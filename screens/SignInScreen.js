@@ -1,6 +1,6 @@
 import React from 'react';
 // import { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, TextInput, TouchableOpacity,Image } from 'react-native';
+import { View, Text, StyleSheet, TextInput, TouchableOpacity,Image, Button } from 'react-native';
 import RedButton from '../components/redButton';
 // import { GoogleSignin, GoogleSigninButton, statusCodes } from '@react-native-google-signin/google-signin';
 // import jwtDecode from 'jwt-decode';

@@ -4,7 +4,7 @@ import { createDrawerNavigator } from '@react-navigation/drawer';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { NavigationContainer } from '@react-navigation/native';
 import HomeScreen from "./screens/HomeScreen"
-import CreateActivityScreen from "./screens/ActivityAdminScreen";
+import CreateActivityScreen from "./screens/CreateActivityScreen";
 import CalendarScreen from "./screens/CalendarScreen";
 import DiscussionsScreen from "./screens/DiscussionsScreen";
 import ProfilScreen from "./screens/ProfilScreen";
@@ -21,6 +21,7 @@ const Root = () => {
         <Drawer.Screen name="Calendrier" component={CalendarScreen} />
         <Drawer.Screen name="Discussions" component={DiscussionsScreen} />
         <Drawer.Screen name="Profil" component={ProfilScreen} />
+        <Drawer.Screen name="SignInScreen" component={SignInScreen} />
       </Drawer.Navigator>
     
   )
