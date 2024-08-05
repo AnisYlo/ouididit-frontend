@@ -1,5 +1,6 @@
 {
   "expo": {
+    
     "name": "frontend",
     "slug": "frontend",
     "version": "1.0.0",
@@ -11,6 +12,7 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
+    
     "ios": {
       "supportsTablet": true
     },
@@ -22,6 +24,13 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "plugins": [[
+      "expo-font",
+      {
+        "fonts": ["./assets/fonts/ClashGrotesk-Regular.otf"]
+      }
+    ]
+  ]
   }
 }
