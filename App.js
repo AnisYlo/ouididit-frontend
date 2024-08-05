@@ -21,6 +21,7 @@ const Root = () => {
         <Drawer.Screen name="Calendrier" component={CalendarScreen} />
         <Drawer.Screen name="Discussions" component={DiscussionsScreen} />
         <Drawer.Screen name="Profil" component={ProfilScreen} />
+        <Drawer.Screen name="SignInScreen" component={SignInScreen} />
       </Drawer.Navigator>
     
   )
