@@ -1,28 +1,42 @@
 import React from 'react';
-// import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { View, Text, StyleSheet, TextInput, TouchableOpacity,Image, Button } from 'react-native';
 import RedButton from '../components/redButton';
-// import { GoogleSignin, GoogleSigninButton, statusCodes } from '@react-native-google-signin/google-signin';
-// import jwtDecode from 'jwt-decode';
+import Input from '../components/Input';
 
-const clientId = '893917699125-l9kugcm1qd3rkelgn479pldmipn58706.apps.googleusercontent.com';
+
+
 
 function SignInScreen({ navigation }) {
+  const [email, setEmail]=useState('')
+  const [password, setPassword]=useState('')
+
+  
+const handleSubmit = () => {
+  fetch('http://172.20.10.3:3000/users/signin', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({email, password})
+  }).then(response => response.json())
+  .then(data => {
+    console.log(data)
+    if(data.result === true) 
+    navigation.navigate('Accueil');
+    else alert('Email is not deliverable.')
+    
+  }
+  )
+  }
 
   return(
 
  <View style={styles.container}>
-    <Image source={require('../assets/logo.png')} style={styles.logo}>
-    </Image>
-    <TextInput>INPUT</TextInput>
-    <TextInput>INPUT</TextInput>
+    <Image source={require('../assets/logo.png')} style={styles.logo}/>
+    <Input onChangeText={(value) => setEmail(value)} value={email} style={styles.input} placeholder='E-mail'/>
+    <Input onChangeText={(value) => setPassword(value)} value={password} style={styles.input} placeholder="Password"/>
     <Text> Choose another account </Text>
-   <RedButton buttonText='Sign In'>
-   <Button onPress={() => navigation.navigate('HomeScreen')} title="Sign Up" />
-
-   </RedButton>
-    <View>
-    </View>
+   <RedButton buttonText='Sign In'
+   onPress={() => handleSubmit()}/>
     <Text> Not register yet ? Create an account ! </Text>
    <RedButton buttonText='Sign up'></RedButton>
  </View>
@@ -32,7 +46,6 @@ function SignInScreen({ navigation }) {
 const styles = StyleSheet.create({
     container: {
       flex: 1,
-      paddingTop: 50,
       flexDirection: "column",
       backgroundColor: 'white',
       alignItems: 'center',
@@ -43,9 +56,13 @@ const styles = StyleSheet.create({
     },
 
     logo: {
-      width: '100%',
-      height: '50%'
+      resizeMode: 'content',
+      width: '80%',
+      height: '45%',
     },
+    input:{
+      width:'80%'
+    }
     
   });
 

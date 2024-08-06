@@ -9,6 +9,13 @@ import CalendarScreen from "./screens/CalendarScreen";
 import DiscussionsScreen from "./screens/DiscussionsScreen";
 import ProfilScreen from "./screens/ProfilScreen";
 import SignInScreen from "./screens/SignInScreen"
+import { configureStore } from '@reduxjs/toolkit';
+import { Provider } from 'react-redux';
+import users from './reducers/users';
+
+const store = configureStore({
+  reducer: { users },
+});
 
 const Drawer = createDrawerNavigator();
 const Stack = createNativeStackNavigator();
@@ -29,12 +36,14 @@ const Root = () => {
 
 export default function App() {
   return (
+    <Provider store={store}>
     <NavigationContainer>
      <Stack.Navigator screenOptions={{ headerShown: false }}>
        <Stack.Screen name="Root" component={Root} />
        <Stack.Screen name="CreateActivityScreen" component={CreateActivityScreen}/>
      </Stack.Navigator>
    </NavigationContainer>
+   </Provider>
   );
 }
 

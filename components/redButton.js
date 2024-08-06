@@ -5,12 +5,11 @@ function RedButton(props){
 
     return(
 
-<TouchableOpacity style={styles.redButton} 
-onPress = {()=>navigation.navigate("HomeScreen")}
->
-<Text style={styles.redButtonText}>{props.buttonText}</Text>
-</TouchableOpacity>
-    )
+<TouchableOpacity style={styles.redButton} onPress={props.onPress}>
+    <Text style={styles.redButtonText}>
+        {props.buttonText}
+    </Text>
+</TouchableOpacity>)
 }
 const styles = StyleSheet.create({
     redButton: {
@@ -24,7 +23,7 @@ const styles = StyleSheet.create({
        },
        redButtonText: {
          color: 'white',
-         fontFamily: 'ClashGrotesk-Regular.otf',
+         fontFamily: 'ClashGrotesk-Regular',
          fontSize: '24'
        
        },
