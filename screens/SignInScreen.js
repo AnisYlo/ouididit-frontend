@@ -9,6 +9,7 @@ import Input from '../components/Input';
 
 
 
+<<<<<<< HEAD
 function SignInScreen({ navigation }) {
   const [email, setEmail]=useState('')
   const [password, setPassword]=useState('')
@@ -33,10 +34,14 @@ const handleSubmit = () => {
   // const handleSubmitGoogle = () => {
   //   navigation.navigate('Accueil')
   // }
+=======
+export default function SignInScreen({ navigation }) {
+>>>>>>> navigation
 
   return(
 
  <View style={styles.container}>
+<<<<<<< HEAD
     <Image source={require('../assets/logo.png')} style={styles.logo}/>
     <Input onChangeText={(value) => setEmail(value)} value={email} style={styles.input} placeholder='E-mail'/>
     <Input onChangeText={(value) => setPassword(value)} value={password} style={styles.input} placeholder="Password"/>
@@ -51,6 +56,15 @@ const handleSubmit = () => {
   }}
   disabled={isInProgress}
 />; */}
+=======
+    <Image source={require('../assets/logo.png')} style={styles.logo}>
+    </Image>
+    <TextInput>INPUT</TextInput>
+    <TextInput>INPUT</TextInput>
+    <Text> Choose another account </Text>
+   <RedButton buttonText='Sign In' onPress={() => navigation.navigate('Accueil')}>
+   {/* <Button onPress={() => navigation.navigate('Accueil')} title="Sign In" /> */}
+>>>>>>> navigation
 
     <Text style={{ fontFamily: 'ClashGrotesk-Regular', fontSize: 18, color: 'black' }}> Not register yet ? Create an account ! </Text>
    <RedButton buttonText='Sign up'></RedButton>
@@ -84,6 +98,4 @@ const styles = StyleSheet.create({
     
   });
 
-
-export default SignInScreen;
 

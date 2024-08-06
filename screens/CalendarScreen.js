@@ -1,10 +1,13 @@
 import { View, StyleSheet, Text, Button } from "react-native";
+import Header from '../components/Header'
 
-export default function CalendarScreen() {
+export default function CalendarScreen({ navigation }) {
   return (
-    <View style={styles.container}>
-      <Text>Calendar</Text>
-    </View>
+    <Header
+      navigation={navigation}
+      title="Calendrier"
+      avatar={require("../assets/avatarDefault.png")}
+    />
   );
 }
 
@@ -13,6 +16,6 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: "center",
         alignItems: "center",
-        backgroundColor: "blue",
+        // backgroundColor: "blue",
       },
 });
