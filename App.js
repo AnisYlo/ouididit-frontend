@@ -4,7 +4,7 @@ import { createDrawerNavigator } from '@react-navigation/drawer';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { NavigationContainer } from '@react-navigation/native';
 import HomeScreen from "./screens/HomeScreen"
-import CreateActivityScreen from "./screens/ActivityAdminScreen";
+import CreateActivityScreen from "./screens/CreateActivityScreen";
 import CalendarScreen from "./screens/CalendarScreen";
 import DiscussionsScreen from "./screens/DiscussionsScreen";
 import ProfilScreen from "./screens/ProfilScreen";
@@ -15,8 +15,8 @@ const Stack = createNativeStackNavigator();
 
 const Root = () => {
   return(
-      <Drawer.Navigator style={styles.icon} screenOptions={{drawerPosition: 'right'}} initialRouteName="Accueil">
-        <Drawer.Screen name="Accueil" component={HomeScreen} />
+      <Drawer.Navigator style={styles.icon} initialRouteName="Accueil">
+        <Drawer.Screen name="Accueil" component={HomeScreen} options={{headerShown: false}} />
         <Drawer.Screen name="Créer une activité" component={CreateActivityScreen} />
         <Drawer.Screen name="Calendrier" component={CalendarScreen} />
         <Drawer.Screen name="Discussions" component={DiscussionsScreen} />
