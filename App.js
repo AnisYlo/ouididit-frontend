@@ -29,12 +29,12 @@ const Stack = createNativeStackNavigator();
 const Root = () => {
 
   return(
-      <Drawer.Navigator style={styles.icon} initialRouteName="Accueil">
-        <Drawer.Screen name="Accueil" component={HomeScreen} options={{headerShown: false}} />
-        <Drawer.Screen name="Créer une activité" component={CreateActivityScreen} options={{headerShown: false}} />
-        <Drawer.Screen name="Calendrier" component={CalendarScreen} options={{headerShown: false}} />
+      <Drawer.Navigator style={styles.icon} initialRouteName="Home">
+        <Drawer.Screen name="Home" component={HomeScreen} options={{headerShown: false}} />
+        <Drawer.Screen name="Create activity" component={CreateActivityScreen} options={{headerShown: false}} />
+        <Drawer.Screen name="Calendar" component={CalendarScreen} options={{headerShown: false}} />
         <Drawer.Screen name="Discussions" component={DiscussionsScreen} options={{headerShown: false}} />
-        <Drawer.Screen name="Profil" component={ProfilScreen} options={{headerShown: false}} />
+        <Drawer.Screen name="Profile" component={ProfilScreen} options={{headerShown: false}} />
         <Drawer.Screen name="SignInScreen" component={SignInScreen} options={{headerShown: false}} />
       </Drawer.Navigator>
   )
@@ -60,7 +60,7 @@ export default function App() {
     <NavigationContainer>
      <Stack.Navigator screenOptions={{ headerShown: false }}>
        <Stack.Screen name="Root" component={Root} />
-       <Stack.Screen name="Créer une activité" component={CreateActivityScreen}/>
+       <Stack.Screen name="Create activity" component={CreateActivityScreen}/>
 
      </Stack.Navigator>
    </NavigationContainer>

@@ -19,7 +19,7 @@ const handleSubmit = () => {
   .then(data => {
     console.log(data)
     if(data.result === true) 
-    navigation.navigate('Accueil');
+    navigation.navigate('Home');
     else alert('Email is not deliverable.')
     
   }
