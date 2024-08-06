@@ -4,7 +4,7 @@ export default function Input(props) {
     return (          
         <View style={[styles.input, props.style]}>
             <View style={styles.inputLabel}>
-                <Text>{props.placeholder}</Text>
+                <Text style={{ fontFamily: 'ClashGrotesk-Regular', fontSize: 18, color: 'black' }}>{props.placeholder}</Text>
             </View>
             <TextInput
                 label={props.label || 'Input'}

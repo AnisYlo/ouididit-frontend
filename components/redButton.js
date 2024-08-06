@@ -6,7 +6,7 @@ function RedButton(props){
     return(
 
 <TouchableOpacity style={styles.redButton} onPress={props.onPress}>
-    <Text style={styles.redButtonText}>
+    <Text style={{ fontFamily: 'ClashGrotesk-Regular', fontSize: 24, color: '#fff' }} >
         {props.buttonText}
     </Text>
 </TouchableOpacity>)
@@ -21,12 +21,11 @@ const styles = StyleSheet.create({
         borderRadius: '10%'
         
        },
-       redButtonText: {
-         color: 'white',
-         fontFamily: 'ClashGrotesk-Regular',
-         fontSize: '24'
+    //    redButtonText: {
+    //      color: 'white',
+    //      fontSize: '24'
        
-       },
+    //    },
 })
 
 export default RedButton

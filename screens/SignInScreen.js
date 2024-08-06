@@ -3,6 +3,8 @@ import { useState } from 'react';
 import { View, Text, StyleSheet, TextInput, TouchableOpacity,Image, Button } from 'react-native';
 import RedButton from '../components/redButton';
 import Input from '../components/Input';
+// import { GoogleSigninButton } from '@react-native-google-signin/google-signin';
+
 
 
 
@@ -28,16 +30,29 @@ const handleSubmit = () => {
   )
   }
 
+  // const handleSubmitGoogle = () => {
+  //   navigation.navigate('Accueil')
+  // }
+
   return(
 
  <View style={styles.container}>
     <Image source={require('../assets/logo.png')} style={styles.logo}/>
     <Input onChangeText={(value) => setEmail(value)} value={email} style={styles.input} placeholder='E-mail'/>
     <Input onChangeText={(value) => setPassword(value)} value={password} style={styles.input} placeholder="Password"/>
-    <Text> Choose another account </Text>
+    <Text style={{ fontFamily: 'ClashGrotesk-Regular', fontSize: 18, color: 'black' }}> Choose another account </Text>
    <RedButton buttonText='Sign In'
    onPress={() => handleSubmit()}/>
-    <Text> Not register yet ? Create an account ! </Text>
+   {/* <GoogleSigninButton
+  size={GoogleSigninButton.Size.Wide}
+  color={GoogleSigninButton.Color.Dark}
+  onPress={() => {
+  handleSubmitGoogle()
+  }}
+  disabled={isInProgress}
+/>; */}
+
+    <Text style={{ fontFamily: 'ClashGrotesk-Regular', fontSize: 18, color: 'black' }}> Not register yet ? Create an account ! </Text>
    <RedButton buttonText='Sign up'></RedButton>
  </View>
   )
@@ -62,6 +77,9 @@ const styles = StyleSheet.create({
     },
     input:{
       width:'80%'
+    },
+    text: {
+      fontFamily: 'ClashGrotesk-Regular'
     }
     
   });

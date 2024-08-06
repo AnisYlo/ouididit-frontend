@@ -12,6 +12,12 @@ import SignInScreen from "./screens/SignInScreen"
 import { configureStore } from '@reduxjs/toolkit';
 import { Provider } from 'react-redux';
 import users from './reducers/users';
+import { useFonts } from 'expo-font';
+import * as SplashScreen from 'expo-splash-screen';
+import { useEffect } from 'react';
+
+SplashScreen.preventAutoHideAsync();
+
 
 const store = configureStore({
   reducer: { users },
@@ -21,7 +27,9 @@ const Drawer = createDrawerNavigator();
 const Stack = createNativeStackNavigator();
 
 const Root = () => {
+
   return(
+
       <Drawer.Navigator style={styles.icon} screenOptions={{drawerPosition: 'right'}} initialRouteName="Accueil">
         <Drawer.Screen name="Accueil" component={HomeScreen} />
         <Drawer.Screen name="Créer une activité" component={CreateActivityScreen} />
@@ -35,6 +43,20 @@ const Root = () => {
 }
 
 export default function App() {
+  const [loaded, error] = useFonts({
+    'ClashGrotesk-Regular': require('./assets/fonts/ClashGrotesk-Regular.otf'),
+  });
+  
+  useEffect(() => {
+    if (loaded || error) {
+      SplashScreen.hideAsync();
+    }
+  }, [loaded, error]);
+  
+  if (!loaded && !error) {
+    return null ;
+  }
+  
   return (
     <Provider store={store}>
     <NavigationContainer>
