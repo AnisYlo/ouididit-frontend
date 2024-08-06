@@ -2,9 +2,9 @@ import { View, StyleSheet, Button } from "react-native";
 
 export default function HomeScreen({ navigation }) {
   return (
-    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+    <View style={styles.container}>
       <Button
-        onPress={() => navigation.navigate('CreateActivityScreen')}
+        onPress={() => navigation.navigate('Créer une activité')}
         title="Créer une activité"
       />
     </View>
@@ -16,6 +16,5 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: "center",
         alignItems: "center",
-        backgroundColor: "yellow",
       },
 });

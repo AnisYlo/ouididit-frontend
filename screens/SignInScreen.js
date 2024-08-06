@@ -7,7 +7,7 @@ import RedButton from '../components/redButton';
 
 const clientId = '893917699125-l9kugcm1qd3rkelgn479pldmipn58706.apps.googleusercontent.com';
 
-function SignInScreen({ navigation }) {
+export default function SignInScreen({ navigation }) {
 
   return(
 
@@ -17,8 +17,8 @@ function SignInScreen({ navigation }) {
     <TextInput>INPUT</TextInput>
     <TextInput>INPUT</TextInput>
     <Text> Choose another account </Text>
-   <RedButton buttonText='Sign In'>
-   <Button onPress={() => navigation.navigate('HomeScreen')} title="Sign Up" />
+   <RedButton buttonText='Sign In' onPress={() => navigation.navigate('Accueil')}>
+   {/* <Button onPress={() => navigation.navigate('Accueil')} title="Sign In" /> */}
 
    </RedButton>
     <View>
@@ -49,6 +49,4 @@ const styles = StyleSheet.create({
     
   });
 
-
-export default SignInScreen;
 

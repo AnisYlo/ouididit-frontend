@@ -8,7 +8,8 @@ import CreateActivityScreen from "./screens/CreateActivityScreen";
 import CalendarScreen from "./screens/CalendarScreen";
 import DiscussionsScreen from "./screens/DiscussionsScreen";
 import ProfilScreen from "./screens/ProfilScreen";
-import SignInScreen from "./screens/SignInScreen"
+import SignInScreen from "./screens/SignInScreen";
+
 
 const Drawer = createDrawerNavigator();
 const Stack = createNativeStackNavigator();
@@ -17,11 +18,11 @@ const Root = () => {
   return(
       <Drawer.Navigator style={styles.icon} initialRouteName="Accueil">
         <Drawer.Screen name="Accueil" component={HomeScreen} options={{headerShown: false}} />
-        <Drawer.Screen name="Créer une activité" component={CreateActivityScreen} />
-        <Drawer.Screen name="Calendrier" component={CalendarScreen} />
-        <Drawer.Screen name="Discussions" component={DiscussionsScreen} />
-        <Drawer.Screen name="Profil" component={ProfilScreen} />
-        <Drawer.Screen name="SignInScreen" component={SignInScreen} />
+        <Drawer.Screen name="Créer une activité" component={CreateActivityScreen} options={{headerShown: false}} />
+        <Drawer.Screen name="Calendrier" component={CalendarScreen} options={{headerShown: false}} />
+        <Drawer.Screen name="Discussions" component={DiscussionsScreen} options={{headerShown: false}} />
+        <Drawer.Screen name="Profil" component={ProfilScreen} options={{headerShown: false}} />
+        <Drawer.Screen name="SignInScreen" component={SignInScreen} options={{headerShown: false}} />
       </Drawer.Navigator>
     
   )
@@ -32,7 +33,8 @@ export default function App() {
     <NavigationContainer>
      <Stack.Navigator screenOptions={{ headerShown: false }}>
        <Stack.Screen name="Root" component={Root} />
-       <Stack.Screen name="CreateActivityScreen" component={CreateActivityScreen}/>
+       <Stack.Screen name="Créer une activité" component={CreateActivityScreen}/>
+
      </Stack.Navigator>
    </NavigationContainer>
   );
