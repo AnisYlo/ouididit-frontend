@@ -20,7 +20,7 @@ import Input from '../components/Input';
 
 
 
-export default function CreateActivityScreen() {
+export default function CreateActivityScreen( {navigation} ) {
     const [activityName, setActivityName] = useState('');
     const [price, setPrice] = useState(null);
     const [date, setDate] = useState('');
