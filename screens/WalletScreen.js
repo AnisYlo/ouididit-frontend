@@ -2,9 +2,11 @@ import { View, StyleSheet, Text, Button } from "react-native";
 
 export default function WalletScreen() {
   return (
-    <View style={styles.container}>
-      <Text>Wallet</Text>
-    </View>
+    <Header
+          navigation={navigation}
+          title="Wallet"
+          avatar={require("../assets/avatarDefault.png")}
+        />
   );
 }
 

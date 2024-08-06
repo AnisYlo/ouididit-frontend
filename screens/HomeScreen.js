@@ -11,7 +11,7 @@ export default function HomeScreen({ navigation }) {
       <View style={styles.chatCard}>
       </View>
       <RedButton
-        onPress={() => navigation.navigate('CreateActivityScreen')}
+        onPress={() => navigation.navigate('Create activity')}
         title="Créer une activité"
         buttonText='New Activity'
       />

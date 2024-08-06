@@ -1,10 +1,13 @@
 import { View, StyleSheet, Text, Button } from "react-native";
+import Header from "../components/Header";
 
 export default function ProfilInfosScreen() {
   return (
-    <View style={styles.container}>
-      <Text>Profil Infos</Text>
-    </View>
+    <Header
+    navigation={navigation}
+    title="Profile Infos"
+    avatar={require("../assets/avatarDefault.png")}
+  />
   );
 }
 
