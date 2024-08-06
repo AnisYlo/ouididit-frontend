@@ -14,7 +14,7 @@ export default function Header(props) {
     // console.log(props.navigation)
     const handlePress = () => {
         console.log('bonjour')
-        navigation.navigate('Profil')
+        navigation.navigate('Profile')
     }
   const navigation = props.navigation;
   return (

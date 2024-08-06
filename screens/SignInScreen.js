@@ -17,7 +17,7 @@ export default function SignInScreen({ navigation }) {
     <TextInput>INPUT</TextInput>
     <TextInput>INPUT</TextInput>
     <Text> Choose another account </Text>
-   <RedButton buttonText='Sign In' onPress={() => navigation.navigate('Accueil')}>
+   <RedButton buttonText='Sign In' onPress={() => navigation.navigate('Home')}>
    {/* <Button onPress={() => navigation.navigate('Accueil')} title="Sign In" /> */}
 
    </RedButton>

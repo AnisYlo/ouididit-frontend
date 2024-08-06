@@ -4,8 +4,8 @@ export default function HomeScreen({ navigation }) {
   return (
     <View style={styles.container}>
       <Button
-        onPress={() => navigation.navigate('Créer une activité')}
-        title="Créer une activité"
+        onPress={() => navigation.navigate('Create activity')}
+        title="Create activity"
       />
     </View>
   );

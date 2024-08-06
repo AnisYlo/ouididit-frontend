@@ -11,7 +11,7 @@ import Header from "../components/Header";
 
 export default function ProfilScreen({ navigation }) {
   return (
-    <Header navigation={navigation} title='Profil' avatar={require('../assets/avatarDefault.png')}/>
+    <Header navigation={navigation} title='Profile' avatar={require('../assets/avatarDefault.png')}/>
   );
 }
 
