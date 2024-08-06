@@ -2,13 +2,13 @@ import * as React from 'react';
 import { StyleSheet } from 'react-native';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, createAppContainer } from '@react-navigation/native';
 import HomeScreen from "./screens/HomeScreen"
 import CreateActivityScreen from "./screens/CreateActivityScreen";
 import CalendarScreen from "./screens/CalendarScreen";
 import DiscussionsScreen from "./screens/DiscussionsScreen";
 import ProfilScreen from "./screens/ProfilScreen";
-import SignInScreen from "./screens/SignInScreen"
+import SignInScreen from "./screens/SignInScreen";
 
 const Drawer = createDrawerNavigator();
 const Stack = createNativeStackNavigator();
@@ -23,7 +23,6 @@ const Root = () => {
         <Drawer.Screen name="Profil" component={ProfilScreen} />
         <Drawer.Screen name="SignInScreen" component={SignInScreen} />
       </Drawer.Navigator>
-    
   )
 }
 

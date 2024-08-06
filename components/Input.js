@@ -10,6 +10,11 @@ export default function Input(props) {
                 label={props.label || 'Input'}
                 secureTextEntry={props.secureTextEntry}
                 onChangeText={props.onChangeText}
+                onFocus={props.onFocus}
+                onPressIn={props.onPressIn}
+                onPressOut={props.onPressOut}
+                onEndEditing={props.onEndEditing}
+                editable={props.editable}
                 value={props.value}
                 style={styles.inputStyle}
                 onSubmitEditing={props.onSubmitEditing || ''}
