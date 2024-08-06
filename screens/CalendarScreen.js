@@ -5,7 +5,7 @@ export default function CalendarScreen({ navigation }) {
   return (
     <Header
       navigation={navigation}
-      title="Calendrier"
+      title="Calendar"
       avatar={require("../assets/avatarDefault.png")}
     />
   );
