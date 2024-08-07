@@ -87,7 +87,7 @@ export default function CreateActivityScreen( {navigation} ) {
             navigation={navigation}
             title='New activity'
             avatar={require('../assets/avatarDefault.png')}
-            onPressProfil = {navigation.navigate('Profil')}
+            onPressProfil = {navigation.navigate('Profile')}
         />  
         <SafeAreaView style={styles.container}>          
             <Input

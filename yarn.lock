@@ -1496,9 +1496,10 @@
   dependencies:
     invariant "^2.2.4"
 
-"@react-native-google-signin/google-signin@react-native-google-signin/google-signin":
+"@react-native-google-signin/google-signin@^12.2.1":
   version "12.2.1"
-  resolved "https://codeload.github.com/react-native-google-signin/google-signin/tar.gz/f5ef438aeda0c40f68082dc0b1bddc04bbd6298c"
+  resolved "https://registry.yarnpkg.com/@react-native-google-signin/google-signin/-/google-signin-12.2.1.tgz#242247ab18ea7bb3a1dcabb50df7ad236f104294"
+  integrity sha512-qt2Cb+bN2NS8BBT06M3UbLVS1gaSYTenNh4uZtPNmyJC23xZAynLkuhvsC6gmeEnxcj0wLVUn1Es+LSHw0OhVQ==
 
 "@react-native/assets-registry@0.74.86":
   version "0.74.86"
