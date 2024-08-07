@@ -3,24 +3,25 @@ import { StyleSheet, Text, TextInput, View} from 'react-native';
 export default function Input(props) {
     return (          
         <View style={[styles.input, props.style]}>
-            <View style={styles.inputLabel}>
-                <Text style={{ fontFamily: 'ClashGrotesk-Regular', fontSize: 18, color: 'black' }}>{props.placeholder}</Text>
+            <View style={styles.inputLabelView}>
+                <Text style={styles.inputLabel}>{props.placeholder} {props.require && (<Text style={styles.require}>*</Text>)}</Text>
             </View>
             <TextInput
+                autoComplete={props.autoComplete}
+                editable={props.editable}
+                keyboardType={props.keyboardType}
                 label={props.label || 'Input'}
-                secureTextEntry={props.secureTextEntry}
+                multiline={props.multiline}
+                numberOfLines={props.numberOfLines}
                 onChangeText={props.onChangeText}
                 onFocus={props.onFocus}
                 onPressIn={props.onPressIn}
                 onPressOut={props.onPressOut}
                 onEndEditing={props.onEndEditing}
-                editable={props.editable}
-                value={props.value}
-                style={styles.inputStyle}
                 onSubmitEditing={props.onSubmitEditing || ''}
-                keyboardType={props.keyboardType}
-                multiline={props.multiline}
-                numberOfLines={props.numberOfLines}
+                secureTextEntry={props.secureTextEntry}
+                style={styles.inputStyle}
+                value={props.value}
             />
         </View>
     );
@@ -30,22 +31,35 @@ const styles = StyleSheet.create({
     input:{
         width:'100%'
     },
-    inputLabel:{
+    inputLabelView:{
+        backgroundColor: 'white',
         color: 'rgba(38,50,56)',
         fontSize: 12,
-        backgroundColor: 'white',
         marginLeft: 10,
         paddingHorizontal:3,
-        zIndex: 1,
         position: "absolute",
-        top: -12,
+        top: -10,
+        zIndex: 1,
+    },
+    inputLabel:{
+        backgroundColor: 'white',
+        color: 'rgba(38,50,56)',
+        fontFamily: 'ClashGrotesk-Regular',
+        fontSize: 16,
+    },
+    require:{
+        color : '#F74231',
+        fontFamily: 'ClashGrotesk-Regular',
+        fontSize: 16,
     },
     inputStyle:{
-        fontSize: 14,
-        borderRadius: 10,
-        height: 40,
         borderColor: 'rgba(38,50,56,0.16)',
+        borderRadius: 10,
         borderWidth:1,
+        fontFamily: 'ClashGrotesk-Regular',
+        fontSize: 18,
+        height: 40,
         padding: 5,
+        paddingHorizontal:10,
     },
 });

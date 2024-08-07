@@ -11,9 +11,8 @@ import Entypo from "@expo/vector-icons/Entypo";
 import { AntDesign } from "@expo/vector-icons";
 
 export default function Header(props) {
-    // console.log(props.navigation)
+    //console.log(props.navigation)
     const handlePress = () => {
-        console.log('bonjour')
         navigation.navigate('Profil')
     }
   const navigation = props.navigation;
@@ -24,8 +23,6 @@ export default function Header(props) {
           <Image
             style={styles.avatar}
             source={props.avatar}
-            onPress={() => handlePress()}
-        
           />
         </TouchableOpacity>
         <TouchableOpacity style={styles.drawer}>
@@ -55,7 +52,8 @@ export default function Header(props) {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 0.05,
+    flex: 0.12,
+    paddingTop: 35,
     // backgroundColor: "red",
   },
   buttonsMenu: {

@@ -1,10 +1,14 @@
 import { View, StyleSheet, Text, Button } from "react-native";
+import { TouchableOpacity } from "react-native-gesture-handler";
+import { SafeAreaView } from "react-native-safe-area-context";
 
-export default function ProfilPaiementsScreen() {
+export default function ProfilPaiementsScreen({ navigation }) {
   return (
-    <View style={styles.container}>
-      <Text>Profil Paiements</Text>
-    </View>
+    <Header
+    navigation={navigation}
+    title="Profil Paiements"
+    avatar={require("../assets/avatarDefault.png")}
+  />
   );
 }
 

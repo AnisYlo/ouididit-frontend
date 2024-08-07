@@ -42,7 +42,7 @@ const styles = StyleSheet.create({
       },
       activitiesCard: {
       
-        borderRadius: "20%",
+        borderRadius: 10,
         borderWidth: 2,
         borderColor: '#e74c3c',
         height: '40%',
@@ -51,7 +51,7 @@ const styles = StyleSheet.create({
       },
       chatCard: {
       
-        borderRadius: '20%',
+        borderRadius: 10,
         borderWidth: 2,
         borderColor: '#1F84D6',
         backgroundColor: 'white',
