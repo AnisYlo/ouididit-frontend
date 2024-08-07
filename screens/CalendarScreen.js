@@ -3,11 +3,13 @@ import Header from '../components/Header'
 
 export default function CalendarScreen({ navigation }) {
   return (
+    <>
     <Header
       navigation={navigation}
       title="Calendar"
       avatar={require("../assets/avatarDefault.png")}
     />
+    </>
   );
 }
 

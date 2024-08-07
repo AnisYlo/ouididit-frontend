@@ -3,11 +3,13 @@ import Header from "../components/Header";
 
 export default function DiscussionsScreen({ navigation }) {
   return (
+    <>
     <Header
       navigation={navigation}
       title="Discussions"
       avatar={require("../assets/avatarDefault.png")}
     />
+    </>
   );
 }
 
