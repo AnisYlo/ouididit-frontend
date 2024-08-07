@@ -2,7 +2,7 @@ import * as React from "react";
 import { StyleSheet } from "react-native";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import {NavigationContainer} from "@react-navigation/native";
+import {NavigationContainer,createAppContainer} from "@react-navigation/native";
 import ActivityAdminScreen from "./screens/ActivityAdminScreen";
 import CalendarScreen from "./screens/CalendarScreen";
 import CreateActivityScreen from "./screens/CreateActivityScreen";
@@ -14,13 +14,14 @@ import ProfilInfosScreen from "./screens/ProfilInfos";
 import ProfilScreen from "./screens/ProfilScreen";
 import SignInScreen from "./screens/SignInScreen";
 import SignUpScreen from "./screens/SignUpScreen";
-import WalletScreen from "./screens/WalletScreen";
+import Wallet from "./screens/WalletScreen";
 import { configureStore } from "@reduxjs/toolkit";
 import { Provider } from "react-redux";
 import users from "./reducers/users";
 import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
+import WalletScreen from "./screens/WalletScreen";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -66,15 +67,11 @@ export default function App() {
       <NavigationContainer>
         <Stack.Navigator screenOptions={{ headerShown: false }}>
           <Stack.Screen name="Root" component={Root} />
-          <Stack.Screen name='Signup' component={SignUpScreen}/>
-          <Stack.Screen name="Activity Admin" component={ActivityAdminScreen}/>
-          <Stack.Screen name="Calendar" component={CalendarScreen}/>
+          <Stack.Screen name="Activity Admin" component={ActivityAdminScreen} />
           <Stack.Screen name="Create activity" component={CreateActivityScreen}/>
-          <Stack.Screen name="Discussions" component={DiscussionsScreen}/>
-          <Stack.Screen name="Profile" component={ProfilScreen}/>
-          <Stack.Screen name="Profile Infos" component={ProfilInfosScreen}/>
           <Stack.Screen name="Profile Paiements" component={ProfilPaiementsScreen}/>
-          <Stack.Screen name="Wallet" component={WalletScreen}/>
+          <Stack.Screen name="Profile Infos" component={ProfilInfosScreen} />
+          <Stack.Screen name="Wallet" component={WalletScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     </Provider>
