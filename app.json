@@ -26,10 +26,12 @@
       "favicon": "./assets/favicon.png"
     },
     "plugins": [[
+
       "expo-font",
       {
         "fonts": ["./assets/fonts/ClashGrotesk-Regular.otf"]
       }
+
     ]
   ]
   }

@@ -5,17 +5,13 @@ import Header from "../components/Header"
 
 export default function HomeScreen({ navigation }) {
   return (
-    
-  <SafeAreaView style={styles.container}>
-    <View style={styles.header}>
+   <>
       <Header 
         navigation={navigation}
         title= "Home"
         avatar={require("../assets/avatarDefault.png")}>
       </Header>
-      <Text style={styles.title}>Home</Text>
-      </View>
-      
+  <SafeAreaView style={styles.container}>      
         <View style={styles.activitiesCard}>
         </View>
         <View style={styles.chatCard}>
@@ -27,7 +23,7 @@ export default function HomeScreen({ navigation }) {
             />
    
     </SafeAreaView>
-   
+    </> 
   );
 }
 
@@ -35,9 +31,8 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         alignItems: 'center',
-        justifyContent: "space-around",
+        justifyContent: "space-between",
         backgroundColor: "white",
-        paddingBottom: 50,
         
       },
       activitiesCard: {
@@ -65,8 +60,5 @@ const styles = StyleSheet.create({
       fontFamily: 'ClashGrotesk-Bold',
       fontSize: 24,
       },
-      header: {
-        height: '10%',
-        width: "100%",
-      }
+  
 });
