@@ -11,7 +11,7 @@ export default function SignInScreen({ navigation }) {
   const [password, setPassword]=useState('')
   const [hideLogo, setHideLogo]=useState(true)
 
-  
+
 const handleSubmit = () => {
   fetch('http://172.20.10.3:3000/users/signin', {
     method: 'POST',
@@ -43,7 +43,7 @@ const handleSubmit = () => {
    <RedButton buttonText='Sign In'
    onPress={() => handleSubmit()}/>
     <Text style={{ fontFamily: 'ClashGrotesk-Regular', fontSize: 18, color: 'black' }}> Not register yet ? Create an account ! </Text>
-   <RedButton buttonText='Sign up'></RedButton>
+   <RedButton buttonText='Sign up' onPress={() => navigation.navigate('Signup')}></RedButton>
    <View></View>
  </KeyboardAvoidingView>
   )

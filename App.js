@@ -65,6 +65,7 @@ export default function App() {
       <NavigationContainer>
         <Stack.Navigator screenOptions={{ headerShown: false }}>
           <Stack.Screen name="Root" component={Root} />
+          <Stack.Screen name='Signup' component={SignUpScreen}/>
           <Stack.Screen name="Activity Admin" component={ActivityAdminScreen} />
           <Stack.Screen name="Create activity" component={CreateActivityScreen}/>
           <Stack.Screen name="Profile Paiements" component={ProfilPaiementsScreen}/>
