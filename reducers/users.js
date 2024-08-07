@@ -11,8 +11,12 @@ export const usersSlice = createSlice({
     userConnect: (state, action) => {
         state.value.nickname = action.payload;
       },
+    logout: (state) => {
+      state.value.nickname = null;
+      state.value.token = null
+    }
   },
 });
 
-export const {userConnect} = usersSlice.actions;
+export const {userConnect, logout} = usersSlice.actions;
 export default usersSlice.reducer;

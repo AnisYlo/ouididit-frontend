@@ -26,6 +26,7 @@ export default function Input(props) {
                 style={styles.inputStyle}
                 value={props.value}
             />
+            <Text style={styles.uniti}>{props.uniti}</Text>
             </View>
         </View>
     );
@@ -33,7 +34,8 @@ export default function Input(props) {
 
 const styles = StyleSheet.create({
     input:{
-        width:'100%'
+        width:'100%',
+        justifyContent: 'center',
     },
     inputLabelView:{
         backgroundColor: 'white',
@@ -63,6 +65,15 @@ const styles = StyleSheet.create({
         height: 40,
         padding: 5,
         paddingHorizontal:10,
+    },
+    uniti:{
+        backgroundColor: 'white',
+        color: 'rgba(38,50,56)',
+        fontFamily: 'ClashGrotesk-Regular',
+        fontSize: 16,
+        position: "absolute",
+        right:'5%',
+        zIndex: 1,
     },
     inputEmail: {
         borderColor: 'rgba(38,50,56,0.16)',

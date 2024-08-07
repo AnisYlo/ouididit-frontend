@@ -17,6 +17,9 @@ import Input from '../components/Input';
 import Header from "../components/Header";
 import RedButton from "../components/redButton";
 
+//const BACKEND_IP = 'http://192.168.1.120:3000'; //maison
+const BACKEND_IP = 'http://10.0.2.129:3000'; //cowork
+
 export default function CreateActivityScreen( {navigation} ) {
     const [activityName, setActivityName] = useState('');
     const [price, setPrice] = useState(null);
@@ -33,7 +36,7 @@ export default function CreateActivityScreen( {navigation} ) {
     const onChangeDate = (event, selectedDate) => {
         setDatePickerVisible(false);  // Masquer le picker si l'utilisateur annule la sélection
         if (event.type === 'set') {
-            setDatePickerVisible(Platform.OS === 'ios');  // Setting for IOs need testing
+            //setDatePickerVisible(Platform.OS === 'ios');  // Setting for IOs need testing
             const currentDate = selectedDate || datePicker;
             setDate(moment(currentDate).format('DD/MM/YYYY'));
             setDatePicker(currentDate);
@@ -51,8 +54,31 @@ export default function CreateActivityScreen( {navigation} ) {
         }
     };
 
-    const sendCreateActivityScreen =()=>{
+    const sendCreateActivityScreen = async () =>{
+        // Conversion de la date pour enregitrement en BDD
+        const [day, month, year] = date.split('/');
+        const [hours, minutes] = startTime.split(':');
+        const startDate = new Date(year, month - 1, day, hours, minutes);
 
+        const body = {
+            organizer : "7HIcKJ04pAR8Wqxt7O268oFVLG-AvfEI",
+            name:activityName,
+            location : {street : location},
+            date : startDate,
+            time : duration,
+            description,
+            payementLimit : price,
+          };
+
+        try{
+            await fetch(`${BACKEND_IP}/activities/`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(body),
+            });
+        } catch (error) {
+            console.error("Failed to send activty:", error);
+        }
     }
 
     return (
@@ -61,7 +87,6 @@ export default function CreateActivityScreen( {navigation} ) {
             navigation={navigation}
             title='New activity'
             avatar={require('../assets/avatarDefault.png')}
-            onPressProfil = {navigation.navigate('Profil')}
         />  
         <SafeAreaView style={styles.container}>          
             <Input
@@ -80,6 +105,7 @@ export default function CreateActivityScreen( {navigation} ) {
                     require={true}
                     style={styles.inputLine}
                     value={price}
+                    uniti="€"
                 />
             </View>
 
@@ -101,6 +127,7 @@ export default function CreateActivityScreen( {navigation} ) {
             
             {timePickerVisible && (<RNDateTimePicker
                 display='spinner'
+                minuteInterval={15}
                 mode='time'
                 onChange={onChangeTime}
                 value={startTimePicker}
@@ -116,10 +143,12 @@ export default function CreateActivityScreen( {navigation} ) {
                     value={startTime}
                 />
                 <Input
+                    keyboardType='numeric'
                     onChangeText={(value) => setDuration(value)}
                     placeholder = 'Duration'
                     style={styles.inputLine}
                     value={duration}
+                    uniti="hours"
                 />
             </View>
             <Input
@@ -165,6 +194,7 @@ const styles = StyleSheet.create({
     line:{
         flexDirection:'row',
         justifyContent: 'space-between',
+        alignItems: 'center',
         marginVertical:10,
         width:'80%',
     },
