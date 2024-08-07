@@ -71,5 +71,5 @@ export default function App() {
 const styles = StyleSheet.create({
   icon : {
     justifyContent: "flex-end"
-  }
+  },
 })
