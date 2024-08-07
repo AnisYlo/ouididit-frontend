@@ -12,153 +12,161 @@ import {
 } from 'react-native';
 import RNDateTimePicker, { DateTimePickerAndroid } from '@react-native-community/datetimepicker';
 import moment from 'moment';
-
-
-
 import { useState } from 'react';
 import Input from '../components/Input';
-
-
+import Header from "../components/Header";
+import RedButton from "../components/redButton";
 
 export default function CreateActivityScreen( {navigation} ) {
     const [activityName, setActivityName] = useState('');
     const [price, setPrice] = useState(null);
     const [date, setDate] = useState('');
     const [datePicker, setDatePicker] = useState(new Date());
-    const [startTime, setStartTime] = useState(new Date());    
+    const [startTime, setStartTime] = useState('');    
+    const [startTimePicker, setStartTimePicker] = useState(new Date());    
     const [duration, setDuration] = useState('');
     const [location, setLocation] = useState([]);
     const [description, setDescription] = useState('');
     const [datePickerVisible, setDatePickerVisible] = useState(false);
     const [timePickerVisible, setTimePickerVisible] = useState(false);
 
-    const showDatePicker = () => {
-        setDatePickerVisible(true);
-    };
-    const showTimePicker = () => {
-        setTimePickerVisible(true);
-    };
-
     const onChangeDate = (event, selectedDate) => {
         setDatePickerVisible(false);  // Masquer le picker si l'utilisateur annule la sélection
-        if (event.type === 'set') {   // 
-            const currentDate = selectedDate || date;
+        if (event.type === 'set') {
+            setDatePickerVisible(Platform.OS === 'ios');  // Setting for IOs need testing
+            const currentDate = selectedDate || datePicker;
             setDate(moment(currentDate).format('DD/MM/YYYY'));
             setDatePicker(currentDate);
-        } 
+        } else {
+            setDatePickerVisible(false);
+        }
     };
-
-    function setTempDate(dateTemp){
-        const regexDate =  /\d\d\/\d\d\/\d\d\d\d/
-        if(regexDate.test(dateTemp))
-            setDate(Date(dateTemp))
-    }
 
     const onChangeTime = (event, selectedTime) => {        
         setTimePickerVisible(false); // Masquer le picker si l'utilisateur annule la sélection
         if (event.type === 'set') {
-            const currentTime = selectedTime || startTime;
-            setStartTime(currentTime);
+            const currentTime = selectedTime || startTimePicker;
+            setStartTime(moment(currentTime).format('HH:mm'));
+            setStartTimePicker(currentTime);
         }
     };
 
+    const sendCreateActivityScreen =()=>{
+
+    }
+
     return (
-        <SafeAreaView style={styles.container}>
-            <Text style={styles.title}>New Activity</Text>            
+    <>
+        <Header 
+            navigation={navigation}
+            title='New activity'
+            avatar={require('../assets/avatarDefault.png')}
+            onPressProfil = {navigation.navigate('Profil')}
+        />  
+        <SafeAreaView style={styles.container}>          
             <Input
-                placeholder = 'Activity Name'
-                onChangeText={(value) => setActivityName(value)}
-                value={activityName}
                 autoFocus
+                onChangeText={(value) => setActivityName(value)}
+                placeholder = 'Activity Name'
+                require={true}
                 style={styles.input}
+                value={activityName}
             />
             <View style={styles.line}>
                 <Input
-                    placeholder = 'Price'
-                    onChangeText={(value) => setPrice(value)}
-                    value={price}
-                    style={styles.inputLine}
                     keyboardType='numeric'
+                    onChangeText={(value) => setPrice(value)}
+                    placeholder = 'Price'
+                    require={true}
+                    style={styles.inputLine}
+                    value={price}
                 />
             </View>
 
             {datePickerVisible && (<RNDateTimePicker
-                value={datePicker}
+                display='spinner'
                 mode='date'
                 onChange={onChangeDate}
-                display='spinner'
+                value={datePicker}
             />)}
             <Input
-                placeholder = 'Date'
-                onChangeText={(value) => setDate(value)}
-                onPressOut ={showDatePicker}
-                value={date}
-                style={styles.input}
                 keyboardType={Platform.OS === 'ios' ? 'numbers-and-punctuation' : 'phone-pad'}
+                onChangeText={(value) => setTempDate(value)}
+                onPressOut ={() => setDatePickerVisible(true)}
+                placeholder = 'Date'
+                require={true}
+                style={styles.input}
+                value={date}
             />
             
             {timePickerVisible && (<RNDateTimePicker
-                value={startTime}
+                display='spinner'
                 mode='time'
                 onChange={onChangeTime}
-                display='spinner'
+                value={startTimePicker}
             />)}
             <View style={styles.line}>
                 <Input
-                    placeholder = 'Start time'
-                    onChangeText={(value) => setStartTime(value)}
-                    onPressOut ={showTimePicker}
-                    value={moment(startTime).format('HH:mm')}
-                    style={styles.inputLine}
                     keyboardType={Platform.OS === 'ios' ? 'numbers-and-punctuation' : 'default'}
+                    onChangeText={(value) => setStartTime(value)}
+                    onPressOut ={() => setTimePickerVisible(true)}
+                    placeholder = 'Start time'
+                    require={true}
+                    style={styles.inputLine}
+                    value={startTime}
                 />
                 <Input
-                    placeholder = 'Duration'
                     onChangeText={(value) => setDuration(value)}
-                    value={duration}
+                    placeholder = 'Duration'
                     style={styles.inputLine}
+                    value={duration}
                 />
             </View>
             <Input
-                placeholder = 'Location'
                 onChangeText={(value) => setLocation(value)}
-                value={location}
+                placeholder = 'Location'
                 style={styles.input}
+                value={location}
             />
             <Input
-                placeholder = 'Description'
-                onChangeText={(value) => setDescription(value)}
-                value={description}
-                style={styles.input}
                 multiline
+                onChangeText={(value) => setDescription(value)}
+                placeholder = 'Description'
+                style={styles.input}
+                value={description}
             />
-            <Text>{JSON.stringify(date)}</Text>
+            <RedButton
+                buttonText='Create'
+                onPress={() => sendCreateActivityScreen()}
+                title='Create activity'
+            />
         </SafeAreaView>
+    </>
     );
 }
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
-        width:'100%',
-        height:'100%',
-        backgroundColor: '#ffffff',
         alignItems: 'center',
+        backgroundColor: '#ffffff',
+        flex: 1,
+        height:'100%',
         justifyContent: 'center',
+        width:'100%',
     },
     title:{
         fontSize: 20,
         fontWeight: '600',
     },
     input:{
-        width:'80%',
         marginVertical:10,
+        width:'80%',
     },    
     line:{
         flexDirection:'row',
         justifyContent: 'space-between',
-        width:'80%',
         marginVertical:10,
+        width:'80%',
     },
     inputLine:{
         width:'48%',
