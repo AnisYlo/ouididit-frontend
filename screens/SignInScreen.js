@@ -5,7 +5,7 @@ import RedButton from '../components/redButton';
 import Input from '../components/Input';
 import InputPassword from '../components/InputPassword';
 // import { GoogleSigninButton } from '@react-native-google-signin/google-signin';
-
+import { BACKEND_IP } from '@env';
 export default function SignInScreen({ navigation }) {
   const [email, setEmail]=useState('')
   const [password, setPassword]=useState('')
@@ -13,7 +13,7 @@ export default function SignInScreen({ navigation }) {
 
 
 const handleSubmit = () => {
-  fetch('http://172.20.10.3:3000/users/signin', {
+  fetch(`${BACKEND_IP}/users/signin`, {
     method: 'POST',
     headers: {'Content-Type': 'application/json'},
     body: JSON.stringify({email, password})

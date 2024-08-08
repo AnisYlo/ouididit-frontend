@@ -3,6 +3,7 @@ import RedButton from '../components/redButton';
 import Input from '../components/Input';
 import InputPassword from '../components/InputPassword';
 import { useState } from "react";
+import { BACKEND_IP } from '@env';
 
 
 
@@ -13,7 +14,7 @@ const [username, setUsername]=useState('')
 
 
   const handleSubmitSignUp = () => {
-    fetch('http://172.20.10.3:3000/users/signup', {
+    fetch(`${BACKEND_IP}/users/signup`, {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({email, password})
