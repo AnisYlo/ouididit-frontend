@@ -23,6 +23,7 @@ import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
 import WalletScreen from "./screens/WalletScreen";
 
+
 SplashScreen.preventAutoHideAsync();
 
 const store = configureStore({

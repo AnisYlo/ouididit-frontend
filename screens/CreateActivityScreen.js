@@ -1,24 +1,18 @@
 import {
-    Image,
     KeyboardAvoidingView,
     Platform,
     SafeAreaView,
     StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    Button,
     View,
 } from 'react-native';
 import RNDateTimePicker, { DateTimePickerAndroid } from '@react-native-community/datetimepicker';
-import moment from 'moment';
+import moment, { invalid } from 'moment';
 import { useState } from 'react';
 import Input from '../components/Input';
 import Header from "../components/Header";
 import RedButton from "../components/redButton";
+import { BACKEND_IP } from '@env';
 
-//const BACKEND_IP = 'http://192.168.1.120:3000'; //maison
-const BACKEND_IP = 'http://10.0.2.129:3000'; //cowork
 
 export default function CreateActivityScreen( {navigation} ) {
     const [activityName, setActivityName] = useState('');
@@ -34,28 +28,69 @@ export default function CreateActivityScreen( {navigation} ) {
     const [timePickerVisible, setTimePickerVisible] = useState(false);
 
     const onChangeDate = (event, selectedDate) => {
-        setDatePickerVisible(false);  // Masquer le picker si l'utilisateur annule la sélection
+        setDatePickerVisible(false);  // Hide picker if user cancel selection
         if (event.type === 'set') {
             //setDatePickerVisible(Platform.OS === 'ios');  // Setting for IOs need testing
             const currentDate = selectedDate || datePicker;
             setDate(moment(currentDate).format('DD/MM/YYYY'));
             setDatePicker(currentDate);
         } else {
-            setDatePickerVisible(false);
+            setDatePickerVisible(false); // Hide picker for all other events
         }
     };
 
     const onChangeTime = (event, selectedTime) => {        
-        setTimePickerVisible(false); // Masquer le picker si l'utilisateur annule la sélection
+        setTimePickerVisible(false); // Hide picker if user cancel selection
         if (event.type === 'set') {
             const currentTime = selectedTime || startTimePicker;
             setStartTime(moment(currentTime).format('HH:mm'));
             setStartTimePicker(currentTime);
+        }else {
+            setTimePickerVisible(false); // Hide picker for all other events
         }
     };
 
-    const sendCreateActivityScreen = async () =>{
-        // Conversion de la date pour enregitrement en BDD
+    // Check Date and TimeStart
+    function isFutureDate(dateString, timeString) {
+        // Check input format with regex
+        const regexDate = /^(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[0-2])\/\d{4}$/;
+        const regexTime = /^([01]\d|2[0-3]):([0-5]\d)$/;
+        if (!regexDate.test(dateString) || !regexTime.test(timeString)) {
+            return false;
+        }
+    
+        let [day, month, year] = dateString.split('/');
+        // Conversion to integer for comparison with date
+        day = parseInt(day);
+        month = parseInt(month) - 1; // Months are indexed from 0 to 11 in JS
+        year = parseInt(year);
+        const [hours, minutes] = timeString.split(':');
+        const date = new Date(year, month, day, hours, minutes);
+
+        // Check valide date (isn't 30/02/2025)
+        if (date.getFullYear() !== year || date.getMonth() !== month || date.getDate() !== day) {
+            return false;
+        }
+    
+        // Check that the date is later than now
+        return date > new Date();
+    }
+
+    const sendCreateActivityScreen = () =>{
+        // Check inputs before action
+        let alertMessage = '';
+        !(/^\d+(\.\d{1,2})?$/.test(price)) && (alertMessage += "Invalid price.\n")
+        !(/^[1-9]\d*$/.test(duration)) && (alertMessage += "Invalid duration.\n")
+        !isFutureDate(date, startTime) && (alertMessage += "Invalid date/time or passed date/time.\n")
+        
+        // If message, show alert and cancel send
+        if(alertMessage){
+            alert(alertMessage);
+            alertMessage = '';
+            return;
+        }
+
+        // Date conversion for database
         const [day, month, year] = date.split('/');
         const [hours, minutes] = startTime.split(':');
         const startDate = new Date(year, month - 1, day, hours, minutes);
@@ -68,13 +103,19 @@ export default function CreateActivityScreen( {navigation} ) {
             time : duration,
             description,
             payementLimit : price,
-          };
+        };
+        const participants = ['test@MediaList.fr','toto@MediaList.fr']
 
         try{
-            await fetch(`${BACKEND_IP}/activities/`, {
+            fetch(`${BACKEND_IP}/activities/`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(body),
+            })
+            .then(res => res.json())
+            .then(res =>{
+                participants.map()
+//il faut créer l'ajout des participants
             });
         } catch (error) {
             console.error("Failed to send activty:", error);
@@ -117,7 +158,7 @@ export default function CreateActivityScreen( {navigation} ) {
             />)}
             <Input
                 keyboardType={Platform.OS === 'ios' ? 'numbers-and-punctuation' : 'phone-pad'}
-                onChangeText={(value) => setTempDate(value)}
+                onChangeText={(value) => setDate(value)}
                 onPressOut ={() => setDatePickerVisible(true)}
                 placeholder = 'Date'
                 require={true}
