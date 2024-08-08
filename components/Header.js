@@ -15,6 +15,7 @@ import { useRoute } from "@react-navigation/native";
 
 export default function Header(props) {
   const [homeArrow, setHomeArrow] = useState("");
+  const [logoHome, setLogoHome] = useState(false);
   const state = useNavigationState((state) => state);
   //hook useRoute pour récupérer la valeur du nom de la route (route.name)
   const route = useRoute();
@@ -27,16 +28,16 @@ export default function Header(props) {
       "Calendar",
       "Discussions",
       "Profile",
-    ]; 
-    //Si le route.name est présent dans le tableau routesWithHomeIcon alors l'icone sera home
-      if (routesWithHomeIcon.includes(route.name)) {
-        setHomeArrow("home");
-        //sinon l'icone sera la flèche
-      } else {
-        setHomeArrow("arrow-left");
-      
+    ];
+    //Si le route.name est présent dans le tableau routesWithHomeIcon
+    //  et si le route.name est différent de Home alors l'icone sera home
+    if (routesWithHomeIcon.includes(route.name) && route.name !== "Home") {
+      setHomeArrow("home");
+      //sinon l'icone sera la flèche
+    } else if (!routesWithHomeIcon.includes(route.name)) {
+      setHomeArrow("arrow-left");
     }
-    //dans le tableau de redevance on surveille route.name -> useEffect est relancé à chaque 
+    //dans le tableau de redevance on surveille route.name -> useEffect est relancé à chaque
     //fois que route.name change
   }, [route.name]);
 
@@ -57,12 +58,15 @@ export default function Header(props) {
       </View>
       <View style={styles.page}>
         <TouchableOpacity style={styles.arrow}>
-          <Feather
-            name={homeArrow}
-            size={35}
-            color="black"
-            onPress={() => props.navigation.goBack()}
-          />
+          {/* si l'état est initialisé à true, alors le logo sur la page Home ne s'affichera pas */}
+          {!logoHome && (
+            <Feather
+              name={homeArrow}
+              size={35}
+              color="black"
+              onPress={() => props.navigation.goBack()}
+            />
+          )}
         </TouchableOpacity>
         <Text style={styles.title}>{props.title}</Text>
         <View style={styles.view}></View>

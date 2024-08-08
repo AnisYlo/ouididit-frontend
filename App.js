@@ -1,4 +1,5 @@
 import * as React from "react";
+import { Alert } from 'react-native';
 import { StyleSheet } from "react-native";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
@@ -8,7 +9,6 @@ import CalendarScreen from "./screens/CalendarScreen";
 import CreateActivityScreen from "./screens/CreateActivityScreen";
 import DiscussionsScreen from "./screens/DiscussionsScreen";
 import HomeScreen from "./screens/HomeScreen";
-import LogoutScreen from "./screens/LogoutScreen"
 import ProfilPaiementsScreen from "./screens/ProfilPaiementsScreen";
 import ProfilInfosScreen from "./screens/ProfilInfos";
 import ProfilScreen from "./screens/ProfilScreen";
@@ -30,6 +30,30 @@ const store = configureStore({
 const Drawer = createDrawerNavigator();
 const Stack = createNativeStackNavigator();
 
+const showLogoutAlert = (navigation) => {
+  Alert.alert(
+    "Logout Confirmation",
+    "Are you sure you want to log out ?",
+    [
+      { text: "Cancel",
+        onPress: () => console.log("Déconnexion annulée"),
+        style: "cancel"
+      },
+      { text: "Log out",
+        onPress: () => handleLogout(navigation)
+      }
+    ],
+    { cancelable: false }
+  );
+};
+
+
+const handleLogout = (navigation) => {
+  //utilisation du token user pour se déconnecter ?
+  console.log("Utilisateur déconnecté");
+  navigation.navigate('Home');
+};
+
 const Root = () => {
 
   return(
@@ -40,7 +64,12 @@ const Root = () => {
         <Drawer.Screen name="Discussions" component={DiscussionsScreen} options={{headerShown: false}} />
         <Drawer.Screen name="Profile" component={ProfilScreen} options={{headerShown: false}} />
         <Drawer.Screen name="SignInScreen" component={SignInScreen} options={{headerShown: false}} />
-        <Drawer.Screen name="Logout" component={LogoutScreen} options={{headerShown: false}}/>
+        <Drawer.Screen name="Logout" component={HomeScreen} options={{headerShown: false}} listeners={({ navigation }) => ({
+            drawerItemPress: e => {
+              e.preventDefault(); // Empêcher la navigation par défaut
+              showLogoutAlert(navigation); // Afficher l'alerte de déconnexion
+            },
+          })}/>
       </Drawer.Navigator>
   )
 }
