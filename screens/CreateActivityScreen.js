@@ -96,7 +96,7 @@ export default function CreateActivityScreen( {navigation} ) {
         const startDate = new Date(year, month - 1, day, hours, minutes);
 
         const body = {
-            organizer : "7HIcKJ04pAR8Wqxt7O268oFVLG-AvfEI",
+            organizer : "l46GXh9ZryVTKq_APsIzBwzH9TUtBOW0",
             name:activityName,
             location : {street : location},
             date : startDate,
@@ -104,7 +104,7 @@ export default function CreateActivityScreen( {navigation} ) {
             description,
             payementLimit : price,
         };
-        const participants = ['test@MediaList.fr','toto@MediaList.fr']
+        const participants = [{email :'test@MediaList.fr'},{email :'toto@MediaList.fr'},{email :'toto@test.fr', status:"Accepted"}]
 
         try{
             fetch(`${BACKEND_IP}/activities/`, {
@@ -114,8 +114,11 @@ export default function CreateActivityScreen( {navigation} ) {
             })
             .then(res => res.json())
             .then(res =>{
-                participants.map()
-//il faut créer l'ajout des participants
+                fetch(`${BACKEND_IP}/activities/participants/${res.activity._id}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({participants}),
+                })
             });
         } catch (error) {
             console.error("Failed to send activty:", error);
