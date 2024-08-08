@@ -1,26 +1,268 @@
-import { View, StyleSheet, Text, Button } from "react-native";
+import {
+  KeyboardAvoidingView,
+  Button,
+  Platform,
+  SafeAreaView,
+  StyleSheet,
+  View,
+  Text,
+} from "react-native";
+import RNDateTimePicker, {
+  DateTimePickerAndroid,
+} from "@react-native-community/datetimepicker";
+import moment, { invalid } from "moment";
+import { useState } from "react";
+import Input from "../components/Input";
 import Header from "../components/Header";
+import RedButton from "../components/redButton";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import FontAwesome from "@expo/vector-icons/FontAwesome";
+import { BACKEND_IP } from "@env";
+import { TouchableOpacity } from "react-native-gesture-handler";
 
 export default function ActivityAdminScreen({ navigation }) {
+  const [activityName, setActivityName] = useState("");
+  const [price, setPrice] = useState(null);
+  const [date, setDate] = useState("");
+  const [datePicker, setDatePicker] = useState(new Date());
+  const [startTime, setStartTime] = useState("");
+  const [startTimePicker, setStartTimePicker] = useState(new Date());
+  const [duration, setDuration] = useState("");
+  const [location, setLocation] = useState([]);
+  const [description, setDescription] = useState("");
+  const [datePickerVisible, setDatePickerVisible] = useState(false);
+  const [timePickerVisible, setTimePickerVisible] = useState(false);
+  const [edit, setEdit] = useState(false);
+
+  const onChangeDate = (event, selectedDate) => {
+    setDatePickerVisible(false); // Hide picker if user cancel selection
+    if (event.type === "set") {
+      //setDatePickerVisible(Platform.OS === 'ios');  // Setting for IOs need testing
+      const currentDate = selectedDate || datePicker;
+      setDate(moment(currentDate).format("DD/MM/YYYY"));
+      setDatePicker(currentDate);
+    } else {
+      setDatePickerVisible(false); // Hide picker for all other events
+    }
+  };
+
+  const onChangeTime = (event, selectedTime) => {
+    setTimePickerVisible(false); // Hide picker if user cancel selection
+    if (event.type === "set") {
+      const currentTime = selectedTime || startTimePicker;
+      setStartTime(moment(currentTime).format("HH:mm"));
+      setStartTimePicker(currentTime);
+    } else {
+      setTimePickerVisible(false); // Hide picker for all other events
+    }
+  };
+
+  // Check Date and TimeStart
+  function isFutureDate(dateString, timeString) {
+    // Check input format with regex
+    const regexDate = /^(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[0-2])\/\d{4}$/;
+    const regexTime = /^([01]\d|2[0-3]):([0-5]\d)$/;
+    if (!regexDate.test(dateString) || !regexTime.test(timeString)) {
+      return false;
+    }
+
+    let [day, month, year] = dateString.split("/");
+    // Conversion to integer for comparison with date
+    day = parseInt(day);
+    month = parseInt(month) - 1; // Months are indexed from 0 to 11 in JS
+    year = parseInt(year);
+    const [hours, minutes] = timeString.split(":");
+    const date = new Date(year, month, day, hours, minutes);
+
+    // Check valide date (isn't 30/02/2025)
+    if (
+      date.getFullYear() !== year ||
+      date.getMonth() !== month ||
+      date.getDate() !== day
+    ) {
+      return false;
+    }
+
+    // Check that the date is later than now
+    return date > new Date();
+  }
+
+  const sendCreateActivityScreen = () => {
+    // Check inputs before action
+    let alertMessage = "";
+    !/^\d+(\.\d{1,2})?$/.test(price) && (alertMessage += "Invalid price.\n");
+    !/^[1-9]\d*$/.test(duration) && (alertMessage += "Invalid duration.\n");
+    !isFutureDate(date, startTime) &&
+      (alertMessage += "Invalid date/time or passed date/time.\n");
+
+    // If message, show alert and cancel send
+    if (alertMessage) {
+      alert(alertMessage);
+      alertMessage = "";
+      return;
+    }
+
+    // Date conversion for database
+    const [day, month, year] = date.split("/");
+    const [hours, minutes] = startTime.split(":");
+    const startDate = new Date(year, month - 1, day, hours, minutes);
+
+    const body = {
+      organizer: "7HIcKJ04pAR8Wqxt7O268oFVLG-AvfEI",
+      name: activityName,
+      location: { street: location },
+      date: startDate,
+      time: duration,
+      description,
+      payementLimit: price,
+    };
+    const participants = ["test@MediaList.fr", "toto@MediaList.fr"];
+
+    try {
+      fetch(`${BACKEND_IP}/activities/`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      })
+        .then((res) => res.json())
+        .then((res) => {
+          participants.map();
+          //il faut créer l'ajout des participants
+        });
+    } catch (error) {
+      console.error("Failed to send activty:", error);
+    }
+  };
+
   return (
     <>
-    <Header
-    navigation={navigation}
-    title='New activity'
-    avatar={require('../assets/avatarDefault.png')}
-    onPressProfil = {navigation.navigate('Profile')}/>
-    <View style={styles.container}>
-      <Text>ActivityAdmin</Text>
-    </View>
+      <Header
+        navigation={navigation}
+        title="Activity Name"
+        avatar={require("../assets/avatarDefault.png")}
+      />
+      <SafeAreaView style={styles.container}>
+        <View style={styles.editButton}>
+          <TouchableOpacity style={styles.edit} onPress={() => setEdit(true)}>
+            <MaterialIcons name="edit" color="white" size={34} />
+          </TouchableOpacity>
+        </View>
+        <Input
+          editable={edit}
+          multiline
+          onChangeText={(value) => setDescription(value)}
+          placeholder="Description"
+          style={styles.input}
+          value={description}
+        />
+        {datePickerVisible && (
+          <RNDateTimePicker
+            display="spinner"
+            mode="date"
+            onChange={onChangeDate}
+            value={datePicker}
+          />
+        )}
+        <Input
+          editable={edit}
+          keyboardType={
+            Platform.OS === "ios" ? "numbers-and-punctuation" : "phone-pad"
+          }
+          onChangeText={(value) => setDate(value)}
+          onPressOut={() => setDatePickerVisible(true)}
+          placeholder="Date"
+          require={true}
+          style={styles.input}
+          value={date}
+        />
+
+        {timePickerVisible && (
+          <RNDateTimePicker
+            display="spinner"
+            minuteInterval={15}
+            mode="time"
+            onChange={onChangeTime}
+            value={startTimePicker}
+          />
+        )}
+        <View style={styles.line}>
+          <Input
+            editable={edit}
+            keyboardType={
+              Platform.OS === "ios" ? "numbers-and-punctuation" : "default"
+            }
+            onChangeText={(value) => setStartTime(value)}
+            onPressOut={() => setTimePickerVisible(true)}
+            placeholder="Start time"
+            require={true}
+            style={styles.inputLine}
+            value={startTime}
+          />
+          <Input
+            editable={edit}
+            keyboardType="numeric"
+            onChangeText={(value) => setDuration(value)}
+            placeholder="Duration"
+            style={styles.inputLine}
+            value={duration}
+            uniti="hours"
+          />
+        </View>
+        <Input
+          editable={edit}
+          onChangeText={(value) => setLocation(value)}
+          placeholder="Location"
+          style={styles.input}
+          value={location}
+        />
+        <RedButton
+          buttonText="Valid Modifications"
+          onPress={() => sendCreateActivityScreen()}
+          title="Create activity"
+        />
+      </SafeAreaView>
     </>
   );
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-        backgroundColor: "blue",
-      },
+  container: {
+    alignItems: "center",
+    backgroundColor: "#ffffff",
+    flex: 1,
+    height: "100%",
+    justifyContent: "center",
+    width: "100%",
+  },
+  title: {
+    fontSize: 20,
+    fontWeight: "600",
+  },
+  input: {
+    marginVertical: 10,
+    width: "80%",
+  },
+  line: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginVertical: 10,
+    width: "80%",
+  },
+  inputLine: {
+    width: "48%",
+  },
+  editButton: {
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    width: "80%",
+  },
+  edit: {
+    height: 50,
+    width: 50,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#F74231",
+    borderRadius: 10,
+  },
 });

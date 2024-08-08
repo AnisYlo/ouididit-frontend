@@ -14,7 +14,6 @@ import ProfilInfosScreen from "./screens/ProfilInfos";
 import ProfilScreen from "./screens/ProfilScreen";
 import SignInScreen from "./screens/SignInScreen";
 import SignUpScreen from "./screens/SignUpScreen";
-import Wallet from "./screens/WalletScreen";
 import { configureStore } from "@reduxjs/toolkit";
 import { Provider } from "react-redux";
 import users from "./reducers/users";
@@ -22,16 +21,20 @@ import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
 import WalletScreen from "./screens/WalletScreen";
+// import { useDispatch } from "react-redux";
+// import { logout } from "./reducers/users";
 
 
 SplashScreen.preventAutoHideAsync();
 
+// const dispatch = useDispatch();
 const store = configureStore({
   reducer: { users },
 });
 
 const Drawer = createDrawerNavigator();
 const Stack = createNativeStackNavigator();
+
 
 const showLogoutAlert = (navigation) => {
   Alert.alert(
@@ -52,21 +55,21 @@ const showLogoutAlert = (navigation) => {
 
 
 const handleLogout = (navigation) => {
-  //utilisation du token user pour se déconnecter ?
+  // dispatch(logout())
   console.log("Utilisateur déconnecté");
-  navigation.navigate('Home');
+  navigation.navigate('Sign In');
 };
-
 const Root = () => {
 
   return(
       <Drawer.Navigator style={styles.icon} initialRouteName="Home">
         <Drawer.Screen name="Home" component={HomeScreen} options={{headerShown: false}} />
         <Drawer.Screen name="Create activity" component={CreateActivityScreen} options={{headerShown: false}} />
+        <Drawer.Screen name="Admin activity" component={ActivityAdminScreen} options={{headerShown: false}}/>
         <Drawer.Screen name="Calendar" component={CalendarScreen} options={{headerShown: false}} />
         <Drawer.Screen name="Discussions" component={DiscussionsScreen} options={{headerShown: false}} />
         <Drawer.Screen name="Profile" component={ProfilScreen} options={{headerShown: false}} />
-        <Drawer.Screen name="SignInScreen" component={SignInScreen} options={{headerShown: false}} />
+        <Drawer.Screen name="Sign In" component={SignInScreen} options={{headerShown: false}} />
         <Drawer.Screen name="Logout" component={HomeScreen} options={{headerShown: false}} listeners={({ navigation }) => ({
             drawerItemPress: e => {
               e.preventDefault(); // Empêcher la navigation par défaut
