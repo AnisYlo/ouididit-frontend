@@ -13,7 +13,7 @@ import ProfilPaiementsScreen from "./screens/ProfilPaiementsScreen";
 import ProfilInfosScreen from "./screens/ProfilInfos";
 import ProfilScreen from "./screens/ProfilScreen";
 import SignInScreen from "./screens/SignInScreen";
-import SignUpScreen from "./screens/SignInScreen";
+import SignUpScreen from "./screens/SignUpScreen";
 import WalletScreen from "./screens/WalletScreen";
 import { configureStore } from "@reduxjs/toolkit";
 import { Provider } from "react-redux";
