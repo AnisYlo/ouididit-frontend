@@ -14,14 +14,13 @@ import ProfilInfosScreen from "./screens/ProfilInfos";
 import ProfilScreen from "./screens/ProfilScreen";
 import SignInScreen from "./screens/SignInScreen";
 import SignUpScreen from "./screens/SignUpScreen";
-import WalletScreen from "./screens/WalletScreen";
 import { configureStore } from "@reduxjs/toolkit";
 import { Provider } from "react-redux";
 import users from "./reducers/users";
 import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
-import WalletScreen from "./screens/WalletScreen";
+import WalletScreen from "../frontend/screens/WalletScreen";
 
 
 SplashScreen.preventAutoHideAsync();
@@ -96,7 +95,9 @@ export default function App() {
     <Provider store={store}>
       <NavigationContainer>
         <Stack.Navigator screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="Root" component={Root} />
+          <Stack.Screen name="Root" component={Root}/>
+          <Stack.Screen name="Signin" component={SignInScreen}/>
+          <Stack.Screen name="Signup" component={SignUpScreen}/>
           <Stack.Screen name="Activity Admin" component={ActivityAdminScreen} />
           <Stack.Screen name="Create activity" component={CreateActivityScreen}/>
           <Stack.Screen name="Profile Paiements" component={ProfilPaiementsScreen}/>

@@ -1,16 +1,17 @@
 import React from 'react';
 import { useState } from 'react';
+import { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 import { View, Text, StyleSheet, Image, KeyboardAvoidingView, Platform} from 'react-native';
 import RedButton from '../components/redButton';
 import Input from '../components/Input';
 import InputPassword from '../components/InputPassword';
-// import { GoogleSigninButton } from '@react-native-google-signin/google-signin';
 import { BACKEND_IP } from '@env';
+import { userInfo } from '../reducers/users';
 export default function SignInScreen({ navigation }) {
   const [email, setEmail]=useState('')
   const [password, setPassword]=useState('')
-  const [hideLogo, setHideLogo]=useState(true)
-
+  const dispatch = useDispatch()
 
 const handleSubmit = () => {
   fetch(`${BACKEND_IP}/users/signin`, {
@@ -19,14 +20,17 @@ const handleSubmit = () => {
     body: JSON.stringify({email, password})
   }).then(response => response.json())
   .then(data => {
-    console.log(data)
-    if(data.result === true) 
-    navigation.navigate('Home');
-    else alert('Wrong email or password !')
+    if(data.result === true) {
+      dispatch(userInfo(data))
+      navigation.navigate('Home');
+    } else { alert('Wrong email or password !')
+
+    }
     
   }
   )
   }
+
 
   return(
  
