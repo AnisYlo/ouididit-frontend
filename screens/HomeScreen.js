@@ -2,10 +2,23 @@ import { View, StyleSheet, Button, TouchableOpacity, Text } from "react-native";
 import RedButton from "../components/redButton";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Header from "../components/Header";
-
+import { useEffect } from "react";
+import { useSelector } from "react-redux";
+import { BACKEND_IP } from '@env';
 export default function HomeScreen({ navigation }) {
+  
+  const users = useSelector(state => state.users.value)
+  // prend en parametre le token venant du reducer et le compare a celui venant de la route get
+  //si il ne le trouve pas il renvoie sur la page signin sinon on reste simplement sur Home
+  useEffect(() => {
+    fetch(`${BACKEND_IP}/users/:${users.token}`).then(response => response.json())
+    .then(data => {
+      if(data.result === false) {
+        navigation.navigate('Signin')
+      }
+    })
+   }, []);
 
-  //  console.log(route);
   return (
     <>
       <Header

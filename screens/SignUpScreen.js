@@ -1,28 +1,33 @@
-import { View, StyleSheet, Text, Button } from "react-native";
+import { View, StyleSheet, Text, Button, KeyboardAvoidingView, Platform } from "react-native";
 import RedButton from '../components/redButton';
 import Input from '../components/Input';
 import InputPassword from '../components/InputPassword';
+import FontAwesome from '@expo/vector-icons/FontAwesome';
+import { useDispatch } from 'react-redux';
 import { useState } from "react";
 import { BACKEND_IP } from '@env';
-
+import { userInfo } from '../reducers/users'
+import { TouchableOpacity } from "react-native-gesture-handler";
 
 
 export default function SignUpScreen({navigation}) {
   const [email, setEmail]=useState('')
-const [password, setPassword]=useState('')
-const [username, setUsername]=useState('')
+  const [password, setPassword]=useState('')
+  const [username, setUsername]=useState('')
 
-
+  const dispatch = useDispatch()
   const handleSubmitSignUp = () => {
+
     fetch(`${BACKEND_IP}/users/signup`, {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({email, password})
+      body: JSON.stringify({email, password, username})
     }).then(response => response.json())
     .then(data => {
-      console.log(data)
-      if(data.result === true) 
-      navigation.navigate('Home');
+      if(data.result === true) {
+        dispatch(userInfo(data))
+        navigation.navigate('Home');
+      }
       else alert('User already exist !')
       
     }
@@ -30,20 +35,49 @@ const [username, setUsername]=useState('')
     }
 
   return (
-    <View style={styles.container}>
+    <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.container}>
+      <View style={styles.close}> 
+        <FontAwesome onPress={() => navigation.navigate('Signin')} name="close" size={35} color="black" />
+      </View>
+      <Text style={styles.title}>Create account</Text>
+      <View style={styles.register}>
       <Input onChangeText={(value) => setEmail(value)} value={email}  placeholder='E-mail'></Input>
       <Input onChangeText={(value) => setUsername(value)} value={username}  placeholder='Username'></Input>
       <InputPassword onChangeText={(value) => setPassword(value)} value={password}  placeholder="Password" secureTextEntry={true}></InputPassword>
-      <RedButton onPress={() => handleSubmitSignUp()}></RedButton>
-    </View>
+      <RedButton buttonText='Register' onPress={() => handleSubmitSignUp()}></RedButton>
+      </View>
+    </KeyboardAvoidingView>
+    
+
   );
 }
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-        backgroundColor: "blue",
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: "white",
+        fontFamily: 'ClashGrotesk-Regular'
       },
+      register: {
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        width: '80%',
+        height: '50%',
+      },
+      title: {
+        alignItems: 'center',
+        justifyContent: 'center', 
+        paddingBottom: 100,
+        fontSize: 40,
+      },
+      close: {
+        justifyContent: 'flex-start',
+        alignItems: 'flex-end',
+        width: '100%',
+        height: '10%',
+        paddingRight: 20,
+      }
 });
