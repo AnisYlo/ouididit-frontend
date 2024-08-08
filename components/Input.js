@@ -7,26 +7,26 @@ export default function Input(props) {
                 <Text style={styles.inputLabel}>{props.placeholder} {props.require && (<Text style={styles.require}>*</Text>)}</Text>
             </View>
             <View style={styles.inputEmail}>
-            <TextInput
-                textContentType='oneTimeCode'
-                autoCorrect={props.autoCorrect}
-                autoComplete={props.autoComplete}
-                editable={props.editable}
-                keyboardType={props.keyboardType}
-                label={props.label || 'Input'}
-                multiline={props.multiline}
-                numberOfLines={props.numberOfLines}
-                onChangeText={props.onChangeText}
-                onFocus={props.onFocus}
-                onPressIn={props.onPressIn}
-                onPressOut={props.onPressOut}
-                onEndEditing={props.onEndEditing}
-                onSubmitEditing={props.onSubmitEditing || ''}
-                secureTextEntry={props.secureTextEntry}
-                style={styles.inputStyle}
-                value={props.value}
-            />
-            <Text style={styles.uniti}>{props.uniti}</Text>
+                <TextInput
+                    autoCorrect={props.autoCorrect}
+                    autoComplete={props.autoComplete}
+                    editable={props.editable}
+                    keyboardType={props.keyboardType}
+                    label={props.label || 'Input'}
+                    multiline={props.multiline}
+                    numberOfLines={props.numberOfLines}
+                    onChangeText={props.onChangeText}
+                    onFocus={props.onFocus}
+                    onPressIn={props.onPressIn}
+                    onPressOut={props.onPressOut}
+                    onEndEditing={props.onEndEditing}
+                    onSubmitEditing={props.onSubmitEditing || ''}
+                    secureTextEntry={props.secureTextEntry}
+                    style={[styles.inputStyle, (props.multiline && styles.multiline)]}
+                    textContentType='oneTimeCode'
+                    value={props.value}
+                />
+                <Text style={styles.uniti}>{props.uniti}</Text>
             </View>
         </View>
     );
@@ -86,5 +86,8 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         // paddingHorizontal: 14,
         backgroundColor: 'white',
+    },
+    multiline:{
+        height:80
     }
 });
