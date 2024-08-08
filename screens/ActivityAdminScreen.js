@@ -3,6 +3,7 @@ import Header from "../components/Header";
 
 export default function ActivityAdminScreen({ navigation }) {
   return (
+    //implementation du component header
     <>
     <Header
     navigation={navigation}
