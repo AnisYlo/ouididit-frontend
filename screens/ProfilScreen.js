@@ -40,5 +40,4 @@ export default function ProfilScreen({ navigation }) {
     </>
   );
 }
-
 const styles = StyleSheet.create({});

@@ -1,17 +1,8 @@
-import {
-  KeyboardAvoidingView,
-  Button,
-  Platform,
-  SafeAreaView,
-  StyleSheet,
-  View,
-  Text,
-} from "react-native";
-import RNDateTimePicker, {
-  DateTimePickerAndroid,
-} from "@react-native-community/datetimepicker";
+import { KeyboardAvoidingView, Button, Platform, SafeAreaView, StyleSheet, View, Text, Alert } from "react-native";
+import RNDateTimePicker, { DateTimePickerAndroid} from "@react-native-community/datetimepicker";
 import moment, { invalid } from "moment";
 import { useState } from "react";
+import { useSelector } from "react-redux"
 import Input from "../components/Input";
 import Header from "../components/Header";
 import RedButton from "../components/redButton";
@@ -19,6 +10,8 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { BACKEND_IP } from "@env";
 import { TouchableOpacity } from "react-native-gesture-handler";
+import { useRoute } from '@react-navigation/native';
+import Wallet from "../components/ProgressBar";
 
 export default function ActivityAdminScreen({ navigation }) {
   const [activityName, setActivityName] = useState("");
@@ -33,6 +26,11 @@ export default function ActivityAdminScreen({ navigation }) {
   const [datePickerVisible, setDatePickerVisible] = useState(false);
   const [timePickerVisible, setTimePickerVisible] = useState(false);
   const [edit, setEdit] = useState(false);
+
+  const activityId ='66b4d9015301b4a78b8b258f' ;
+  const route = useRoute();
+  // const activtyId = route.params?.activtyId
+  const users = useSelector(state => state.users.value)
 
   const onChangeDate = (event, selectedDate) => {
     setDatePickerVisible(false); // Hide picker if user cancel selection
@@ -108,7 +106,6 @@ export default function ActivityAdminScreen({ navigation }) {
     const startDate = new Date(year, month - 1, day, hours, minutes);
 
     const body = {
-      organizer: "7HIcKJ04pAR8Wqxt7O268oFVLG-AvfEI",
       name: activityName,
       location: { street: location },
       date: startDate,
@@ -118,20 +115,30 @@ export default function ActivityAdminScreen({ navigation }) {
     };
     const participants = ["test@MediaList.fr", "toto@MediaList.fr"];
 
-    try {
-      fetch(`${BACKEND_IP}/activities/`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
-      })
-        .then((res) => res.json())
-        .then((res) => {
-          participants.map();
-          //il faut créer l'ajout des participants
-        });
-    } catch (error) {
-      console.error("Failed to send activty:", error);
-    }
+    //   try {
+    //     fetch(`${BACKEND_IP}/activities/participants/${res.activity._id}`, {
+    //     method: 'POST',
+    //     headers: { 'Content-Type': 'application/json' },
+    //     body: JSON.stringify({participants}),
+    //   })
+    //   } catch (error) {
+    //     console.error("Failed to send activty:", error);
+    //   };
+  };
+
+
+  fetch(`${BACKEND_IP}/${activityId}`)
+  .then(response => response.json())
+  .then( data => {
+   console.log(data);
+ });
+
+  const validModifications = () => {
+    fetch(`${BACKEND_IP}/${activityId}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    }).then();
   };
 
   return (
@@ -139,15 +146,29 @@ export default function ActivityAdminScreen({ navigation }) {
     <>
       <Header
         navigation={navigation}
-        title="Activity Name"
+        title="Activity Admin"
         avatar={require("../assets/avatarDefault.png")}
       />
       <SafeAreaView style={styles.container}>
-        <View style={styles.editButton}>
-          <TouchableOpacity style={styles.edit} onPress={() => setEdit(true)}>
-            <MaterialIcons name="edit" color="white" size={34} />
-          </TouchableOpacity>
+        <Wallet total='200' max='350'/>
+        <View style={styles.walletContainer}>
+          <Text style={styles.text}> WALLET </Text>
+          <FontAwesome name="unlock" size={50} color="white" />
         </View>
+      <View style={styles.editButton}>
+        <TouchableOpacity style={styles.edit} onPress={() => setEdit(true)}>
+          <MaterialIcons name="edit" color="white" size={30} />
+        </TouchableOpacity>
+        </View>
+        <Input
+          autoFocus
+          editable={edit}
+          onChangeText={(value) => setActivityName(value)}
+          placeholder="Activity Name"
+          require={true}
+          style={styles.input}
+          value={activityName}
+        />
         <Input
           editable={edit}
           multiline
@@ -218,7 +239,7 @@ export default function ActivityAdminScreen({ navigation }) {
         />
         <RedButton
           buttonText="Valid Modifications"
-          onPress={() => sendCreateActivityScreen()}
+          onPress={() => validModifications()}
           title="Create activity"
         />
       </SafeAreaView>
@@ -259,11 +280,31 @@ const styles = StyleSheet.create({
     width: "80%",
   },
   edit: {
-    height: 50,
-    width: 50,
+    height: 40,
+    width: 40,
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "#F74231",
     borderRadius: 10,
   },
+  walletContainer: {
+    marginBottom: 20,
+    height: 55,
+    width: "80%",
+    backgroundColor: "#F74231",
+    borderRadius: 10,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingHorizontal: 20,
+  },
+  text: {
+    fontFamily: "ClashGrotesk-Regular",
+    fontSize: 30,
+    color: "white",
+  },
+  progress:{
+    height: 20,
+    width:"80%"
+  }
 });
