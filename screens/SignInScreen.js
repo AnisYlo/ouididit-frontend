@@ -38,10 +38,10 @@ const handleSubmit = () => {
  <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.container}>
     <Image source={require('../assets/logo.png')} style={styles.logo}/>
     <View style={styles.input}>
-    <Input onChangeText={(value) => setEmail(value)} value={email}  placeholder='E-mail'/>
+    <Input autoCapitalize='none' onChangeText={(value) => setEmail(value)} value={email}  placeholder='E-mail'/>
     </View>
     <View style={styles.input}>
-    <InputPassword onChangeText={(value) => setPassword(value)} value={password}  placeholder="Password" secureTextEntry={true}/>
+    <InputPassword autoCapitalize='none' onChangeText={(value) => setPassword(value)} value={password}  placeholder="Password" secureTextEntry={true}/>
     </View>
     <Text style={{ fontFamily: 'ClashGrotesk-Regular', fontSize: 18, color: 'black' }}> Choose another account </Text>
    <RedButton buttonText='Sign In'

@@ -41,9 +41,9 @@ export default function SignUpScreen({navigation}) {
       </View>
       <Text style={styles.title}>Create account</Text>
       <View style={styles.register}>
-      <Input onChangeText={(value) => setEmail(value)} value={email}  placeholder='E-mail'></Input>
-      <Input onChangeText={(value) => setUsername(value)} value={username}  placeholder='Username'></Input>
-      <InputPassword onChangeText={(value) => setPassword(value)} value={password}  placeholder="Password" secureTextEntry={true}></InputPassword>
+      <Input autoCapitalize='none' onChangeText={(value) => setEmail(value)} value={email}  placeholder='E-mail'></Input>
+      <Input autoCapitalize='none' onChangeText={(value) => setUsername(value)} value={username}  placeholder='Username'></Input>
+      <InputPassword autoCapitalize='none' onChangeText={(value) => setPassword(value)} value={password}  placeholder="Password" secureTextEntry={true}></InputPassword>
       <RedButton buttonText='Register' onPress={() => handleSubmitSignUp()}></RedButton>
       </View>
     </KeyboardAvoidingView>

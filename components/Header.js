@@ -41,11 +41,14 @@ export default function Header(props) {
     //fois que route.name change
   }, [route.name]);
 
+  // set avatar to user uri if exist or to default avatar
+  const avatar = !(props.avatar) ? require('../assets/avatarDefault.png') : {uri : props.avatar};
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.buttonsMenu}>
         <TouchableOpacity onPress={() => props.navigation.navigate("Profile")}>
-          <Image style={styles.avatar} source={props.avatar} />
+          <Image style={styles.avatar} source={avatar} />
         </TouchableOpacity>
         <TouchableOpacity style={styles.drawer}>
           <Entypo

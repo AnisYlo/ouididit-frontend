@@ -12,6 +12,7 @@ import RNDateTimePicker, {
 } from "@react-native-community/datetimepicker";
 import moment, { invalid } from "moment";
 import { useState } from "react";
+import { useSelector } from "react-redux";
 import Input from "../components/Input";
 import Header from "../components/Header";
 import RedButton from "../components/redButton";
@@ -33,6 +34,9 @@ export default function ActivityAdminScreen({ navigation }) {
   const [datePickerVisible, setDatePickerVisible] = useState(false);
   const [timePickerVisible, setTimePickerVisible] = useState(false);
   const [edit, setEdit] = useState(false);
+
+  // Get reducer users
+  const users = useSelector(state => state.users.value)
 
   const onChangeDate = (event, selectedDate) => {
     setDatePickerVisible(false); // Hide picker if user cancel selection
@@ -140,7 +144,7 @@ export default function ActivityAdminScreen({ navigation }) {
       <Header
         navigation={navigation}
         title="Activity Name"
-        avatar={require("../assets/avatarDefault.png")}
+        avatar={users.avatar}
       />
       <SafeAreaView style={styles.container}>
         <View style={styles.editButton}>

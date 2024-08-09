@@ -34,6 +34,7 @@ export default function Input(props) {
             </View>
             <View style={styles.inputpassword}>
             <TextInput
+                autoCapitalize={props.autoCapitalize}
                 textContentType='oneTimeCode'
                 autoComplete={props.autoComplete}
                 editable={props.editable}

@@ -8,6 +8,7 @@ import {
 import RNDateTimePicker, { DateTimePickerAndroid } from '@react-native-community/datetimepicker';
 import moment, { invalid } from 'moment';
 import { useState } from 'react';
+import { useSelector } from "react-redux";
 import Input from '../components/Input';
 import Header from "../components/Header";
 import RedButton from "../components/redButton";
@@ -26,6 +27,9 @@ export default function CreateActivityScreen( {navigation} ) {
     const [description, setDescription] = useState('');
     const [datePickerVisible, setDatePickerVisible] = useState(false);
     const [timePickerVisible, setTimePickerVisible] = useState(false);
+
+    // Get reducer users
+    const users = useSelector(state => state.users.value)
 
     const onChangeDate = (event, selectedDate) => {
         setDatePickerVisible(false);  // Hide picker if user cancel selection
@@ -96,7 +100,7 @@ export default function CreateActivityScreen( {navigation} ) {
         const startDate = new Date(year, month - 1, day, hours, minutes);
 
         const body = {
-            organizer : "l46GXh9ZryVTKq_APsIzBwzH9TUtBOW0",
+            organizer : users.token,
             name:activityName,
             location : {street : location},
             date : startDate,
@@ -104,9 +108,10 @@ export default function CreateActivityScreen( {navigation} ) {
             description,
             payementLimit : price,
         };
-        const participants = [{email :'test@MediaList.fr'},{email :'toto@MediaList.fr'},{email :'toto@test.fr', status:"Accepted"}]
-
+        const participants = [{email :'test2@MediaList.fr'},{email :'2toto@MediaList.fr'},{email :'anis@gmail.com', status:"Accepted"}]
+        let activityId = null;
         try{
+            // Create activity
             fetch(`${BACKEND_IP}/activities/`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -114,11 +119,25 @@ export default function CreateActivityScreen( {navigation} ) {
             })
             .then(res => res.json())
             .then(res =>{
-                fetch(`${BACKEND_IP}/activities/participants/${res.activity._id}`, {
+                activityId = res.activity._id; // Stock activityId
+                // Create participants list
+                fetch(`${BACKEND_IP}/activities/participants/${activityId}`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({participants}),
                 })
+            })
+            .then(()=>{
+                // Create Chat
+                console.log("activityId =>", activityId)
+                fetch(`${BACKEND_IP}/chats/`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({activityId}),
+                })
+            })
+            .then(()=>{
+                navigation.navigate('Admin activity',{activityId});
             });
         } catch (error) {
             console.error("Failed to send activty:", error);
@@ -129,8 +148,8 @@ export default function CreateActivityScreen( {navigation} ) {
     <>
         <Header 
             navigation={navigation}
-            title='New activity'
-            avatar={require('../assets/avatarDefault.png')}
+            title='New activity' 
+            avatar={users.avatar}
         />  
         <SafeAreaView style={styles.container}>          
             <Input

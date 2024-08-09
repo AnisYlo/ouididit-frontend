@@ -8,6 +8,7 @@ export default function Input(props) {
             </View>
             <View style={styles.inputEmail}>
                 <TextInput
+                    autoCapitalize={props.autoCapitalize}
                     autoCorrect={props.autoCorrect}
                     autoComplete={props.autoComplete}
                     editable={props.editable}
