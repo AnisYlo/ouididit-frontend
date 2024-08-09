@@ -21,20 +21,11 @@ const handleSubmit = () => {
   }).then(response => response.json())
   .then(data => {
     if(data.result === true) {
-      dispatch(userInfo(data))
+      dispatch(userInfo(data.data))
       navigation.navigate('Home');
     } else { alert('Wrong email or password !')
-
-    }
-    
-  }
-  )
-  }
-
-
+}})}
   return(
- 
-
  <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.container}>
     <Image source={require('../assets/logo.png')} style={styles.logo}/>
     <View style={styles.input}>

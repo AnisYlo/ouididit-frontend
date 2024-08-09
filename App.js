@@ -17,6 +17,7 @@ import SignUpScreen from "./screens/SignUpScreen";
 import { configureStore } from "@reduxjs/toolkit";
 import { Provider } from "react-redux";
 import users from "./reducers/users";
+import activities from "./reducers/activities"
 import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
@@ -29,7 +30,7 @@ SplashScreen.preventAutoHideAsync();
 
 // const dispatch = useDispatch();
 const store = configureStore({
-  reducer: { users },
+  reducer: { users, activities },
 });
 
 const Drawer = createDrawerNavigator();
