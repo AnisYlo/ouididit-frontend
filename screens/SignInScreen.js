@@ -20,72 +20,35 @@ export default function SignInScreen({ navigation }) {
   const [password, setPassword] = useState("");
   const dispatch = useDispatch();
 
-  const handleSubmit = () => {
-    fetch(`${BACKEND_IP}/users/signin`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password }),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.result === true) {
-          dispatch(userInfo(data));
-          navigation.navigate("Home");
-        } else {
-          alert("Wrong email or password !");
-        }
-      });
-  };
-
-  return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-      style={styles.container}
-    >
-      <Image source={require("../assets/logo.png")} style={styles.logo} />
-      <View style={styles.input}>
-        <Input
-          onChangeText={(value) => setEmail(value)}
-          value={email}
-          placeholder="E-mail"
-        />
-      </View>
-      <View style={styles.input}>
-        <InputPassword
-          onChangeText={(value) => setPassword(value)}
-          value={password}
-          placeholder="Password"
-          secureTextEntry={true}
-        />
-      </View>
-      <Text
-        style={{
-          fontFamily: "ClashGrotesk-Regular",
-          fontSize: 18,
-          color: "black",
-        }}
-      >
-        {" "}
-        Choose another account{" "}
-      </Text>
-      <RedButton buttonText="Sign In" onPress={() => handleSubmit()} />
-      <Text
-        style={{
-          fontFamily: "ClashGrotesk-Regular",
-          fontSize: 18,
-          color: "black",
-        }}
-      >
-        {" "}
-        Not register yet ? Create an account !{" "}
-      </Text>
-      <RedButton
-        buttonText="Sign up"
-        onPress={() => navigation.navigate("Signup")}
-      ></RedButton>
-      <View></View>
-    </KeyboardAvoidingView>
-  );
+const handleSubmit = () => {
+  fetch(`${BACKEND_IP}/users/signin`, {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({email, password})
+  }).then(response => response.json())
+  .then(data => {
+    if(data.result === true) {
+      dispatch(userInfo(data.data))
+      navigation.navigate('Home');
+    } else { alert('Wrong email or password !')
+}})}
+  return(
+ <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.container}>
+    <Image source={require('../assets/logo.png')} style={styles.logo}/>
+    <View style={styles.input}>
+    <Input onChangeText={(value) => setEmail(value)} value={email}  placeholder='E-mail'/>
+    </View>
+    <View style={styles.input}>
+    <InputPassword onChangeText={(value) => setPassword(value)} value={password}  placeholder="Password" secureTextEntry={true}/>
+    </View>
+    <Text style={{ fontFamily: 'ClashGrotesk-Regular', fontSize: 18, color: 'black' }}> Choose another account </Text>
+   <RedButton buttonText='Sign In'
+   onPress={() => handleSubmit()}/>
+    <Text style={{ fontFamily: 'ClashGrotesk-Regular', fontSize: 18, color: 'black' }}> Not register yet ? Create an account ! </Text>
+   <RedButton buttonText='Sign up' onPress={() => navigation.navigate('Signup')}></RedButton>
+   <View></View>
+ </KeyboardAvoidingView>
+  )
 }
 
 const styles = StyleSheet.create({
