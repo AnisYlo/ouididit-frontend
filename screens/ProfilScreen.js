@@ -7,18 +7,19 @@ import {
   SafeAreaView,
   Image,
 } from "react-native";
+import { useSelector } from "react-redux";
 import Header from "../components/Header";
 import RedButton from "../components/redButton";
 
 export default function ProfilScreen({ navigation }) {
   // console.log(navigation);
-
+  const users = useSelector(state => state.users.value)
   return (
     <>
       <Header
         navigation={navigation}
         title="Profile"
-        avatar={require("../assets/avatarDefault.png")}
+        avatar={users.avatar}
       />
       <SafeAreaView>
         <View>

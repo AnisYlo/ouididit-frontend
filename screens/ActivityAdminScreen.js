@@ -147,7 +147,7 @@ export default function ActivityAdminScreen({ navigation }) {
       <Header
         navigation={navigation}
         title="Activity Admin"
-        avatar={require("../assets/avatarDefault.png")}
+        avatar={users.avatar}
       />
       <SafeAreaView style={styles.container}>
         <Wallet total='200' max='350'/>

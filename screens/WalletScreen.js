@@ -1,11 +1,14 @@
 import { View, StyleSheet, Text, Button } from "react-native";
+import { useSelector } from "react-redux";
 
 export default function WalletScreen() {
+  const users = useSelector(state => state.users.value)
+
   return (
     <Header
           navigation={navigation}
           title="Wallet"
-          avatar={require("../assets/avatarDefault.png")}
+          avatar={users.avatar}
         />
   );
 }

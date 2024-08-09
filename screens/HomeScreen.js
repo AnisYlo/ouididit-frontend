@@ -44,7 +44,7 @@ export default function HomeScreen({ navigation }) {
       <Header
         navigation={navigation}
         title="Home"
-        avatar={require("../assets/avatarDefault.png")}
+        avatar={users.avatar}
       ></Header>
       <SafeAreaView style={styles.container}>
         <View style={styles.activitiesCard}>

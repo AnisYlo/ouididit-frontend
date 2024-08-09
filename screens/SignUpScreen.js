@@ -39,13 +39,13 @@ export default function SignUpScreen({navigation}) {
       <View style={styles.close}> 
         <FontAwesome onPress={() => navigation.navigate('Signin')} name="close" size={35} color="black" />
       </View>
-        <Text style={styles.title}>Create account</Text>
-          <View style={styles.register}>
-            <Input onChangeText={(value) => setEmail(value)} value={email}  placeholder='E-mail'></Input>
-            <Input onChangeText={(value) => setUsername(value)} value={username}  placeholder='Username'></Input>
-            <InputPassword onChangeText={(value) => setPassword(value)} value={password}  placeholder="Password" secureTextEntry={true}></InputPassword>
-            <RedButton buttonText='Register' onPress={() => handleSubmitSignUp()}></RedButton>
-          </View>
+      <Text style={styles.title}>Create account</Text>
+      <View style={styles.register}>
+        <Input autoCapitalize='none' onChangeText={(value) => setEmail(value)} value={email}  placeholder='E-mail'></Input>
+        <Input autoCapitalize='none' onChangeText={(value) => setUsername(value)} value={username}  placeholder='Username'></Input>
+        <InputPassword autoCapitalize='none' onChangeText={(value) => setPassword(value)} value={password}  placeholder="Password" secureTextEntry={true}></InputPassword>
+        <RedButton buttonText='Register' onPress={() => handleSubmitSignUp()}></RedButton>
+      </View>
     </KeyboardAvoidingView>
     
 

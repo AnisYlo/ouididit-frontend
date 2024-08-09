@@ -1,13 +1,17 @@
 import { View, StyleSheet, Text, Button } from "react-native";
+import { useSelector } from "react-redux";
 import Header from '../components/Header'
 
 export default function CalendarScreen({ navigation }) {
+
+  const users = useSelector(state => state.users.value)
+
   return (
     <>
     <Header
       navigation={navigation}
       title="Calendar"
-      avatar={require("../assets/avatarDefault.png")}
+      avatar={users.avatar}
     />
     </>
   );
