@@ -31,7 +31,7 @@ export default function HomeScreen({ navigation }) {
     <>
     <Header
       navigation={navigation}
-      title="Home"
+      title={`Welcome ${users.username}`}
       avatar={users.avatar}
     ></Header>
     <SafeAreaView style={styles.container}>
