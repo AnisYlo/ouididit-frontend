@@ -3,6 +3,7 @@ import { createDrawerNavigator } from "@react-navigation/drawer";
 import { Alert, StyleSheet } from 'react-native';
 import { useDispatch } from 'react-redux';
 import { logout } from "../../reducers/users";
+import { logoutActivities } from "../../reducers/activities";
 import { useNavigation } from '@react-navigation/native';
 import HomeScreen from "../../screens/HomeScreen";
 import CreateActivityScreen from "../../screens/CreateActivityScreen";
@@ -10,7 +11,6 @@ import ActivityAdminScreen from "../../screens/ActivityAdminScreen";
 import CalendarScreen from "../../screens/CalendarScreen";
 import DiscussionsScreen from "../../screens/DiscussionsScreen";
 import ProfilScreen from "../../screens/ProfilScreen";
-import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 
 const Drawer = createDrawerNavigator();
 
@@ -28,7 +28,10 @@ export default function DrawerNavigator() {
           style: "cancel"
         },
         { text: "Log out",
-          onPress: () => dispatch(logout()) // Déclenche l'action de déconnexion
+          onPress: () => {
+            dispatch(logoutActivities()) // Déclenche l'action de déconnexion des ativités
+            dispatch(logout()) // Déclenche l'action de déconnexion
+          }
         }
       ],
       { cancelable: false }

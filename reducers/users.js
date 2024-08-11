@@ -4,6 +4,7 @@ const initialState = {
   isAuthenticated: false,
   value: { username: '', email: '', token: '', avatar: '', name: '', location: '', date: ''  },
 };
+
 export const usersSlice = createSlice({
   name: 'users',
   initialState,

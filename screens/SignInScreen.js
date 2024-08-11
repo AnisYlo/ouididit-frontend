@@ -46,7 +46,7 @@ export default function SignInScreen({ navigation }) {
  <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.container}>
     <Image source={require('../assets/logo.png')} style={styles.logo}/>
     <View style={styles.input}>
-    <Input autoCapitalize='none' onChangeText={(value) => setEmail(value)} value={email}  placeholder='E-mail'/>
+    <Input autoCapitalize='none' inputMode='email' onChangeText={(value) => setEmail(value)} value={email}  placeholder='E-mail'/>
     </View>
     <View style={styles.input}>
     <InputPassword autoCapitalize='none' onChangeText={(value) => setPassword(value)} value={password}  placeholder="Password" secureTextEntry={true}/>

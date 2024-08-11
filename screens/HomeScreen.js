@@ -9,66 +9,50 @@ import { addActivities } from "../reducers/activities";
 
 
 export default function HomeScreen({ navigation }) {
-  
-  const activity = useSelector(state => state.activities.value)
   const dispatch = useDispatch()
+  const activity = useSelector(state => state.activities.value)
   const users = useSelector(state => state.users.value)
   // prend en parametre le token venant du reducer et le compare a celui venant de la route get
   //si il ne le trouve pas il renvoie sur la page signin sinon on reste simplement sur Home
 
   useEffect(() => {
-    
-    // if(users.token === ''){
-    //   navigation.navigate('Signin')
-    // }
-      
-    // fetch(`${BACKEND_IP}/users/${users.token}`).then(response => response.json())
-    // .then(data => {
-    //   if(data.result === false) {
-    //     navigation.navigate('Signin')
-    //   }
-    // })
     fetch(`${BACKEND_IP}/users/${users.token}/activities`)
     .then(response => response.json()).then(data => {
   
       if (data) {
-       let activitiesTab = data.allActivities.map(object => {return object})
-    
-       dispatch(addActivities(activitiesTab))
-     
-     }
+        let activitiesTab = data.allActivities.map(object => {return object})
+        dispatch(addActivities(activitiesTab))
+      }
     })
-   }, [users.token]);
+  }, []);
 
-   
-  console.log("users Reducer =>",users)
-  console.log("activity Reducer =>",activity)
+  console.log("activity Reducer =>",activity[0])
   return (
     <>
     <Header
       navigation={navigation}
       title="Home"
-      avatar={require("../assets/avatarDefault.png")}
+      avatar={users.avatar}
     ></Header>
     <SafeAreaView style={styles.container}>
       <View style={styles.activitiesCard}>
-        {activity.length > 0 && activity[0][0] && (
+        {activity.length > 0 && activity[0] && (
           <View>
-            <Text style={styles.activityList}>{activity[0][0].name}</Text>
-            <Text style={styles.activityInfo}>{activity[0][0].location.street}, {activity[0][1].location.city} {activity[0][0].date}</Text>
+            <Text style={styles.activityList}>{activity[0].name}</Text>
+            <Text style={styles.activityInfo}>{activity[0].location.street}, {activity[1].location.city} {activity[0].date}</Text>
           </View>
         )}
 
-        {activity.length > 0 && activity[0][1] && (
+        {activity.length > 0 && activity[1] && (
           <View>
-            <Text style={styles.activityList}>{activity[0][1].name}</Text>
-            <Text style={styles.activityInfo}>{activity[0][1].location.street}, {activity[0][1].location.city} {activity[0][1].date}</Text>
+            <Text style={styles.activityList}>{activity[1].name}</Text>
+            <Text style={styles.activityInfo}>{activity[1].location.street}, {activity[1].location.city} {activity[1].date}</Text>
           </View>
         )}
-        {activity.length > 0 && activity[0][2] && (
+        {activity.length > 0 && activity[2] && (
           <View>
-            <Text style={styles.activityList}>{activity[0][2].name}</Text>
-            <Text style={styles.activityInfo}>{activity[0][2].location.street}, {activity[0][1].location.city} {activity[0][2].date}</Text>
+            <Text style={styles.activityList}>{activity[2].name}</Text>
+            <Text style={styles.activityInfo}>{activity[2].location.street}, {activity[1].location.city} {activity[2].date}</Text>
           </View>
         )}
       </View>
