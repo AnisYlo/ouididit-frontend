@@ -1,6 +1,5 @@
 import React from "react";
 import { useState } from "react";
-import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import {
   View,
@@ -10,28 +9,39 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from "react-native";
+import { BACKEND_IP } from "@env";
+import { login } from "../reducers/users";
 import RedButton from "../components/redButton";
 import Input from "../components/Input";
 import InputPassword from "../components/InputPassword";
-import { BACKEND_IP } from "@env";
-import { userInfo } from "../reducers/users";
+
 export default function SignInScreen({ navigation }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const dispatch = useDispatch();
 
-const handleSubmit = () => {
-  fetch(`${BACKEND_IP}/users/signin`, {
-    method: 'POST',
-    headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify({email, password})
-  }).then(response => response.json())
-  .then(data => {
-    if(data.result === true) {
-      dispatch(userInfo(data.data))
-      navigation.navigate('Home');
-    } else { alert('Wrong email or password !')
-}})}
+  const handleSubmit = () => {
+    fetch(`${BACKEND_IP}/users/signin`, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ email, password })
+    })
+    .then(response => response.json())
+    .then(data => {  
+      if (data.result === true) {
+        dispatch(login(data.data)); // Connect user and save userInfos into "users" store 
+        navigation.navigate('Drawer'); // Navigate to "Drawer" into Stack.Screen 
+      } else {
+        alert('Wrong email or password!');
+      }
+    })
+    .catch(error => {
+      console.error('Error during fetch:', error);
+      alert('An error occurred. Please try again later.');
+    });
+  };
+
+
   return(
  <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.container}>
     <Image source={require('../assets/logo.png')} style={styles.logo}/>
