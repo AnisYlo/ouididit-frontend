@@ -30,48 +30,55 @@ export default function HomeScreen({ navigation }) {
     })
     fetch(`${BACKEND_IP}/users/${users.token}/activities`)
     .then(response => response.json()).then(data => {
+  
       if (data) {
        let activitiesTab = data.allActivities.map(object => {return object})
+    
        dispatch(addActivities(activitiesTab))
+     
      }
     })
-   }, []);
+   }, [users.token]);
 
    
   
   return (
     <>
-      <Header
-        navigation={navigation}
-        title="Home"
-        avatar={users.avatar}
-      ></Header>
-      <SafeAreaView style={styles.container}>
-        <View style={styles.activitiesCard}>
-          {/* <View>
-            <Text>{activity[0][0].name}</Text>
-            <Text>{activity[0][0].location.street}, {activity[0][0].date}</Text>
-          </View> */}
+    <Header
+      navigation={navigation}
+      title="Home"
+      avatar={require("../assets/avatarDefault.png")}
+    ></Header>
+    <SafeAreaView style={styles.container}>
+      <View style={styles.activitiesCard}>
+        {activity.length > 0 && activity[0][0] && (
+          <View>
+            <Text style={styles.activityList}>{activity[0][0].name}</Text>
+            <Text style={styles.activityInfo}>{activity[0][0].location.street}, {activity[0][1].location.city} {activity[0][0].date}</Text>
+          </View>
+        )}
 
-          {/* <View>
-            <Text>{activity[0][1].name}</Text>
-            <Text>{activity[0][1].location.street}, {activity[0][1].date}</Text>
-          </View> */}
-
-          {/* <View>
-          <Text>{activity[0][2].name}</Text>
-          <Text>{activity[0][2].location.street}, {activity[0][2].date}</Text> 
-          </View> */}
-        
-        </View>
-        <View style={styles.chatCard}></View>
-        <RedButton
-          onPress={() => navigation.navigate("Create activity")}
-          title="Créer une activité"
-          buttonText="New Activity"
-        />
-      </SafeAreaView>
-    </>
+        {activity.length > 0 && activity[0][1] && (
+          <View>
+            <Text style={styles.activityList}>{activity[0][1].name}</Text>
+            <Text style={styles.activityInfo}>{activity[0][1].location.street}, {activity[0][1].location.city} {activity[0][1].date}</Text>
+          </View>
+        )}
+        {activity.length > 0 && activity[0][2] && (
+          <View>
+            <Text style={styles.activityList}>{activity[0][2].name}</Text>
+            <Text style={styles.activityInfo}>{activity[0][2].location.street}, {activity[0][1].location.city} {activity[0][2].date}</Text>
+          </View>
+        )}
+      </View>
+      <View style={styles.chatCard}></View>
+      <RedButton
+        onPress={() => navigation.navigate("Create activity")}
+        title="Créer une activité"
+        buttonText="New Activity"
+      />
+    </SafeAreaView>
+  </>
   );
 }
 
@@ -90,6 +97,8 @@ const styles = StyleSheet.create({
     height: "40%",
     backgroundColor: "white",
     width: "95%",
+    justifyContent: 'space-around',
+    paddingLeft: 10,
   },
   chatCard: {
     borderRadius: 10,
@@ -105,4 +114,14 @@ const styles = StyleSheet.create({
     fontFamily: "ClashGrotesk-Bold",
     fontSize: 24,
   },
+  activityList: {
+    fontSize: 24,
+    fontFamily: 'ClashGrotesk-Bold'
+   
+  },
+  activityInfo: {
+    fontFamily: 'ClashGrotesk-Regular',
+    fontSize: 12,
+    color: "grey"
+  }
 });
