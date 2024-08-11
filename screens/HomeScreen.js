@@ -18,16 +18,16 @@ export default function HomeScreen({ navigation }) {
 
   useEffect(() => {
     
-    if(users.token === ''){
-      navigation.navigate('Signin')
-    }
+    // if(users.token === ''){
+    //   navigation.navigate('Signin')
+    // }
       
-    fetch(`${BACKEND_IP}/users/${users.token}`).then(response => response.json())
-    .then(data => {
-      if(data.result === false) {
-        navigation.navigate('Signin')
-      }
-    })
+    // fetch(`${BACKEND_IP}/users/${users.token}`).then(response => response.json())
+    // .then(data => {
+    //   if(data.result === false) {
+    //     navigation.navigate('Signin')
+    //   }
+    // })
     fetch(`${BACKEND_IP}/users/${users.token}/activities`)
     .then(response => response.json()).then(data => {
   
@@ -41,7 +41,8 @@ export default function HomeScreen({ navigation }) {
    }, [users.token]);
 
    
-  
+  console.log("users Reducer =>",users)
+  console.log("activity Reducer =>",activity)
   return (
     <>
     <Header
