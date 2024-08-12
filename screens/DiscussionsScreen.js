@@ -6,41 +6,65 @@ import Input from "../components/Input";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { FontAwesome } from "@expo/vector-icons";
 
+import ChatMessage from "../components/ChatMessage"
 
 export default function DiscussionsScreen({ navigation }) {
   const users = useSelector((state) => state.users.value);
   return (
-    <>
-        <SafeAreaView style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <Header
         navigation={navigation}
         title="Discussions"
         avatar={users.avatar}
       />
-        
-        <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'}  >
-    
+      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'}  >
         <View style={styles.vue1}>
           <View style={styles.vue11}></View>
-      
           <View style={styles.vue12}>
             <View style={styles.topBar}></View>
-            <ScrollView flexGrow={1} > 
-                <View style={styles.messages}></View>
+            <ScrollView flexGrow={1} >             
+              <View style={styles.messages}>
+                <ChatMessage
+                  avatar=''
+                  type="Message"
+                  userName="test k"
+                  date="20:00"
+                  courantUser="test"
+                  message="jolie message !"
+                  />
+                <ChatMessage
+                  avatar={users.avatar}
+                  type="Message"
+                  userName={users.username}
+                  date="20:05"
+                  courantUser={users.username}
+                  message="jolie message !jolie message !jolie message !jolie message !jolie message !"
+                  />
+                  
+                <ChatMessage 
+                  type="Event" 
+                  userName="Xavier" 
+                  courantUser={users.username}
+                  />
+                  <ChatMessage
+                  avatar=''
+                  type="Message"
+                  userName="test k"
+                  date="20:40"
+                  courantUser="test"
+                  message="autre message !"
+                  />
+              </View>
             </ScrollView>
           </View>
-          <View>
-
-          </View>
-    
+          <View> </View>
         </View>
         <View  style={styles.vue2}>
-        <Input style={styles.input} autoCapitalize='none' inputMode='message' placeholder='Message'/>
-        <FontAwesome style={styles.sendIcon} onPress name="send-o" size={24} color="black" />
+          <Input style={styles.input} autoCapitalize='none' inputMode='message' placeholder='Message'/>
+          <FontAwesome style={styles.sendIcon} onPress name="send-o" size={24} color="black" />
         </View>
       </KeyboardAvoidingView>
-      </SafeAreaView>
-    </> 
+    </SafeAreaView>
   );
 }
 
