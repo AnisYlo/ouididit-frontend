@@ -12,7 +12,7 @@ import RNDateTimePicker, {
   DateTimePickerAndroid,
 } from "@react-native-community/datetimepicker";
 import moment, { invalid } from "moment";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import Input from "../components/Input";
 import Header from "../components/Header";
@@ -21,10 +21,11 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { BACKEND_IP } from "@env";
 import { TouchableOpacity } from "react-native-gesture-handler";
-import { useRoute, useEffect } from "@react-navigation/native";
+import { useRoute } from "@react-navigation/native";
 import Wallet from "../components/ProgressBar";
 
 export default function ActivityAdminScreen({ navigation }) {
+
   const [activityName, setActivityName] = useState("");
   const [price, setPrice] = useState(null);
   const [date, setDate] = useState("");
@@ -38,7 +39,7 @@ export default function ActivityAdminScreen({ navigation }) {
   const [timePickerVisible, setTimePickerVisible] = useState(false);
   const [edit, setEdit] = useState(false);
 
-  const activityId = "66b5e25359a79a205eb415be";
+  const activityId = "66b5e34b59a79a205eb415ce";
   const route = useRoute();
   // const activtyId = route.params?.activtyId
   const users = useSelector((state) => state.users.value);
@@ -94,12 +95,33 @@ export default function ActivityAdminScreen({ navigation }) {
 
     // Check that the date is later than now
     return date > new Date();
-  }
+  };
+    const participants = ["test@MediaList.fr", "toto@MediaList.fr"];
 
-  const sendCreateActivityScreen = () => {
+  fetch(`${BACKEND_IP}/activities/participants/${res.activity._id}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({participants}),
+      });
+
+  useEffect(() => {
+      fetch(`${BACKEND_IP}/activities/${activityId}`)
+      .then(response => response.json())
+      .then(data => {
+        // console.log(data)
+        setDescription(data.activity.description);
+        setActivityName(data.activity.name);
+        setDate(moment(data.activity.date).format('DD/MM/YYYY'));
+        setDuration(String(data.activity.time));
+        setLocation(data.activity.location.street);
+        setStartTime(moment(data.activity.startTime).format('HH:mm'));
+      });
+    }, [activityId]);
+
+  const validModifications = (res) => {
     // Check inputs before action
     let alertMessage = "";
-    !/^\d+(\.\d{1,2})?$/.test(price) && (alertMessage += "Invalid price.\n");
+    // !/^\d+(\.\d{1,2})?$/.test(price) && (alertMessage += "Invalid price.\n");
     !/^[1-9]\d*$/.test(duration) && (alertMessage += "Invalid duration.\n");
     !isFutureDate(date, startTime) &&
       (alertMessage += "Invalid date/time or passed date/time.\n");
@@ -109,75 +131,50 @@ export default function ActivityAdminScreen({ navigation }) {
       alert(alertMessage);
       alertMessage = "";
       return;
-    }
+    };
 
-    // Date conversion for database
     const [day, month, year] = date.split("/");
     const [hours, minutes] = startTime.split(":");
     const startDate = new Date(year, month - 1, day, hours, minutes);
 
-    const body = {
-      name: activityName,
-      location: { street: location },
-      date: startDate,
-      time: duration,
-      description,
-      payementLimit: price,
-    };
-    const participants = ["test@MediaList.fr", "toto@MediaList.fr"];
-
-    //   try {
-    //     fetch(`${BACKEND_IP}/activities/participants/${res.activity._id}`, {
-    //     method: 'POST',
-    //     headers: { 'Content-Type': 'application/json' },
-    //     body: JSON.stringify({participants}),
-    //   })
-    //   } catch (error) {
-    //     console.error("Failed to send activty:", error);
-    //   };
-  };
-
-  useEffect(() => {
-    const ActivityDetails = async () => {
-      fetch(`${BACKEND_IP}/activities/${activityId}`, {
-        headers: { "Content-type": "application/json" },
-        body: JSON.stringify(body),
-        
-      })
-      .then(data => {
-        setDescription(data.description),
-        setActivityName(data.name),
-        setDate(data.date),
-        setDuration(data.duration),
-        setLocation(data.location),
-        setStartTime(data.startTime)
-      });
-    };
-  }, [activityId]);
-
-  const validModifications = () => {
-    fetch(`${BACKEND_IP}/${activityId}`, {
+    const modif = {name: activityName, location: { street: location }, date: startDate, time: duration, description: description }
+    // console.log(modif)
+    fetch(`${BACKEND_IP}/activities/${activityId}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body),
+      body: JSON.stringify(modif),
     })
-  };
+    // Convertir la réponse en JSON
+    .then((response) =>  response.json())
+    .then((data) => {
+      // Vérifier si l'activité a été mise à jour
+      console.log("data ==>", data)
+      if (data.modifiedCount > 0) {
+        alert('Activitée modifiée')
+      }
+    })
+    .catch((error) => {
+      console.error('Erreur lors de la mise à jour de l\'activité:', error);
+      res.status(500).json({ result: false, error: 'Erreur serveur' });
+    });
+}
 
   return (
     //implementation du component header
     <>
       <Header
         navigation={navigation}
-        title="Activity Admin"
+        title={activityName}
         avatar={users.avatar}
       />
       <SafeAreaView style={styles.container}>
-        <Wallet total="125" max="150" />
+        <Wallet total="150" max="150" />
         <View style={styles.editButton}>
-          <TouchableOpacity style={styles.edit} onPress={() => setEdit(true)}>
+          <TouchableOpacity style={styles.edit} onPress={() => setEdit(!edit)}>
             <MaterialIcons name="edit" color="white" size={30} />
           </TouchableOpacity>
         </View>
+        {edit &&
         <Input
           autoFocus
           editable={edit}
@@ -186,7 +183,7 @@ export default function ActivityAdminScreen({ navigation }) {
           require={true}
           style={styles.input}
           value={activityName}
-        />
+        />}
         <Input
           editable={edit}
           multiline
@@ -195,7 +192,7 @@ export default function ActivityAdminScreen({ navigation }) {
           style={styles.input}
           value={description}
         />
-        {datePickerVisible && (
+        {datePickerVisible && edit &&(
           <RNDateTimePicker
             display="spinner"
             mode="date"
@@ -216,7 +213,7 @@ export default function ActivityAdminScreen({ navigation }) {
           value={date}
         />
 
-        {timePickerVisible && (
+        {timePickerVisible && edit &&(
           <RNDateTimePicker
             display="spinner"
             minuteInterval={15}
@@ -258,7 +255,7 @@ export default function ActivityAdminScreen({ navigation }) {
         <RedButton
           buttonText="Valid Modifications"
           onPress={() => validModifications()}
-          title="Create activity"
+          title="Valid Modifications"
         />
       </SafeAreaView>
     </>
