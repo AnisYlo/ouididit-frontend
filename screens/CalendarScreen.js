@@ -17,6 +17,7 @@ export default function CalendarScreen({ navigation }) {
   );
 }
 
+
 const styles = StyleSheet.create({
     container: {
         flex: 1,
