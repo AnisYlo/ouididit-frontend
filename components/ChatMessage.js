@@ -19,7 +19,7 @@ export default function ChatMessage(props) {
                     <Text style={styles.date} >{props.date}</Text>
                 </View> 
                 <Text style={styles.messageText}>{props.message}</Text> 
-           </View>
+            </View>
         </View>
     );
 }

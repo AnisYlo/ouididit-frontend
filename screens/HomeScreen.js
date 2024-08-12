@@ -28,13 +28,13 @@ export default function HomeScreen({ navigation }) {
 
   console.log("activity Reducer =>",activity[0])
   return (
-    <>
+    <SafeAreaView style={styles.safeArea}>
     <Header
       navigation={navigation}
       title={`Welcome ${users.username}`}
       avatar={users.avatar}
     ></Header>
-    <SafeAreaView style={styles.container}>
+      <View style={styles.container}>
       <View style={styles.activitiesCard}>
         {activity.length > 0 && activity[0] && (
           <View>
@@ -62,12 +62,17 @@ export default function HomeScreen({ navigation }) {
         title="Créer une activité"
         buttonText="New Activity"
       />
+      </View>
     </SafeAreaView>
-  </>
   );
 }
 
 const styles = StyleSheet.create({
+  safeArea:{
+    width:'100%',
+    height:'100%',
+    backgroundColor: 'white',
+  },
   container: {
     flex: 1,
     alignItems: "center",
