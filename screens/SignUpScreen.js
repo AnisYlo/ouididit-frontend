@@ -25,7 +25,7 @@ export default function SignUpScreen({navigation}) {
     }).then(response => response.json())
     .then(data => {
       if(data.result === true) {
-        dispatch(userInfo(data))
+        dispatch(userInfo(data.newDoc))
         navigation.navigate('Home');
       }
       else alert('User already exist !')
