@@ -55,7 +55,7 @@ export default function SignInScreen({ navigation }) {
    <RedButton buttonText='Sign In'
    onPress={() => handleSubmit()}/>
     <Text style={{ fontFamily: 'ClashGrotesk-Regular', fontSize: 18, color: 'black' }}> Not register yet ? Create an account ! </Text>
-   <RedButton buttonText='Sign up' onPress={() => navigation.navigate('Signup')}></RedButton>
+   <RedButton buttonText='Sign up' onPress={() => navigation.navigate('SignUp')}></RedButton>
    <View></View>
  </KeyboardAvoidingView>
   )

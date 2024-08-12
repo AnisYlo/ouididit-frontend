@@ -6,7 +6,7 @@ import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { useDispatch } from 'react-redux';
 import { useState } from "react";
 import { BACKEND_IP } from '@env';
-import { userInfo } from '../reducers/users'
+import { login, userInfo } from '../reducers/users'
 import { TouchableOpacity } from "react-native-gesture-handler";
 
 
@@ -25,8 +25,8 @@ export default function SignUpScreen({navigation}) {
     }).then(response => response.json())
     .then(data => {
       if(data.result === true) {
-        dispatch(userInfo(data.newDoc))
-        navigation.navigate('Home');
+        dispatch(login(data.newDoc))
+        navigation.navigate('Drawer');
       }
       else alert('User already exist !')
       
@@ -37,7 +37,7 @@ export default function SignUpScreen({navigation}) {
   return (
     <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.container}>
       <View style={styles.close}> 
-        <FontAwesome onPress={() => navigation.navigate('Signin')} name="close" size={35} color="black" />
+        <FontAwesome onPress={() => navigation.navigate('SignIn')} name="close" size={35} color="black" />
       </View>
       <Text style={styles.title}>Create account</Text>
       <View style={styles.register}>
