@@ -3,6 +3,7 @@ import { useSelector } from "react-redux";
 import Header from "../components/Header";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Input from "../components/Input";
+import ChatMessage from "../components/ChatMessage"
 
 export default function DiscussionsScreen({ navigation }) {
   const users = useSelector((state) => state.users.value);
@@ -18,7 +19,38 @@ export default function DiscussionsScreen({ navigation }) {
           <View style={styles.vue11}></View>
           <View style={styles.vue12}>
             <View style={styles.topBar}></View>
-            <View style={styles.messages}></View>
+            <View style={styles.messages}>
+              <ChatMessage
+                avatar=''
+                type="Message"
+                userName="test k"
+                date="20:00"
+                courantUser="test"
+                message="jolie message !"
+                />
+              <ChatMessage
+                avatar={users.avatar}
+                type="Message"
+                userName={users.username}
+                date="20:05"
+                courantUser={users.username}
+                message="jolie message !jolie message !jolie message !jolie message !jolie message !"
+                />
+                
+              <ChatMessage 
+                type="Event" 
+                userName="Xavier" 
+                courantUser={users.username}
+                />
+                <ChatMessage
+                avatar=''
+                type="Message"
+                userName="test k"
+                date="20:40"
+                courantUser="test"
+                message="autre message !"
+                />
+            </View>
           </View>
         </View>
         <View style={styles.vue2}>
