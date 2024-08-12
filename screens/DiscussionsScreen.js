@@ -1,48 +1,71 @@
-import { View, StyleSheet, Text, Button } from "react-native";
+import { View, StyleSheet, Text, Button, KeyboardAvoidingView, Platform,ScrollView } from "react-native";
 import { useSelector } from "react-redux";
 import Header from "../components/Header";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Input from "../components/Input";
+import { TouchableOpacity } from "react-native-gesture-handler";
+import { FontAwesome } from "@expo/vector-icons";
+
 
 export default function DiscussionsScreen({ navigation }) {
   const users = useSelector((state) => state.users.value);
   return (
     <>
+        <SafeAreaView style={styles.container}>
       <Header
         navigation={navigation}
         title="Discussions"
         avatar={users.avatar}
       />
-      <View style={styles.container}>
+        
+        <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'}  >
+    
         <View style={styles.vue1}>
           <View style={styles.vue11}></View>
+      
           <View style={styles.vue12}>
             <View style={styles.topBar}></View>
-            <View style={styles.messages}></View>
+            <ScrollView flexGrow={1} > 
+                <View style={styles.messages}></View>
+            </ScrollView>
           </View>
+          <View>
+
+          </View>
+    
         </View>
-        <View style={styles.vue2}>
-        <Input></Input>
+        <View  style={styles.vue2}>
+        <Input style={styles.input} autoCapitalize='none' inputMode='message' placeholder='Message'/>
+        <FontAwesome style={styles.sendIcon} onPress name="send-o" size={24} color="black" />
         </View>
-      </View>
-    </>
+      </KeyboardAvoidingView>
+      </SafeAreaView>
+    </> 
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+
+  allView: {
     flex: 1,
+    
+  },
+  container: {
+    
+    flex: 1,
+    paddingTop: 25,
+    justifyContent: 'center',
     width: '100%',
-    backgroundColor: "white",
-    alignItems: 'center'
-    // marginHorizontal: 10,
+    alignItems: 'center',
+    backgroundColor: 'white'
+
   },
 
   vue1: {
     flexDirection: "row",
-    width: "95%",
+    width: "100%",
     height: "80%",
-    backgroundColor: "white",
+   
     
   },
   vue11: {
@@ -50,28 +73,40 @@ const styles = StyleSheet.create({
     alignItems: "flex-start",
     backgroundColor: "#1F84D6",
     width: "20%",
-    height: "100%",
+    height: 550,
     borderRadius: 10,
   },
   vue12: {
+    flex: 1,
     height: "100%",
     width: "80%",
     flexDirection: "column",
+   
   },
   vue2: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: "95%",
-    height: "15%",
-    backgroundColor: "white",
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    justifyContent: 'space-between',
+    width: "100%",
+    paddingTop: 25,
+  
+
   },
   topBar: {
     width: "100%",
-    height: "10%",
+    height: 50,
     backgroundColor: "#40BCD8",
     borderRadius: 10,
   },
-  messages: {
-    
+  sendIcon: {
+    paddingTop: 10,
+    paddingRight: 10,
   },
+  messages: {
+ 
+  },
+  input: {
+    width: '90%',
+  }
 });
