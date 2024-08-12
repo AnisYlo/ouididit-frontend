@@ -25,8 +25,7 @@ export default function HomeScreen({ navigation }) {
       }
     })
   }, []);
-
-  console.log("activity Reducer =>",activity[0])
+  
   return (
     <SafeAreaView style={styles.safeArea}>
     <Header

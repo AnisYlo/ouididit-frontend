@@ -158,13 +158,13 @@ export default function ActivityAdminScreen({ navigation }) {
 
   return (
     //implementation du component header
-    <>
+    <SafeAreaView style={styles.safeArea}>
       <Header
         navigation={navigation}
         title={activityName}
         avatar={users.avatar}
       />
-      <SafeAreaView style={styles.container}>
+      <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === 'ios' ? 'padding' : 'height'} >
         <View style={styles.friendsContainer}>
           <Image style={styles.avatar} source={avatar} />
           <Ionicons style={styles.add} name="add" size={45} color="black" onPress={() => addFriend()}/>
@@ -259,12 +259,18 @@ export default function ActivityAdminScreen({ navigation }) {
           onPress={() => validModifications()}
           title="Valid Modifications"
         />
-      </SafeAreaView>
-    </>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
+  safeArea:{
+    width:'100%',
+    height:'100%',
+    paddingTop:35,
+    backgroundColor: 'white',
+  },
   container: {
     alignItems: "center",
     backgroundColor: "#ffffff",

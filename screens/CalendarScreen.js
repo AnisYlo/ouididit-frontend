@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, SafeAreaView } from 'react-native';
 import { Agenda } from 'react-native-calendars';
 import Header from '../components/Header';
 
@@ -37,7 +37,7 @@ const CalendarScreen = ({ navigation }) => {
   };
 
   return (
-    <>
+    <SafeAreaView style={styles.safeArea}>
       <Header
         navigation={navigation}
         title={`Welcome ${user.username}`}
@@ -65,11 +65,17 @@ const CalendarScreen = ({ navigation }) => {
           </Text>
         ) : null}
       </View>
-    </>
+    </SafeAreaView>
   );
 };
 
-const styles = StyleSheet.create({
+const styles = StyleSheet.create({  
+  safeArea:{
+    width:'100%',
+    height:'100%',
+    paddingTop:35,
+    backgroundColor: 'white',
+  },
   container: {
     flex: 1,
     backgroundColor: 'white',
