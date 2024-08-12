@@ -151,7 +151,7 @@ export default function CreateActivityScreen( {navigation} ) {
             title='New activity' 
             avatar={users.avatar}
         />  
-        <SafeAreaView style={styles.container}>          
+        <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>          
             <Input
                 autoFocus
                 onChangeText={(value) => setActivityName(value)}
@@ -232,7 +232,7 @@ export default function CreateActivityScreen( {navigation} ) {
                 onPress={() => sendCreateActivityScreen()}
                 title='Create activity'
             />
-        </SafeAreaView>
+        </KeyboardAvoidingView>
     </>
     );
 }

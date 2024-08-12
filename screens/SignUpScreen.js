@@ -1,4 +1,4 @@
-import { View, StyleSheet, Text, Button, KeyboardAvoidingView, Platform } from "react-native";
+import { View, StyleSheet, Text, KeyboardAvoidingView, Platform } from "react-native";
 import RedButton from '../components/redButton';
 import Input from '../components/Input';
 import InputPassword from '../components/InputPassword';
@@ -6,8 +6,7 @@ import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { useDispatch } from 'react-redux';
 import { useState } from "react";
 import { BACKEND_IP } from '@env';
-import { userInfo } from '../reducers/users'
-import { TouchableOpacity } from "react-native-gesture-handler";
+import { login } from '../reducers/users'
 
 
 export default function SignUpScreen({navigation}) {
@@ -16,8 +15,8 @@ export default function SignUpScreen({navigation}) {
   const [username, setUsername]=useState('')
 
   const dispatch = useDispatch()
-  const handleSubmitSignUp = () => {
 
+  const handleSubmitSignUp = () => {
     fetch(`${BACKEND_IP}/users/signup`, {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
@@ -25,14 +24,12 @@ export default function SignUpScreen({navigation}) {
     }).then(response => response.json())
     .then(data => {
       if(data.result === true) {
-        dispatch(userInfo(data.newDoc))
-        navigation.navigate('Home');
+        dispatch(login(data.newDoc));
+        navigation.navigate('Drawer');
       }
-      else alert('User already exist !')
-      
-    }
-    )
-    }
+      else alert('User already exist !');
+    })
+  }
 
   return (
     <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.container}>
@@ -41,14 +38,12 @@ export default function SignUpScreen({navigation}) {
       </View>
       <Text style={styles.title}>Create account</Text>
       <View style={styles.register}>
-        <Input autoCapitalize='none' onChangeText={(value) => setEmail(value)} value={email}  placeholder='E-mail'></Input>
+        <Input autoCapitalize='none' inputMode='email' onChangeText={(value) => setEmail(value)} value={email}  placeholder='E-mail'></Input>
         <Input autoCapitalize='none' onChangeText={(value) => setUsername(value)} value={username}  placeholder='Username'></Input>
         <InputPassword autoCapitalize='none' onChangeText={(value) => setPassword(value)} value={password}  placeholder="Password" secureTextEntry={true}></InputPassword>
         <RedButton buttonText='Register' onPress={() => handleSubmitSignUp()}></RedButton>
       </View>
     </KeyboardAvoidingView>
-    
-
   );
 }
 
