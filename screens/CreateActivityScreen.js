@@ -145,13 +145,14 @@ export default function CreateActivityScreen( {navigation} ) {
     }
 
     return (
-    <>
-        <Header 
-            navigation={navigation}
-            title='New activity' 
-            avatar={users.avatar}
-        />  
-        <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>          
+    <SafeAreaView style={styles.safeArea}>
+                <Header 
+                    navigation={navigation}
+                    title='New activity' 
+                    avatar={users.avatar}
+                />  
+        <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>          
+            <View style={styles.container} >
             <Input
                 autoFocus
                 onChangeText={(value) => setActivityName(value)}
@@ -232,19 +233,27 @@ export default function CreateActivityScreen( {navigation} ) {
                 onPress={() => sendCreateActivityScreen()}
                 title='Create activity'
             />
+            </View>
         </KeyboardAvoidingView>
-    </>
+    </SafeAreaView>
     );
 }
 
 const styles = StyleSheet.create({
-    container: {
-        alignItems: 'center',
-        backgroundColor: '#ffffff',
-        flex: 1,
-        height:'100%',
-        justifyContent: 'center',
+    safeArea:{
+        flex:1,
         width:'100%',
+        height:'100%',
+        paddingTop:35,
+        backgroundColor: 'white',
+      },
+    container: {
+        //flex: 1,
+        height:'100%',
+        width:'100%',
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: 'white',
     },
     title:{
         fontSize: 20,

@@ -80,13 +80,10 @@ export default function Header(props) {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor:'white',
-    height: 150,
+    height: 100,
     width: '100%',
-    paddingTop: 35,
     zIndex:10,
-
-
+    backgroundColor: 'white',
   },
   buttonsMenu: {
     flexDirection: "row",
