@@ -38,21 +38,21 @@ export default function HomeScreen({ navigation }) {
       <View style={styles.activitiesCard}>
         {activity.length > 0 && activity[0] && (
           <View>
-            {/* <Text style={styles.activityList}>{activity[0].name}</Text>
-            <Text style={styles.activityInfo}>{activity[0].location.street}, {activity[1].location.city} {activity[0].date}</Text> */}
+            <Text style={styles.activityList}>{activity[0].name}</Text>
+            <Text style={styles.activityInfo}>{activity[0].location.street}, {activity[1].location.city} {activity[0].date}</Text>
           </View>
         )}
 
         {activity.length > 0 && activity[1] && (
           <View>
-            {/* <Text style={styles.activityList}>{activity[1].name}</Text>
-            <Text style={styles.activityInfo}>{activity[1].location.street}, {activity[1].location.city} {activity[1].date}</Text> */}
+            <Text style={styles.activityList}>{activity[1].name}</Text>
+            <Text style={styles.activityInfo}>{activity[1].location.street}, {activity[1].location.city} {activity[1].date}</Text>
           </View>
         )}
         {activity.length > 0 && activity[2] && (
           <View>
-            {/* <Text style={styles.activityList}>{activity[2].name}</Text>
-            <Text style={styles.activityInfo}>{activity[2].location.street}, {activity[1].location.city} {activity[2].date}</Text> */}
+            <Text style={styles.activityList}>{activity[2].name}</Text>
+            <Text style={styles.activityInfo}>{activity[2].location.street}, {activity[1].location.city} {activity[2].date}</Text>
           </View>
         )}
       </View>

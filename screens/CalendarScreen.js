@@ -1,27 +1,109 @@
-import { View, StyleSheet, Text, Button } from "react-native";
-import { useSelector } from "react-redux";
-import Header from '../components/Header'
+import React, { useState } from 'react';
+import { useSelector } from 'react-redux';
+import { View, Text, StyleSheet } from 'react-native';
+import { Agenda } from 'react-native-calendars';
+import Header from '../components/Header';
 
-export default function CalendarScreen({ navigation }) {
+const CalendarScreen = ({ navigation }) => {
+  const [selectedDate, setSelectedDate] = useState("");
+  const user = useSelector((state) => state.users.value);
+  const events = user.events; // Accède aux événements depuis le reducer
 
-  const users = useSelector(state => state.users.value)
+  // Fonction pour charger les événements du mois
+  const loadItems = (day) => {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve();
+      }, 1000);
+    });
+  };
+
+  // Fonction pour afficher les éléments d'événement
+  const renderItem = (item) => {
+    return (
+      <View style={styles.item}>
+        <Text style={styles.itemName}>{item.name}</Text>
+        <Text style={styles.itemTime}>{item.time}</Text>
+        <Text style={styles.itemDescription}>{item.description}</Text>
+      </View>
+    );
+  };
+
+  // Fonction pour gérer la sélection d'une date
+  const onDayPress = (day) => {
+    setSelectedDate(day.dateString);
+    // Tu peux ajouter une logique pour naviguer vers un autre écran si nécessaire
+    // navigation.navigate('Details', { date: day.dateString });
+  };
 
   return (
     <>
-    <Header
-      navigation={navigation}
-      title="Calendar"
-      avatar={users.avatar}
-    />
+      <Header
+        navigation={navigation}
+        title={`Welcome ${user.username}`}
+        avatar={user.avatar}
+      />
+      <View style={styles.container}>
+        <Text style={styles.title}>Calendrier</Text>
+        <Agenda
+          items={events}
+          loadItemsForMonth={loadItems}
+          selected={selectedDate}
+          renderItem={renderItem}
+          onDayPress={onDayPress}
+          markedDates={{
+            [selectedDate]: {
+              selected: true,
+              marked: true,
+              selectedColor: '#F74231',
+            },
+          }}
+        />
+        {selectedDate ? (
+          <Text style={styles.selectedDate}>
+            Date sélectionnée: {selectedDate}
+          </Text>
+        ) : null}
+      </View>
     </>
   );
-}
+};
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-        // backgroundColor: "blue",
-      },
+  container: {
+    flex: 1,
+    backgroundColor: 'white',
+    paddingTop: 50,
+  },
+  title: {
+    fontFamily: 'ClashGrotesk-Regular',
+    fontSize: 32,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginBottom: 20,
+  },
+  selectedDate: {
+    backgroundColor: 'red',
+    fontSize: 18,
+    textAlign: 'center',
+    marginTop: 20,
+  },
+  item: {
+    backgroundColor: 'lightgray',
+    borderRadius: 5,
+    height: 80,
+    marginBottom: 10,
+    padding: 10,
+  },
+  itemName: {
+    fontWeight: 'bold',
+  },
+  itemTime: {
+    fontStyle: 'italic',
+  },
+  itemDescription: {
+    marginTop: 5,
+  },
 });
+
+export default CalendarScreen;
