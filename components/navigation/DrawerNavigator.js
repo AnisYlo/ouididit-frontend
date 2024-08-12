@@ -11,6 +11,7 @@ import ActivityAdminScreen from "../../screens/ActivityAdminScreen";
 import CalendarScreen from "../../screens/CalendarScreen";
 import DiscussionsScreen from "../../screens/DiscussionsScreen";
 import ProfilScreen from "../../screens/ProfilScreen";
+import allActivities from "../../screens/AllActivities";
 
 const Drawer = createDrawerNavigator();
 
@@ -63,10 +64,11 @@ export default function DrawerNavigator() {
       <Drawer.Screen name="Home" component={HomeScreen} />
       <Drawer.Screen name="Create activity" component={CreateActivityScreen} />
       <Drawer.Screen name="Admin activity" component={ActivityAdminScreen} />
+      <Drawer.Screen name="Activities" component={allActivities}/>
       <Drawer.Screen name="Calendar" component={CalendarScreen} />
       <Drawer.Screen name="Discussions" component={DiscussionsScreen} />
       <Drawer.Screen name="Profile" component={ProfilScreen} />
-      <Drawer.Screen name="Logout" component={HomeScreen} 
+      <Drawer.Screen name="Logout" component={HomeScreen}
         options={{
           drawerLabelStyle: { 
             borderColor: 'rgba(31,132,214,0.16)',

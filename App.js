@@ -7,15 +7,15 @@ import Navigation from './components/navigation/Navigation';
 import users from "./reducers/users";
 import activities from "./reducers/activities";
 import * as SplashScreen from "expo-splash-screen";
-import { Calendar } from 'react-native-calendars';
+import { Calendar, Agenda } from 'react-native-calendars';
 
 SplashScreen.preventAutoHideAsync();
 
 
-const MyCalendar = () => {
+const MyAgenda = () => {
     return (
         <View>
-            <Calendar
+            <Agenda
                 markedDates={{
                     '2023-06-25': { selected: true, marked: true },
                     '2023-06-24': { marked: true },
@@ -38,9 +38,9 @@ const MyCalendar = () => {
                     arrowColor: '#00adf5',
                     monthTextColor: '#00adf5',
                     indicatorColor: 'blue',
-                    textDayFontFamily: 'monospace',
-                    textMonthFontFamily: 'monospace',
-                    textDayHeaderFontFamily: 'monospace',
+                    textDayFontFamily: 'ClashGrotesk-Regular',
+                    textMonthFontFamily: 'ClashGrotesk-Regular',
+                    textDayHeaderFontFamily: 'ClashGrotesk-Regular',
                     textDayFontSize: 16,
                     textMonthFontSize: 16,
                     textDayHeaderFontSize: 16
