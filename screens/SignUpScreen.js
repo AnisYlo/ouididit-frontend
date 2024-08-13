@@ -14,7 +14,7 @@ export default function SignUpScreen({navigation}) {
   const [password, setPassword]=useState('');
   const [username, setUsername]=useState('');
 
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
 
   const handleSubmitSignUp = () => {
     if(!(/^[\w-.]+@([\w-]+.)+[\w-]{2,}$/ig.test(email))){
