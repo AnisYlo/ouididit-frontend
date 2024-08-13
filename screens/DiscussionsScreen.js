@@ -4,9 +4,10 @@ import Header from "../components/Header";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Input from "../components/Input";
 import { FontAwesome } from "@expo/vector-icons";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import Pusher from 'pusher-js/react-native';
 import ChatMessage from "../components/ChatMessage";
+import ChatActivity from "../components/ChatActivity";
 import { BACKEND_IP } from '@env';
 import moment, { invalid } from 'moment';
 
@@ -17,6 +18,9 @@ export default function DiscussionsScreen({ navigation }) {
   const [messageText, setMessageText] = useState('');
 
   const users = useSelector((state) => state.users.value);
+  const activities = useSelector((state) => state.activities.value);
+  const scrollViewRef = useRef();
+  let activitiesIndex =0;
 
   useEffect(()=>{
     // Créer une nouvelle instance de Pusher
@@ -55,7 +59,7 @@ export default function DiscussionsScreen({ navigation }) {
       pusher.unsubscribe(chatId);
       const deleteUser = async () => {
         try {
-          await fetch(`${BACKEND_IP}/chats/${chatId}/${users.token}`, { method: 'DELETE' });
+          await fetch(`${BACKEND_IP}/users/${chatId}/${users.token}`, { method: 'DELETE' });
         } catch (error) {
           console.error("Failed to delete user:", error);
         }
@@ -65,7 +69,18 @@ export default function DiscussionsScreen({ navigation }) {
   },[]);
 
   const handleReceiveMessage = (data) => {
-    setMessages(messages => [...messages, data]);
+    console.log("data messages =>", data)
+    const newMessage = {
+      user :{
+        username: data.userName,
+        avatar: data.userAvatar,
+      },
+      message : data.text,
+      type : "Message",
+      createdAt : data.createdAt,
+      _id : data.id,
+    }
+    setMessages(messages => [...messages, newMessage]);
   };
 
   const handleSendMessage = async () => {
@@ -100,12 +115,26 @@ export default function DiscussionsScreen({ navigation }) {
       />
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'}  >
         <View style={styles.vue1}>
-          <View style={styles.vue11}></View>
+          <View style={styles.vue11}>
+          <Text  >Hello</Text>
+            {/* {
+              activities.map((activity, i)=>{ */}
+                <ChatActivity key={0}
+                  userToken ={users.token}
+                  chatId = {chatId}
+                />
+              {/* })
+            } */}
+          </View>
           <View style={styles.vue12}>
             <View style={styles.topBar}>
-              <Text></Text>
+              <Text style={styles.topBarText}>{activities[activitiesIndex].name}</Text>
             </View>
-            <ScrollView flexGrow={1} >             
+            <ScrollView flexGrow={1} ref={scrollViewRef} 
+              onContentSizeChange={() => 
+                        scrollViewRef.current?.scrollToEnd({ animated: false }) // 3. Appel de scrollToEnd
+                    }
+            >             
               <View style={styles.messages}>
               {
                 messages.map((message, i) => (
@@ -135,11 +164,11 @@ export default function DiscussionsScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {    
     flex: 1,
-    //paddingTop: 25,
     justifyContent: 'flex-start',
     width: '100%',
     alignItems: 'center',
     backgroundColor: 'white',
+    paddingTop:80,
   },
   vue1: {
     flexDirection: "row",
@@ -171,9 +200,18 @@ const styles = StyleSheet.create({
   },
   topBar: {
     width: "100%",
+    flexDirection: 'row',
     height: 50,
     backgroundColor: "#40BCD8",
     borderRadius: 10,
+    paddingHorizontal : 10,
+    alignItems: 'center',
+  },
+  topBarText:{
+    color: 'white',
+    fontSize: 16,
+    fontWeight: 'bold',
+    fontFamily: 'ClashGrotesk-Regular',
   },
   sendIcon: {
     paddingTop: 10,
