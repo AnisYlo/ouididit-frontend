@@ -11,6 +11,8 @@ import {
   Modal,
   TextInput,
   Button,
+  TouchableWithoutFeedback,
+  Keyboard
 } from "react-native";
 import RNDateTimePicker from "@react-native-community/datetimepicker";
 import moment from "moment";
@@ -205,6 +207,12 @@ export default function ActivityAdminScreen({ route, navigation }) {
 
   };
 
+  const keyboardClose = () =>{
+    setDatePickerVisible(false);
+    setTimePickerVisible(false);
+    Keyboard.dismiss();
+  }
+
   return (
     //implementation du component header
     <SafeAreaView style={styles.safeArea}>
@@ -213,6 +221,7 @@ export default function ActivityAdminScreen({ route, navigation }) {
         title={activityName}
         avatar={users.avatar}
       />
+      <TouchableWithoutFeedback onPress={keyboardClose}>
       {modalVisible && (
         <Modal visible={modalVisible} animationType="fade" transparent>
           <View style={styles.centeredView}>
@@ -373,6 +382,7 @@ export default function ActivityAdminScreen({ route, navigation }) {
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
+      </TouchableWithoutFeedback>
     </SafeAreaView>
   );
 }
