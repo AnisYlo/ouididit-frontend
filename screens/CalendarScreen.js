@@ -3,12 +3,13 @@ import { useSelector } from 'react-redux';
 import { View, Text, StyleSheet, SafeAreaView } from 'react-native';
 import { Agenda } from 'react-native-calendars';
 import Header from '../components/Header';
+import activities from '../reducers/activities';
 
 const CalendarScreen = ({ navigation }) => {
   const [selectedDate, setSelectedDate] = useState("");
   const user = useSelector((state) => state.users.value);
-  const events = user.events; // Accède aux événements depuis le reducer
-
+  const activities = useSelector((state) => state.activities.value)
+  console.log( '------>', activities[0])
   // Fonction pour charger les événements du mois
   const loadItems = (day) => {
     return new Promise((resolve) => {
@@ -22,9 +23,9 @@ const CalendarScreen = ({ navigation }) => {
   const renderItem = (item) => {
     return (
       <View style={styles.item}>
-        <Text style={styles.itemName}>{item.name}</Text>
-        <Text style={styles.itemTime}>{item.time}</Text>
-        <Text style={styles.itemDescription}>{item.description}</Text>
+        <Text style={styles.itemName}>{activities[0].name}</Text>
+        <Text style={styles.itemTime}>{activities[0].date}</Text>
+        <Text style={styles.itemDescription}>{activities[0].description}</Text>
       </View>
     );
   };
@@ -32,7 +33,7 @@ const CalendarScreen = ({ navigation }) => {
   // Fonction pour gérer la sélection d'une date
   const onDayPress = (day) => {
     setSelectedDate(day.dateString);
-    // Tu peux ajouter une logique pour naviguer vers un autre écran si nécessaire
+    // peux ajouter une logique pour naviguer vers un autre écran si nécessaire
     // navigation.navigate('Details', { date: day.dateString });
   };
 
@@ -46,7 +47,7 @@ const CalendarScreen = ({ navigation }) => {
       <View style={styles.container}>
         <Text style={styles.title}>Calendrier</Text>
         <Agenda
-          items={events}
+          items={activities[0]}
           loadItemsForMonth={loadItems}
           selected={selectedDate}
           renderItem={renderItem}
