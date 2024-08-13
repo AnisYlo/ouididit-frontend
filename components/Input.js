@@ -11,10 +11,12 @@ export default function Input(props) {
                     autoCapitalize={props.autoCapitalize}
                     autoCorrect={props.autoCorrect}
                     autoComplete={props.autoComplete}
+                    autoFocus={props.autoFocus}
                     editable={props.editable}
                     inputMode={props.inputMode}
                     keyboardType={props.keyboardType}
                     label={props.label || 'Input'}
+                    maxLength={props.maxLength}
                     multiline={props.multiline}
                     numberOfLines={props.numberOfLines}
                     onChangeText={props.onChangeText}

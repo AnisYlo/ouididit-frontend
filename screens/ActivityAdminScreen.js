@@ -1,4 +1,4 @@
-import { KeyboardAvoidingView, Button, Platform, SafeAreaView, StyleSheet, View, Text, Alert, Image } from "react-native";
+import { KeyboardAvoidingView, Button, Platform, SafeAreaView, StyleSheet, View, Text, Alert, Image, TouchableWithoutFeedback, Keyboard } from "react-native";
 import RNDateTimePicker, { DateTimePickerAndroid } from "@react-native-community/datetimepicker";
 import moment, { invalid } from "moment";
 import { useState, useEffect } from "react";
@@ -156,6 +156,12 @@ export default function ActivityAdminScreen({ navigation }) {
       });
   };
 
+  const keyboardClose = () =>{
+    setDatePickerVisible(false);
+    setTimePickerVisible(false);
+    Keyboard.dismiss();
+  }
+
   return (
     //implementation du component header
     <SafeAreaView style={styles.safeArea}>
@@ -164,6 +170,7 @@ export default function ActivityAdminScreen({ navigation }) {
         title={activityName}
         avatar={users.avatar}
       />
+      <TouchableWithoutFeedback onPress={keyboardClose}>
       <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === 'ios' ? 'padding' : 'height'} >
         <View style={styles.friendsContainer}>
           <Image style={styles.avatar} source={avatar} />
@@ -260,6 +267,7 @@ export default function ActivityAdminScreen({ navigation }) {
           title="Valid Modifications"
         />
       </KeyboardAvoidingView>
+      </TouchableWithoutFeedback>
     </SafeAreaView>
   );
 }

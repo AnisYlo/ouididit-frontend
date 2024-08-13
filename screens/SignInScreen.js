@@ -8,6 +8,8 @@ import {
   Image,
   KeyboardAvoidingView,
   Platform,
+  TouchableWithoutFeedback,
+  Keyboard,
 } from "react-native";
 import { BACKEND_IP } from "@env";
 import { login } from "../reducers/users";
@@ -43,10 +45,11 @@ export default function SignInScreen({ navigation }) {
 
 
   return(
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
  <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.container}>
     <Image source={require('../assets/logo.png')} style={styles.logo}/>
     <View style={styles.input}>
-    <Input autoCapitalize='none' inputMode='email' onChangeText={(value) => setEmail(value)} value={email}  placeholder='E-mail'/>
+    <Input autoCapitalize='none' inputMode='email' onChangeText={(value) => setEmail(value.toLowerCase())} value={email}  placeholder='E-mail'/>
     </View>
     <View style={styles.input}>
     <InputPassword autoCapitalize='none' onChangeText={(value) => setPassword(value)} value={password}  placeholder="Password" secureTextEntry={true}/>
@@ -58,6 +61,7 @@ export default function SignInScreen({ navigation }) {
    <RedButton buttonText='Sign up' onPress={() => navigation.navigate('SignUp')}></RedButton>
    <View></View>
  </KeyboardAvoidingView>
+ </TouchableWithoutFeedback>
   )
 }
 

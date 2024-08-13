@@ -1,4 +1,4 @@
-import { View, StyleSheet, Text, KeyboardAvoidingView, Platform, ScrollView } from "react-native";
+import { View, StyleSheet, Text, KeyboardAvoidingView, Platform, ScrollView, TouchableWithoutFeedback, Keyboard } from "react-native";
 import { useSelector } from "react-redux";
 import Header from "../components/Header";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -10,12 +10,15 @@ import ChatMessage from "../components/ChatMessage";
 import ChatActivity from "../components/ChatActivity";
 import { BACKEND_IP } from '@env';
 import moment, { invalid } from 'moment';
+import { useIsFocused } from '@react-navigation/native';
 
 const chatId = '66b8bc81c2d65214466106d9';
 
 export default function DiscussionsScreen({ navigation }) {
   const [messages, setMessages] = useState([]);
   const [messageText, setMessageText] = useState('');
+  
+  const isFocused = useIsFocused();
 
   const users = useSelector((state) => state.users.value);
   const activities = useSelector((state) => state.activities.value);
@@ -30,6 +33,11 @@ export default function DiscussionsScreen({ navigation }) {
       try {
         const response = await fetch(`${BACKEND_IP}/chats/${chatId}`);
         const chatHistory = await response.json();
+
+        console.log('chatHistory.messages[last] =>',chatHistory.messages[chatHistory.messages.length-1])
+        // If last message, is event then it's remove from array
+        if(chatHistory.messages[chatHistory.messages.length-1].type==='Event')
+          chatHistory.messages.pop();
         setMessages(chatHistory.messages);
       } catch (error) {
         console.error("Failed to fetch messages:", error);
@@ -59,14 +67,14 @@ export default function DiscussionsScreen({ navigation }) {
       pusher.unsubscribe(chatId);
       const deleteUser = async () => {
         try {
-          await fetch(`${BACKEND_IP}/users/${chatId}/${users.token}`, { method: 'DELETE' });
+          await fetch(`${BACKEND_IP}/chats/${chatId}/${users.token}`, { method: 'DELETE' });
         } catch (error) {
           console.error("Failed to delete user:", error);
         }
       };
       deleteUser();
     };
-  },[]);
+  },[isFocused]);
 
   const handleReceiveMessage = (data) => {
     console.log("data messages =>", data)
@@ -113,6 +121,7 @@ export default function DiscussionsScreen({ navigation }) {
         title="Discussions"
         avatar={users.avatar}
       />
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'}  >
         <View style={styles.vue1}>
           <View style={styles.vue11}>
@@ -153,10 +162,18 @@ export default function DiscussionsScreen({ navigation }) {
           </View>
         </View>
         <View  style={styles.vue2}>
-          <Input style={styles.input} onChangeText={(value) => setMessageText(value)} value={messageText} autoCapitalize='none' inputMode='message' placeholder='Message'/>
+          <Input 
+            style={styles.input}
+            onChangeText={(value) => setMessageText(value)}
+            value={messageText} autoCapitalize='none'
+            inputMode='message'
+            placeholder='Message'
+            maxLength={200}
+            />
           <FontAwesome style={styles.sendIcon} onPress={() => handleSendMessage()} name="send-o" size={24} color="black" />
         </View>
       </KeyboardAvoidingView>
+      </TouchableWithoutFeedback>
     </SafeAreaView>
   );
 }

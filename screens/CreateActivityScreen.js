@@ -1,9 +1,11 @@
 import {
+    Keyboard,
     KeyboardAvoidingView,
     Platform,
     SafeAreaView,
     ScrollView,
     StyleSheet,
+    TouchableWithoutFeedback,
     View,
 } from 'react-native';
 import RNDateTimePicker, { DateTimePickerAndroid } from '@react-native-community/datetimepicker';
@@ -35,7 +37,7 @@ export default function CreateActivityScreen( {navigation} ) {
     const onChangeDate = (event, selectedDate) => {
         setDatePickerVisible(false);  // Hide picker if user cancel selection
         if (event.type === 'set') {
-            //setDatePickerVisible(Platform.OS === 'ios');  // Setting for IOs need testing
+            setDatePickerVisible(Platform.OS === 'ios');  // Setting for IOs need testing
             const currentDate = selectedDate || datePicker;
             setDate(moment(currentDate).format('DD/MM/YYYY'));
             setDatePicker(currentDate);
@@ -47,6 +49,7 @@ export default function CreateActivityScreen( {navigation} ) {
     const onChangeTime = (event, selectedTime) => {        
         setTimePickerVisible(false); // Hide picker if user cancel selection
         if (event.type === 'set') {
+            setTimePickerVisible(Platform.OS === 'ios');  // Setting for IOs need testing
             const currentTime = selectedTime || startTimePicker;
             setStartTime(moment(currentTime).format('HH:mm'));
             setStartTimePicker(currentTime);
@@ -109,7 +112,7 @@ export default function CreateActivityScreen( {navigation} ) {
             description,
             payementLimit : price,
         };
-        const participants = [{email :'test2@MediaList.fr'},{email :'2toto@MediaList.fr'},{email :'anis@gmail.com', status:"Accepted"}]
+        const participants = [{email :'test2@MediaList.fr'},{email :'2toto@MediaList.fr'},{email :'xavier@gmail.com', status:"Accepted"}]
         let activityId = null;
         try{
             // Create activity
@@ -129,6 +132,8 @@ export default function CreateActivityScreen( {navigation} ) {
                 })
             })
             .then(()=>{
+                // Clear inputs
+                clearInputs()
                 // Create Chat
                 console.log("activityId =>", activityId)
                 fetch(`${BACKEND_IP}/chats/`, {
@@ -145,6 +150,26 @@ export default function CreateActivityScreen( {navigation} ) {
         }
     }
 
+    const keyboardClose = () =>{
+        setDatePickerVisible(false);
+        setTimePickerVisible(false);
+        Keyboard.dismiss();
+    }
+
+    const clearInputs = () =>{
+        setActivityName('');
+        setPrice(null);
+        setDate('');
+        setDatePicker(new Date());
+        setStartTime('');    
+        setStartTimePicker(new Date());    
+        setDuration('');
+        setLocation([]);
+        setDescription('');
+        setDatePickerVisible(false);
+        setTimePickerVisible(false);
+    }
+
     return (
     <SafeAreaView style={styles.safeArea}>
         <Header 
@@ -152,16 +177,18 @@ export default function CreateActivityScreen( {navigation} ) {
             title='New activity' 
             avatar={users.avatar}
         />
+      <TouchableWithoutFeedback onPress={keyboardClose}>
         <KeyboardAvoidingView style={styles.keyboardView} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>          
             <ScrollView contentContainerStyle={styles.scroll} >
                 <View style={styles.content}>
                     <Input
-                        autoFocus
+                        autoFocus={true}
                         onChangeText={(value) => setActivityName(value)}
                         placeholder = 'Activity Name'
                         require={true}
                         style={styles.input}
                         value={activityName}
+                        maxLength={40}
                     />
                     <View style={styles.line}>
                         <Input
@@ -172,6 +199,7 @@ export default function CreateActivityScreen( {navigation} ) {
                             style={styles.inputLine}
                             value={price}
                             uniti="€"
+                            maxLength={5}
                         />
                     </View>
 
@@ -189,6 +217,7 @@ export default function CreateActivityScreen( {navigation} ) {
                         require={true}
                         style={styles.input}
                         value={date}
+                        maxLength={10}
                     />
 
                     {timePickerVisible && (<RNDateTimePicker
@@ -207,6 +236,7 @@ export default function CreateActivityScreen( {navigation} ) {
                             require={true}
                             style={styles.inputLine}
                             value={startTime}
+                            maxLength={5}
                         />
                         <Input
                             keyboardType='numeric'
@@ -215,6 +245,7 @@ export default function CreateActivityScreen( {navigation} ) {
                             style={styles.inputLine}
                             value={duration}
                             uniti="hours"
+                            maxLength={3}
                         />
                     </View>
                     <Input
@@ -222,6 +253,7 @@ export default function CreateActivityScreen( {navigation} ) {
                         placeholder = 'Location'
                         style={styles.input}
                         value={location}
+                        maxLength={100}
                     />
                     <Input
                         multiline
@@ -229,6 +261,7 @@ export default function CreateActivityScreen( {navigation} ) {
                         placeholder = 'Description'
                         style={styles.input}
                         value={description}
+                        maxLength={200}
                     />
                     <RedButton
                         buttonText='Create'
@@ -238,6 +271,7 @@ export default function CreateActivityScreen( {navigation} ) {
                 </View>
             </ScrollView>
         </KeyboardAvoidingView>
+        </TouchableWithoutFeedback>
     </SafeAreaView>
     );
 }

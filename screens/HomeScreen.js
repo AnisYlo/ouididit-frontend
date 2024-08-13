@@ -6,14 +6,15 @@ import { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { BACKEND_IP } from '@env';
 import { addActivities } from "../reducers/activities";
+import { useIsFocused } from '@react-navigation/native';
 
 
 export default function HomeScreen({ navigation }) {
   const dispatch = useDispatch()
   const activity = useSelector(state => state.activities.value)
   const users = useSelector(state => state.users.value)
-  // prend en parametre le token venant du reducer et le compare a celui venant de la route get
-  //si il ne le trouve pas il renvoie sur la page signin sinon on reste simplement sur Home
+  
+  const isFocused = useIsFocused();
 
   useEffect(() => {
     fetch(`${BACKEND_IP}/users/${users.token}/activities`)
@@ -22,7 +23,7 @@ export default function HomeScreen({ navigation }) {
         dispatch(addActivities(data.allActivities))
       }
     })
-  }, []);
+  }, [isFocused]);
   
   return (
     <SafeAreaView style={styles.safeArea}>
