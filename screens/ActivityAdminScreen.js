@@ -1,21 +1,33 @@
-import { KeyboardAvoidingView, Button, Platform, SafeAreaView, StyleSheet, View, Text, Alert, Image } from "react-native";
-import RNDateTimePicker, { DateTimePickerAndroid } from "@react-native-community/datetimepicker";
-import moment, { invalid } from "moment";
+import {
+  KeyboardAvoidingView,
+  ScrollView,
+  Platform,
+  SafeAreaView,
+  StyleSheet,
+  View,
+  Text,
+  Alert,
+  Image,
+  Modal,
+  TextInput,
+  Button,
+} from "react-native";
+import RNDateTimePicker from "@react-native-community/datetimepicker";
+import moment from "moment";
 import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import Input from "../components/Input";
 import Header from "../components/Header";
 import RedButton from "../components/redButton";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import Ionicons from '@expo/vector-icons/Ionicons';
-import FontAwesome from "@expo/vector-icons/FontAwesome";
+import Ionicons from "@expo/vector-icons/Ionicons";
 import { BACKEND_IP } from "@env";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { useRoute } from "@react-navigation/native";
 import Wallet from "../components/ProgressBar";
+import { useIsFocused } from "@react-navigation/native";
 
-export default function ActivityAdminScreen({ navigation }) {
-
+export default function ActivityAdminScreen({ route, navigation }) {
   const [activityName, setActivityName] = useState("");
   const [price, setPrice] = useState(null);
   const [date, setDate] = useState("");
@@ -28,12 +40,22 @@ export default function ActivityAdminScreen({ navigation }) {
   const [datePickerVisible, setDatePickerVisible] = useState(false);
   const [timePickerVisible, setTimePickerVisible] = useState(false);
   const [edit, setEdit] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [newParticipant, setNewParticipant] = useState("");
+  const [total, setTotal] = useState(0);
+  const [maxPrice, setMaxPrice] = useState(0)
 
-  const activityId = "66b5e34b59a79a205eb415ce";
-  const route = useRoute();
-  // const activtyId = route.params?.activtyId
+  // const { activityId }  = route.params;
+  const activityId = "66bb6b6e425d42873c3dbec0";
+
+  // Grabbed from emailregex.com
+  const EMAIL_REGEX = /^[\w-.]+@([\w-]+.)+[\w-]{2,}$/ig;
+
   const users = useSelector((state) => state.users.value);
-  const avatar = !(users.avatar) ? require('../assets/avatarDefault.png') : {uri : users.avatar};
+  const avatar = !users.avatar
+    ? require("../assets/avatarDefault.png")
+    : { uri: users.avatar };
+  const isFocused = useIsFocused();
 
   const onChangeDate = (event, selectedDate) => {
     setDatePickerVisible(false); // Hide picker if user cancel selection
@@ -90,24 +112,27 @@ export default function ActivityAdminScreen({ navigation }) {
   const participants = ["test@MediaList.fr", "toto@MediaList.fr"];
 
   useEffect(() => {
-    fetch(`${BACKEND_IP}/activities/participants/${activityId}`)
-      .then((response) => response.json())
-      .then((data) => {
-        
-      })
-  });
+    if (activityId)
+      fetch(`${BACKEND_IP}/activities/participants/${activityId}`)
+        .then((response) => response.json())
+        .then((data) => {
+          console.log(data);
+        });
+  }, [isFocused, activityId]);
 
   useEffect(() => {
-    fetch(`${BACKEND_IP}/activities/${activityId}`)
-      .then((response) => response.json())
-      .then((data) => {
-        setDescription(data.activity.description);
-        setActivityName(data.activity.name);
-        setDate(moment(data.activity.date).format("DD/MM/YYYY"));
-        setDuration(String(data.activity.time));
-        setLocation(data.activity.location.street);
-        setStartTime(moment(data.activity.startTime).format("HH:mm"));
-      });
+    if (activityId) {
+      fetch(`${BACKEND_IP}/activities/${activityId}`)
+        .then((response) => response.json())
+        .then((data) => {
+          setDescription(data.activity.description);
+          setActivityName(data.activity.name);
+          setDate(moment(data.activity.date).format("DD/MM/YYYY"));
+          setDuration(String(data.activity.time));
+          setLocation(data.activity.location.street);
+          setStartTime(moment(data.activity.startTime).format("HH:mm"));
+        });
+    }
   }, [activityId]);
 
   const validModifications = (res) => {
@@ -147,13 +172,37 @@ export default function ActivityAdminScreen({ navigation }) {
       .then((data) => {
         // Vérifier si l'activité a été mise à jour
         if (data.modifiedCount > 0) {
-          alert("Activitée modifiée");
+          alert("Activity updated");
         }
       })
       .catch((error) => {
         console.error("Erreur lors de la mise à jour de l'activité:", error);
         res.status(500).json({ result: false, error: "Erreur serveur" });
       });
+  };
+
+  const addFriend = () => {
+    setModalVisible(true);
+  };
+
+  const handleNewParticipant = () => {
+    EMAIL_REGEX.test({email: newParticipant})
+    setModalVisible(false);
+    fetch(`${BACKEND_IP}/activities/participants/${activityId}`, {
+      method: 'POST',
+      headers: { "Content-Type" : "application/json" },
+      body: JSON.stringify({participants : [{email: newParticipant}]}),
+    })
+    .then((response) => response.json())
+    .then((data) => {
+      if(data){
+        alert('Email sent to participant')
+      } else {
+        alert('Error')
+      }
+      setNewParticipant('')
+    })
+
   };
 
   return (
@@ -164,120 +213,188 @@ export default function ActivityAdminScreen({ navigation }) {
         title={activityName}
         avatar={users.avatar}
       />
-      <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === 'ios' ? 'padding' : 'height'} >
-        <View style={styles.friendsContainer}>
-          <Image style={styles.avatar} source={avatar} />
-          <Ionicons style={styles.add} name="add" size={45} color="black" onPress={() => addFriend()}/>
+      {modalVisible && (
+        <Modal visible={modalVisible} animationType="fade" transparent>
+          <View style={styles.centeredView}>
+            <View style={styles.modalView}>
+              <Input
+                placeholder="Email's participant"
+                onChangeText={(value) => {
+                  setNewParticipant(value.toLowerCase());
+                }}
+                value={newParticipant}
+                style={styles.input}
+              />
+              <RedButton
+                buttonText="Add"
+                onPress={() => handleNewParticipant()}
+                style={styles.button}
+                activeOpacity={0.8}
+              />
+              <RedButton
+                buttonText="Close"
+                onPress={() => setModalVisible(false)}
+                style={styles.button}
+                activeOpacity={0.8}
+              />
+            </View>
           </View>
-        <Wallet total="150" max="150" />
-        <View style={styles.editButton}>
-          <TouchableOpacity style={styles.edit} onPress={() => setEdit(!edit)}>
-            <MaterialIcons name="edit" color="white" size={30} />
-          </TouchableOpacity>
-        </View>
-        {edit && (
-          <Input
-            autoFocus
-            editable={edit}
-            onChangeText={(value) => setActivityName(value)}
-            placeholder="Activity Name"
-            require={true}
-            style={styles.input}
-            value={activityName}
-          />
-        )}
-        <Input
-          editable={edit}
-          multiline
-          onChangeText={(value) => setDescription(value)}
-          placeholder="Description"
-          style={styles.input}
-          value={description}
-        />
-        {datePickerVisible && edit && (
-          <RNDateTimePicker
-            display="spinner"
-            mode="date"
-            onChange={onChangeDate}
-            value={datePicker}
-          />
-        )}
-        <Input
-          editable={edit}
-          keyboardType={
-            Platform.OS === "ios" ? "numbers-and-punctuation" : "phone-pad"
-          }
-          onChangeText={(value) => setDate(value)}
-          onPressOut={() => setDatePickerVisible(true)}
-          placeholder="Date"
-          require={true}
-          style={styles.input}
-          value={date}
-        />
+        </Modal>
+      )}
+      <KeyboardAvoidingView
+        style={styles.keyboardView}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+      >
+        <ScrollView contentContainerStyle={styles.scroll}>
+          <View style={styles.content}>
+            <View style={styles.friendsContainer}>
+              <Image style={styles.avatar} source={avatar} />
+              <Ionicons
+                style={styles.add}
+                name="add"
+                size={45}
+                color="black"
+                onPress={() => addFriend()}
+              />
+            </View>
+            <View style={styles.editButton}>
+              <TouchableOpacity
+                style={styles.edit}
+                onPress={() => setEdit(!edit)}
+              >
+                <MaterialIcons name="edit" color="white" size={30} />
+              </TouchableOpacity>
+            </View>
+            <View>
+              <Input
+              autoFocus
+              editable={!edit}
+              onChangeText={(value) => setTotal(value)}
+              placeholder="Amount added"
+              require={true}
+              style={styles.input}
+              value={total} />
+            </View>
+            <View>
+              <Input
+              autoFocus
+              editable={!edit}
+              onChangeText={(value) => setMaxPrice(value)}
+              placeholder="Payment ceiling"
+              require={true}
+              style={styles.input}
+              value={maxPrice} />
+            </View>
+            <Wallet total={Number(total)} max={Number(maxPrice)} style={styles.wallet} />
+            {edit && (
+              <Input
+                autoFocus
+                editable={edit}
+                onChangeText={(value) => setActivityName(value)}
+                placeholder="Activity Name"
+                require={true}
+                style={styles.input}
+                value={activityName}
+              />
+            )}
+            <Input
+              editable={edit}
+              multiline
+              onChangeText={(value) => setDescription(value)}
+              placeholder="Description"
+              style={styles.input}
+              value={description}
+            />
+            {datePickerVisible && edit && (
+              <RNDateTimePicker
+                display="spinner"
+                mode="date"
+                onChange={onChangeDate}
+                value={datePicker}
+              />
+            )}
+            <Input
+              editable={edit}
+              keyboardType={
+                Platform.OS === "ios" ? "numbers-and-punctuation" : "phone-pad"
+              }
+              onChangeText={(value) => setDate(value)}
+              onPressOut={() => setDatePickerVisible(true)}
+              placeholder="Date"
+              require={true}
+              style={styles.input}
+              value={date}
+            />
 
-        {timePickerVisible && edit && (
-          <RNDateTimePicker
-            display="spinner"
-            minuteInterval={15}
-            mode="time"
-            onChange={onChangeTime}
-            value={startTimePicker}
-          />
-        )}
-        <View style={styles.line}>
-          <Input
-            editable={edit}
-            keyboardType={
-              Platform.OS === "ios" ? "numbers-and-punctuation" : "default"
-            }
-            onChangeText={(value) => setStartTime(value)}
-            onPressOut={() => setTimePickerVisible(true)}
-            placeholder="Start time"
-            require={true}
-            style={styles.inputLine}
-            value={startTime}
-          />
-          <Input
-            editable={edit}
-            keyboardType="numeric"
-            onChangeText={(value) => setDuration(value)}
-            placeholder="Duration"
-            style={styles.inputLine}
-            value={duration}
-            uniti="hours"
-          />
-        </View>
-        <Input
-          editable={edit}
-          onChangeText={(value) => setLocation(value)}
-          placeholder="Location"
-          style={styles.input}
-          value={location}
-        />
-        <RedButton
-          buttonText="Valid Modifications"
-          onPress={() => validModifications()}
-          title="Valid Modifications"
-        />
+            {timePickerVisible && edit && (
+              <RNDateTimePicker
+                display="spinner"
+                minuteInterval={15}
+                mode="time"
+                onChange={onChangeTime}
+                value={startTimePicker}
+              />
+            )}
+            <View style={styles.line}>
+              <Input
+                editable={edit}
+                keyboardType={
+                  Platform.OS === "ios" ? "numbers-and-punctuation" : "default"
+                }
+                onChangeText={(value) => setStartTime(value)}
+                onPressOut={() => setTimePickerVisible(true)}
+                placeholder="Start time"
+                require={true}
+                style={styles.inputLine}
+                value={startTime}
+              />
+              <Input
+                editable={edit}
+                keyboardType="numeric"
+                onChangeText={(value) => setDuration(value)}
+                placeholder="Duration"
+                style={styles.inputLine}
+                value={duration}
+                uniti="hours"
+              />
+            </View>
+            <Input
+              editable={edit}
+              onChangeText={(value) => setLocation(value)}
+              placeholder="Location"
+              style={styles.input}
+              value={location}
+            />
+            <RedButton
+              buttonText="Valid Modifications"
+              onPress={() => validModifications()}
+              title="Valid Modifications"
+            />
+          </View>
+        </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  safeArea:{
-    width:'100%',
-    height:'100%',
-    paddingTop:35,
-    backgroundColor: 'white',
-  },
-  container: {
-    alignItems: "center",
-    backgroundColor: "#ffffff",
+  safeArea: {
     flex: 1,
-    height: "100%",
-    justifyContent: "center",
+    backgroundColor: "white",
+  },
+  keyboardView: {
+    flex: 1,
     width: "100%",
+  },
+  scroll: {
+    flexGrow: 1,
+    paddingTop: 130,
+    paddingBottom: 20,
+    justifyContent: "center",
+  },
+  content: {
+    alignItems: "center",
+    paddingBottom: 15,
   },
   title: {
     fontSize: 20,
@@ -301,7 +418,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "flex-end",
     width: "80%",
-    marginTop: 35,
   },
   edit: {
     height: 40,
@@ -327,13 +443,51 @@ const styles = StyleSheet.create({
   },
   friendsContainer: {
     flexDirection: "row",
-    justifyContent:"space-between",
-    alignItems:'center',
+    justifyContent: "space-between",
+    alignItems: "center",
     height: 50,
-    width: "80%", 
-    marginBottom: 30
+    width: "80%",
+    marginBottom: 20,
   },
-  add:{
-    backgroundColor: 'rgb(31,132,214)',
-  }
+  add: {
+    backgroundColor: "rgb(31,132,214)",
+  },
+  centeredView: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  modalView: {
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 30,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  button: {
+    width: 150,
+    height: 50,
+    alignItems: "center",
+    marginBottom: 20,
+    marginTop: 20,
+    paddingTop: 8,
+    backgroundColor: "#F74231",
+    borderRadius: 10,
+  },
+  textButton: {
+    color: "#ffffff",
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 3,
+    height: 24,
+    fontWeight: "600",
+    fontSize: 15,
+  },
 });

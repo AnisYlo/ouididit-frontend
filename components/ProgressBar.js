@@ -7,9 +7,13 @@ export default function Wallet(props) {
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
+    if(props.max === 0) {
+      setProgress(1)
+    } else {
     // Calculer le pourcentage de progression
     const calculatedProgress = props.total / props.max;
-    setProgress(calculatedProgress);
+    setProgress(calculatedProgress)
+  };
     //Le tableau de redevance indique à React quand exécuter la fonction d'effet.
   }, [props.total, props.max]);
 
