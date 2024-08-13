@@ -12,6 +12,7 @@ import CalendarScreen from "../../screens/CalendarScreen";
 import DiscussionsScreen from "../../screens/DiscussionsScreen";
 import ProfilScreen from "../../screens/ProfilScreen";
 import allActivities from "../../screens/AllActivities";
+import Activity from "../../screens/Activity"
 
 const Drawer = createDrawerNavigator();
 
@@ -68,6 +69,7 @@ export default function DrawerNavigator() {
       <Drawer.Screen name="Calendar" component={CalendarScreen} />
       <Drawer.Screen name="Discussions" component={DiscussionsScreen} />
       <Drawer.Screen name="Profile" component={ProfilScreen} />
+      <Drawer.Screen name="ActivityScreen" component={Activity}/>
       <Drawer.Screen name="Logout" component={HomeScreen}
         options={{
           drawerLabelStyle: { 

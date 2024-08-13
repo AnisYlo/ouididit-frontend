@@ -14,7 +14,7 @@ export default function HomeScreen({ navigation }) {
   const users = useSelector(state => state.users.value)
   // prend en parametre le token venant du reducer et le compare a celui venant de la route get
   //si il ne le trouve pas il renvoie sur la page signin sinon on reste simplement sur Home
-
+ 
   useEffect(() => {
     fetch(`${BACKEND_IP}/users/${users.token}/activities`)
     .then(response => response.json()).then(data => {

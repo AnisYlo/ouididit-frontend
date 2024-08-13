@@ -1,42 +1,81 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { View, Text, StyleSheet, SafeAreaView } from 'react-native';
 import { Agenda } from 'react-native-calendars';
 import Header from '../components/Header';
-import activities from '../reducers/activities';
+import moment from 'moment';
+import { calendarTheme } from 'react-native-calendars'; 
+
+const customTheme = {
+  ...calendarTheme, 
+  agendaDayTextColor: '#F74231', 
+  agendaDayNumColor: '#F74231', 
+  agendaTodayColor: '#F74231', 
+  agendaKnobColor: '#F74231', 
+  todayTextColor: '#F74231',
+};
 
 const CalendarScreen = ({ navigation }) => {
-  const [selectedDate, setSelectedDate] = useState("");
   const user = useSelector((state) => state.users.value);
-  const activities = useSelector((state) => state.activities.value)
-  console.log( '------>', activities[0])
-  // Fonction pour charger les événements du mois
-  const loadItems = (day) => {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve();
-      }, 1000);
+  const reduxActivities = useSelector((state) => state.activities.value);
+  
+  const [selectedDate, setSelectedDate] = useState(moment().format('YYYY-MM-DD'));
+  const [allActivities, setAllActivities] = useState({});
+  const [dayActivities, setDayActivities] = useState({});
+
+  useEffect(() => {
+    //prend les infos dans le redux, les tri et les formate au format utiliser pour l'agenda 
+    let container = {};
+    reduxActivities.forEach(data => {
+      const date = moment(data.date).format('YYYY-MM-DD');
+      if (!container[date]) {
+        container[date] = [];
+      }
+      container[date].push({
+        name: data.name,
+        time: moment(data.date).format('HH:mm'),
+        location: data.location.street,
+        activityID: data._id
+      });
+      //pose un timer avant d'arreter de charger l'element de l'agenda
+      const timer = setTimeout(() => {
+        const selectedEvents = allActivities[selectedDate] || [];
+        setDayActivities({ [selectedDate]: selectedEvents });
+      }, 200)
     });
-  };
+ 
+    
+    setAllActivities(container);
+  }, [selectedDate]);
+  
 
-  // Fonction pour afficher les éléments d'événement
-  const renderItem = (item) => {
-    return (
-      <View style={styles.item}>
-        <Text style={styles.itemName}>{activities[0].name}</Text>
-        <Text style={styles.itemTime}>{activities[0].date}</Text>
-        <Text style={styles.itemDescription}>{activities[0].description}</Text>
-      </View>
-    );
-  };
 
-  // Fonction pour gérer la sélection d'une date
+  
+  
+
   const onDayPress = (day) => {
     setSelectedDate(day.dateString);
-    // peux ajouter une logique pour naviguer vers un autre écran si nécessaire
-    // navigation.navigate('Details', { date: day.dateString });
+    const selectedEvents = allActivities[day.dateString] || [];
+    setDayActivities({ [day.dateString]: selectedEvents });
   };
 
+  const handlePress = (item) => {
+    navigation.navigate('Activity', { activity: item.activityID });
+  };
+  const renderItem = (item) => {
+   
+    return (
+      
+      <View>
+        <View style={styles.item}>
+        <Text onPress={() => handlePress(item)} style={styles.itemName}>{item.name}</Text>
+        <Text onPress={() => handlePress(item)}style={styles.itemTime}>{item.time}</Text>
+        <Text onPress={() => handlePress(item)}style={styles.itemLocation}>{item.location}</Text>
+        </View>
+      </View>
+    );
+    
+  };
   return (
     <SafeAreaView style={styles.safeArea}>
       <Header
@@ -47,8 +86,8 @@ const CalendarScreen = ({ navigation }) => {
       <View style={styles.container}>
         <Text style={styles.title}>Calendrier</Text>
         <Agenda
-          items={activities[0]}
-          loadItemsForMonth={loadItems}
+          theme={customTheme}
+          items={dayActivities}
           selected={selectedDate}
           renderItem={renderItem}
           onDayPress={onDayPress}
@@ -60,21 +99,16 @@ const CalendarScreen = ({ navigation }) => {
             },
           }}
         />
-        {selectedDate ? (
-          <Text style={styles.selectedDate}>
-            Date sélectionnée: {selectedDate}
-          </Text>
-        ) : null}
       </View>
     </SafeAreaView>
   );
 };
 
-const styles = StyleSheet.create({  
-  safeArea:{
-    width:'100%',
-    height:'100%',
-    paddingTop:35,
+const styles = StyleSheet.create({
+  safeArea: {
+    width: '100%',
+    height: '100%',
+    paddingTop: 35,
     backgroundColor: 'white',
   },
   container: {
@@ -89,27 +123,25 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginBottom: 20,
   },
-  selectedDate: {
-    backgroundColor: 'red',
-    fontSize: 18,
-    textAlign: 'center',
-    marginTop: 20,
-  },
   item: {
-    backgroundColor: 'lightgray',
+    backgroundColor: '#F74231',
     borderRadius: 5,
     height: 80,
     marginBottom: 10,
     padding: 10,
+    color: 'white'
   },
   itemName: {
-    fontWeight: 'bold',
+    fontWeight: 'ClashGrotesk-Bold',
+    color: 'white'
   },
   itemTime: {
     fontStyle: 'italic',
+    color: 'white'
   },
-  itemDescription: {
+  itemLocation: {
     marginTop: 5,
+    color: 'white'
   },
 });
 

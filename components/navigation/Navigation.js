@@ -13,6 +13,7 @@ import ProfilScreen from "../../screens/ProfilScreen";
 import WalletScreen from "../../screens/WalletScreen";
 import CalendarScreen from "../../screens/CalendarScreen";
 import allActivities from "../../screens/AllActivities";
+import Activity from "../../screens/Activity"
 
 const Stack = createNativeStackNavigator();
 
@@ -41,6 +42,7 @@ export default function Navigation() {
         <Stack.Screen name="Profile Infos" component={ProfilInfosScreen} />
         <Stack.Screen name="Profile Paiements" component={ProfilPaiementsScreen}/>
         <Stack.Screen name="Wallet" component={WalletScreen} />
+        <Stack.Screen name="Activity" component={Activity}/>
       </Stack.Navigator>
     </NavigationContainer>
   );
