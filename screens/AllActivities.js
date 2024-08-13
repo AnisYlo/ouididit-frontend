@@ -1,4 +1,4 @@
-import { KeyboardAvoidingView, Platform, SafeAreaView, ScrollView, StyleSheet, View, } from "react-native";
+import { KeyboardAvoidingView, Platform, SafeAreaView, ScrollView, StyleSheet, View, Text } from "react-native";
 import { useSelector } from "react-redux";
 import Header from "../components/Header";
 
@@ -15,7 +15,9 @@ export default function AllActivities({ navigation }) {
       <KeyboardAvoidingView style={styles.keyboardView} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>          
         <ScrollView contentContainerStyle={styles.scroll} >
           <View style={styles.content}>
-            {/* Add page content here */}
+            <View style={styles.card}></View>
+            <View style={styles.card}></View>
+            <View style={styles.card}></View>
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
@@ -39,7 +41,15 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   content: {
+    
     alignItems: 'center',
     paddingBottom: 20,
   },
+  card: {
+    height: 200 ,
+    width: '95%',
+    borderRadius: 10,
+    backgroundColor: 'red',
+    margin: 10,
+  }
 });
