@@ -2,6 +2,7 @@ import {
     KeyboardAvoidingView,
     Platform,
     SafeAreaView,
+    ScrollView,
     StyleSheet,
     View,
 } from 'react-native';
@@ -146,94 +147,96 @@ export default function CreateActivityScreen( {navigation} ) {
 
     return (
     <SafeAreaView style={styles.safeArea}>
-                <Header 
-                    navigation={navigation}
-                    title='New activity' 
-                    avatar={users.avatar}
-                />  
-        <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>          
-            <View style={styles.container} >
-            <Input
-                autoFocus
-                onChangeText={(value) => setActivityName(value)}
-                placeholder = 'Activity Name'
-                require={true}
-                style={styles.input}
-                value={activityName}
-            />
-            <View style={styles.line}>
-                <Input
-                    keyboardType='numeric'
-                    onChangeText={(value) => setPrice(value)}
-                    placeholder = 'Price'
-                    require={true}
-                    style={styles.inputLine}
-                    value={price}
-                    uniti="€"
-                />
-            </View>
+        <Header 
+            navigation={navigation}
+            title='New activity' 
+            avatar={users.avatar}
+        />
+        <KeyboardAvoidingView style={styles.keyboardView} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>          
+            <ScrollView contentContainerStyle={styles.scroll} >
+                <View style={styles.content}>
+                    <Input
+                        autoFocus
+                        onChangeText={(value) => setActivityName(value)}
+                        placeholder = 'Activity Name'
+                        require={true}
+                        style={styles.input}
+                        value={activityName}
+                    />
+                    <View style={styles.line}>
+                        <Input
+                            keyboardType='numeric'
+                            onChangeText={(value) => setPrice(value)}
+                            placeholder = 'Price'
+                            require={true}
+                            style={styles.inputLine}
+                            value={price}
+                            uniti="€"
+                        />
+                    </View>
 
-            {datePickerVisible && (<RNDateTimePicker
-                display='spinner'
-                mode='date'
-                onChange={onChangeDate}
-                value={datePicker}
-            />)}
-            <Input
-                keyboardType={Platform.OS === 'ios' ? 'numbers-and-punctuation' : 'phone-pad'}
-                onChangeText={(value) => setDate(value)}
-                onPressOut ={() => setDatePickerVisible(true)}
-                placeholder = 'Date'
-                require={true}
-                style={styles.input}
-                value={date}
-            />
-            
-            {timePickerVisible && (<RNDateTimePicker
-                display='spinner'
-                minuteInterval={15}
-                mode='time'
-                onChange={onChangeTime}
-                value={startTimePicker}
-            />)}
-            <View style={styles.line}>
-                <Input
-                    keyboardType={Platform.OS === 'ios' ? 'numbers-and-punctuation' : 'default'}
-                    onChangeText={(value) => setStartTime(value)}
-                    onPressOut ={() => setTimePickerVisible(true)}
-                    placeholder = 'Start time'
-                    require={true}
-                    style={styles.inputLine}
-                    value={startTime}
-                />
-                <Input
-                    keyboardType='numeric'
-                    onChangeText={(value) => setDuration(value)}
-                    placeholder = 'Duration'
-                    style={styles.inputLine}
-                    value={duration}
-                    uniti="hours"
-                />
-            </View>
-            <Input
-                onChangeText={(value) => setLocation(value)}
-                placeholder = 'Location'
-                style={styles.input}
-                value={location}
-            />
-            <Input
-                multiline
-                onChangeText={(value) => setDescription(value)}
-                placeholder = 'Description'
-                style={styles.input}
-                value={description}
-            />
-            <RedButton
-                buttonText='Create'
-                onPress={() => sendCreateActivityScreen()}
-                title='Create activity'
-            />
-            </View>
+                    {datePickerVisible && (<RNDateTimePicker
+                        display='spinner'
+                        mode='date'
+                        onChange={onChangeDate}
+                        value={datePicker}
+                    />)}
+                    <Input
+                        keyboardType={Platform.OS === 'ios' ? 'numbers-and-punctuation' : 'phone-pad'}
+                        onChangeText={(value) => setDate(value)}
+                        onPressOut ={() => setDatePickerVisible(true)}
+                        placeholder = 'Date'
+                        require={true}
+                        style={styles.input}
+                        value={date}
+                    />
+
+                    {timePickerVisible && (<RNDateTimePicker
+                        display='spinner'
+                        minuteInterval={15}
+                        mode='time'
+                        onChange={onChangeTime}
+                        value={startTimePicker}
+                    />)}
+                    <View style={styles.line}>
+                        <Input
+                            keyboardType={Platform.OS === 'ios' ? 'numbers-and-punctuation' : 'default'}
+                            onChangeText={(value) => setStartTime(value)}
+                            onPressOut ={() => setTimePickerVisible(true)}
+                            placeholder = 'Start time'
+                            require={true}
+                            style={styles.inputLine}
+                            value={startTime}
+                        />
+                        <Input
+                            keyboardType='numeric'
+                            onChangeText={(value) => setDuration(value)}
+                            placeholder = 'Duration'
+                            style={styles.inputLine}
+                            value={duration}
+                            uniti="hours"
+                        />
+                    </View>
+                    <Input
+                        onChangeText={(value) => setLocation(value)}
+                        placeholder = 'Location'
+                        style={styles.input}
+                        value={location}
+                    />
+                    <Input
+                        multiline
+                        onChangeText={(value) => setDescription(value)}
+                        placeholder = 'Description'
+                        style={styles.input}
+                        value={description}
+                    />
+                    <RedButton
+                        buttonText='Create'
+                        onPress={() => sendCreateActivityScreen()}
+                        title='Create activity'
+                    />
+                </View>
+            </ScrollView>
         </KeyboardAvoidingView>
     </SafeAreaView>
     );
@@ -241,19 +244,22 @@ export default function CreateActivityScreen( {navigation} ) {
 
 const styles = StyleSheet.create({
     safeArea:{
+        flex: 1,
+        backgroundColor: 'white',
+    },
+    keyboardView:{
         flex:1,
         width:'100%',
-        height:'100%',
-        paddingTop:35,
-        backgroundColor: 'white',
-      },
-    container: {
-        //flex: 1,
-        height:'100%',
-        width:'100%',
-        alignItems: 'center',
+    },
+    scroll: {
+        flexGrow: 1,
+        paddingTop: 130,
+        paddingBottom: 20,
         justifyContent: 'center',
-        backgroundColor: 'white',
+    },
+    content: {
+        alignItems: 'center',
+        paddingBottom: 20,
     },
     title:{
         fontSize: 20,

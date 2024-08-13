@@ -1,23 +1,45 @@
-import { View, StyleSheet, Text, Button } from "react-native";
+import { KeyboardAvoidingView, Platform, SafeAreaView, ScrollView, StyleSheet, View, } from "react-native";
 import { useSelector } from "react-redux";
+import Header from "../components/Header";
 
-export default function WalletScreen() {
+export default function WalletScreen({ navigation }) {
   const users = useSelector(state => state.users.value)
 
   return (
-    <Header
+    <SafeAreaView style={styles.safeArea}>
+      <Header 
           navigation={navigation}
-          title="Wallet"
+          title='Wallet' 
           avatar={users.avatar}
-        />
+      />
+      <KeyboardAvoidingView style={styles.keyboardView} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>          
+        <ScrollView contentContainerStyle={styles.scroll} >
+          <View style={styles.content}>
+            {/* Add page content here */}
+          </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-        backgroundColor: "red",
-      },
+  safeArea:{
+    flex: 1,
+    backgroundColor: 'white',
+  },
+  keyboardView:{
+    flex:1,
+    width:'100%',
+  },
+  scroll: {
+    flexGrow: 1,
+    paddingTop: 130,
+    paddingBottom: 20,
+    justifyContent: 'center',
+  },
+  content: {
+    alignItems: 'center',
+    paddingBottom: 20,
+  },
 });

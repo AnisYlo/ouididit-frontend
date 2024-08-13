@@ -1,4 +1,4 @@
-import { View, StyleSheet, Button, TouchableOpacity, Text } from "react-native";
+import { View, StyleSheet, Button, ScrollView,Platform, Text, KeyboardAvoidingView } from "react-native";
 import RedButton from "../components/redButton";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Header from "../components/Header";
@@ -18,10 +18,8 @@ export default function HomeScreen({ navigation }) {
   useEffect(() => {
     fetch(`${BACKEND_IP}/users/${users.token}/activities`)
     .then(response => response.json()).then(data => {
-  
       if (data) {
-        let activitiesTab = data.allActivities.map(object => {return object})
-        dispatch(addActivities(activitiesTab))
+        dispatch(addActivities(data.allActivities))
       }
     })
   }, []);
@@ -38,7 +36,7 @@ export default function HomeScreen({ navigation }) {
         {activity.length > 0 && activity[0] && (
           <View>
             <Text style={styles.activityList}>{activity[0].name}</Text>
-            <Text style={styles.activityInfo}>{activity[0].location.street}, {activity[1].location.city} {activity[0].date}</Text>
+            <Text style={styles.activityInfo}>{activity[0].location.street}, {activity[0].location.city} {activity[0].date}</Text>
           </View>
         )}
 
@@ -51,7 +49,7 @@ export default function HomeScreen({ navigation }) {
         {activity.length > 0 && activity[2] && (
           <View>
             <Text style={styles.activityList}>{activity[2].name}</Text>
-            <Text style={styles.activityInfo}>{activity[2].location.street}, {activity[1].location.city} {activity[2].date}</Text>
+            <Text style={styles.activityInfo}>{activity[2].location.street}, {activity[2].location.city} {activity[2].date}</Text>
           </View>
         )}
       </View>
@@ -68,12 +66,12 @@ export default function HomeScreen({ navigation }) {
 
 const styles = StyleSheet.create({
   safeArea:{
-    width:'100%',
-    height:'100%',
+    flex: 1,
     backgroundColor: 'white',
-  },
+},
   container: {
     flex: 1,
+    paddingTop: 130,
     alignItems: "center",
     justifyContent: "space-around",
     backgroundColor: "white",

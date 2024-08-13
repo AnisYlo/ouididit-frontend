@@ -32,9 +32,11 @@ export default function Header(props) {
     //Si le route.name est présent dans le tableau routesWithHomeIcon
     //  et si le route.name est différent de Home alors l'icone sera home
     if (routesWithHomeIcon.includes(route.name) && route.name !== "Home") {
+      setLogoHome(true);
       setHomeArrow("home");
       //sinon l'icone sera la flèche
     } else if (!routesWithHomeIcon.includes(route.name)) {
+      setLogoHome(true);
       setHomeArrow("arrow-left");
     }
     //dans le tableau de redevance on surveille route.name -> useEffect est relancé à chaque
@@ -60,16 +62,15 @@ export default function Header(props) {
         </TouchableOpacity>
       </View>
       <View style={styles.page}>
-        <TouchableOpacity style={styles.arrow}>
-          {/* si l'état est initialisé à true, alors le logo sur la page Home ne s'affichera pas */}
-          {!logoHome && (
-            <Feather
+      <TouchableOpacity style={styles.arrow}>
+          {/* si l'état est initialisé à false, alors le logo sur la page Home ne s'affichera pas */}
+            <Feather style={(!logoHome && styles.home)}
               name={homeArrow}
               size={35}
               color="black"
               onPress={() => props.navigation.goBack()}
             />
-          )}
+      
         </TouchableOpacity>
         <Text style={styles.title}>{props.title}</Text>
         <View style={styles.view}></View>
@@ -80,10 +81,14 @@ export default function Header(props) {
 
 const styles = StyleSheet.create({
   container: {
-    height: 100,
+    height: 135,
     width: '100%',
     zIndex:10,
     backgroundColor: 'white',
+    //backgroundColor: 'red',
+    position:'absolute',
+    justifyContent: 'flex-end',
+    paddingBottom:5,
   },
   buttonsMenu: {
     flexDirection: "row",
@@ -103,8 +108,12 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     fontSize: 24,
   },
+  home:{    
+    display:'none',
+  },
   arrow: {
     flex: 1,
+    height:35,
     justifyContent: "flex-start",
   },
   avatar: {

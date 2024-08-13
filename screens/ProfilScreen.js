@@ -5,6 +5,9 @@ import {
   Text,
   TouchableOpacity,
   SafeAreaView,
+  KeyboardAvoidingView,
+  ScrollView,
+  Platform,
   Image,
 } from "react-native";
 import { useSelector } from "react-redux";
@@ -14,16 +17,19 @@ import RedButton from "../components/redButton";
 export default function ProfilScreen({ navigation }) {
   // console.log(navigation);
   const users = useSelector(state => state.users.value)
+  
   return (
-    <>
-      <Header
-        navigation={navigation}
-        title="Profile"
-        avatar={users.avatar}
+    <SafeAreaView style={styles.safeArea}>
+      <Header 
+          navigation={navigation}
+          title='Profile Infos' 
+          avatar={users.avatar}
       />
-      <SafeAreaView>
-        <View>
-          <TouchableOpacity>
+      <KeyboardAvoidingView style={styles.keyboardView} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>          
+        <ScrollView contentContainerStyle={styles.scroll} >
+          <View style={styles.content}>
+            <View>
+            <TouchableOpacity>
             <RedButton 
               buttonText='Informations'
               onPress={() => navigation.navigate("Profile Infos")} />
@@ -37,8 +43,30 @@ export default function ProfilScreen({ navigation }) {
             />
           </TouchableOpacity>
         </View>
-      </SafeAreaView>
-    </>
+        </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 }
-const styles = StyleSheet.create({});
+
+const styles = StyleSheet.create({
+  safeArea:{
+    flex: 1,
+    backgroundColor: 'white',
+  },
+  keyboardView:{
+    flex:1,
+    width:'100%',
+  },
+  scroll: {
+    flexGrow: 1,
+    paddingTop: 130,
+    paddingBottom: 20,
+    justifyContent: 'center',
+  },
+  content: {
+    alignItems: 'center',
+    paddingBottom: 20,
+  },
+});

@@ -11,6 +11,7 @@ export const activitiesSlice = createSlice({
         addActivities: (state, action) => { 
             state.value = action.payload;
         },
+
         logoutActivities: (state) => {
             state.value = initialState.value;
         },

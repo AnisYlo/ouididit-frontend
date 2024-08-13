@@ -59,6 +59,7 @@ const store = configureStore({
 export default function App() {
   const [loaded, error] = useFonts({
     "ClashGrotesk-Regular": require("./assets/fonts/ClashGrotesk-Regular.otf"),
+    "ClashGrotesk-Bold": require("./assets/fonts/ClashGrotesk-Bold.otf"),
   });
 
   useEffect(() => {
