@@ -20,7 +20,7 @@ const Stack = createNativeStackNavigator();
 export default function Navigation() {
   // Retrive user authification status (true -> connected, false -> not connected)
   const isAuthenticated = useSelector(state => state.users.isAuthenticated);
-  console.log("isAuthenticated =>", isAuthenticated)
+  //console.log("isAuthenticated =>", isAuthenticated)
 
   return (
     <NavigationContainer>

@@ -6,6 +6,7 @@ import { useFonts } from "expo-font";
 import Navigation from './components/navigation/Navigation';
 import users from "./reducers/users";
 import activities from "./reducers/activities";
+import chats from "./reducers/chats";
 import * as SplashScreen from "expo-splash-screen";
 import { Calendar, Agenda } from 'react-native-calendars';
 
@@ -53,13 +54,19 @@ const MyAgenda = () => {
 const store = configureStore({
   reducer: { 
     users, 
-    activities },
+    activities,
+    chats 
+  },
 });
 
 export default function App() {
   const [loaded, error] = useFonts({
-    "ClashGrotesk-Regular": require("./assets/fonts/ClashGrotesk-Regular.otf"),
     "ClashGrotesk-Bold": require("./assets/fonts/ClashGrotesk-Bold.otf"),
+    "ClashGrotesk-Extralight": require("./assets/fonts/ClashGrotesk-Extralight.otf"),
+    "ClashGrotesk-Light": require("./assets/fonts/ClashGrotesk-Light.otf"),
+    "ClashGrotesk-Medium": require("./assets/fonts/ClashGrotesk-Medium.otf"),
+    "ClashGrotesk-Regular": require("./assets/fonts/ClashGrotesk-Regular.otf"),
+    "ClashGrotesk-Semibold": require("./assets/fonts/ClashGrotesk-Semibold.otf"),
   });
 
   useEffect(() => {

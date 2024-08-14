@@ -8,8 +8,8 @@ import {
     TouchableWithoutFeedback,
     View,
 } from 'react-native';
-import RNDateTimePicker, { DateTimePickerAndroid } from '@react-native-community/datetimepicker';
-import moment, { invalid } from 'moment';
+import RNDateTimePicker from '@react-native-community/datetimepicker';
+import moment from 'moment';
 import { useState } from 'react';
 import { useSelector } from "react-redux";
 import Input from '../components/Input';
