@@ -11,8 +11,6 @@ import {
   Modal,
   TextInput,
   Button,
-  TouchableWithoutFeedback,
-  Keyboard
 } from "react-native";
 import RNDateTimePicker from "@react-native-community/datetimepicker";
 import moment from "moment";
@@ -43,20 +41,20 @@ export default function ActivityAdminScreen({ route, navigation }) {
   const [timePickerVisible, setTimePickerVisible] = useState(false);
   const [edit, setEdit] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
-  const [newParticipant, setNewParticipant] = useState("");
+  const [inputParticipant, setinputParticipant] = useState(null);
+  const [participantsArr, setParticipantsArr] = useState([]);
   const [total, setTotal] = useState(0);
-  const [maxPrice, setMaxPrice] = useState(0)
+  const [maxPrice, setMaxPrice] = useState(0);
 
   // const { activityId }  = route.params;
   const activityId = "66bb6b6e425d42873c3dbec0";
 
   // Grabbed from emailregex.com
-  const EMAIL_REGEX = /^[\w-.]+@([\w-]+.)+[\w-]{2,}$/ig;
+  const EMAIL_REGEX = /^[\w-.]+@([\w-]+.)+[\w-]{2,}$/gi;
 
   const users = useSelector((state) => state.users.value);
-  const avatar = !users.avatar
-    ? require("../assets/avatarDefault.png")
-    : { uri: users.avatar };
+  const avatar = (avatarUrl) =>
+    !avatarUrl ? require("../assets/avatarDefault.png") : { uri: avatarUrl };
   const isFocused = useIsFocused();
 
   const onChangeDate = (event, selectedDate) => {
@@ -111,30 +109,18 @@ export default function ActivityAdminScreen({ route, navigation }) {
     // Check that the date is later than now
     return date > new Date();
   }
-  const participants = ["test@MediaList.fr", "toto@MediaList.fr"];
 
   useEffect(() => {
-    if (activityId)
-      fetch(`${BACKEND_IP}/activities/participants/${activityId}`)
-        .then((response) => response.json())
-        .then((data) => {
-          console.log(data);
-        });
-  }, [isFocused, activityId]);
-
-  useEffect(() => {
-    if (activityId) {
-      fetch(`${BACKEND_IP}/activities/${activityId}`)
-        .then((response) => response.json())
-        .then((data) => {
-          setDescription(data.activity.description);
-          setActivityName(data.activity.name);
-          setDate(moment(data.activity.date).format("DD/MM/YYYY"));
-          setDuration(String(data.activity.time));
-          setLocation(data.activity.location.street);
-          setStartTime(moment(data.activity.startTime).format("HH:mm"));
-        });
-    }
+    fetch(`${BACKEND_IP}/activities/${activityId}`)
+      .then((response) => response.json())
+      .then((data) => {
+        setDescription(data.activity.description);
+        setActivityName(data.activity.name);
+        setDate(moment(data.activity.date).format("DD/MM/YYYY"));
+        setDuration(String(data.activity.time));
+        setLocation(data.activity.location.street);
+        setStartTime(moment(data.activity.startTime).format("HH:mm"));
+      });
   }, [activityId]);
 
   const validModifications = (res) => {
@@ -188,30 +174,38 @@ export default function ActivityAdminScreen({ route, navigation }) {
   };
 
   const handleNewParticipant = () => {
-    EMAIL_REGEX.test({email: newParticipant})
+    EMAIL_REGEX.test({ email: inputParticipant });
     setModalVisible(false);
     fetch(`${BACKEND_IP}/activities/participants/${activityId}`, {
-      method: 'POST',
-      headers: { "Content-Type" : "application/json" },
-      body: JSON.stringify({participants : [{email: newParticipant}]}),
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ participants: [{ email: inputParticipant }] }),
     })
-    .then((response) => response.json())
-    .then((data) => {
-      if(data){
-        alert('Email sent to participant')
-      } else {
-        alert('Error')
-      }
-      setNewParticipant('')
-    })
-
+      .then((response) => response.json())
+      .then((data) => {
+        console.log("hello data", data.participants);
+        setParticipantsArr([...participantsArr, data.participants]);
+        setinputParticipant("");
+        if (data) {
+          alert("Email sent to participant");
+        } else {
+          alert("Error");
+        }
+      });
   };
 
-  const keyboardClose = () =>{
-    setDatePickerVisible(false);
-    setTimePickerVisible(false);
-    Keyboard.dismiss();
-  }
+  const avatarPart = participantsArr.map((data, i) => {
+    return (
+      <Image
+        key={i}
+        source={avatar(data.avatar)}
+        style={styles.avatar}
+        editable={edit}
+      />
+    );
+  });
+
+  const deleteParticipant = () => {};
 
   return (
     //implementation du component header
@@ -221,7 +215,6 @@ export default function ActivityAdminScreen({ route, navigation }) {
         title={activityName}
         avatar={users.avatar}
       />
-      <TouchableWithoutFeedback onPress={keyboardClose}>
       {modalVisible && (
         <Modal visible={modalVisible} animationType="fade" transparent>
           <View style={styles.centeredView}>
@@ -229,9 +222,9 @@ export default function ActivityAdminScreen({ route, navigation }) {
               <Input
                 placeholder="Email's participant"
                 onChangeText={(value) => {
-                  setNewParticipant(value.toLowerCase());
+                  setinputParticipant(value.toLowerCase());
                 }}
-                value={newParticipant}
+                value={inputParticipant}
                 style={styles.input}
               />
               <RedButton
@@ -256,15 +249,21 @@ export default function ActivityAdminScreen({ route, navigation }) {
       >
         <ScrollView contentContainerStyle={styles.scroll}>
           <View style={styles.content}>
-            <View style={styles.friendsContainer}>
-              <Image style={styles.avatar} source={avatar} />
-              <Ionicons
-                style={styles.add}
-                name="add"
-                size={45}
-                color="black"
-                onPress={() => addFriend()}
-              />
+            <View style={styles.friendsContainerWrapper}>
+              <ScrollView
+                horizontal={true}
+                style={styles.horizontalScrollContent}
+              >
+                <View style={styles.friendsContainer}>{avatarPart}</View>
+              </ScrollView>
+              <View style={styles.add}>
+                <Ionicons
+                  name="add"
+                  size={45}
+                  color="white"
+                  onPress={() => addFriend()}
+                />
+              </View>
             </View>
             <View style={styles.editButton}>
               <TouchableOpacity
@@ -276,25 +275,33 @@ export default function ActivityAdminScreen({ route, navigation }) {
             </View>
             <View>
               <Input
-              autoFocus
-              editable={!edit}
-              onChangeText={(value) => setTotal(value)}
-              placeholder="Amount added"
-              require={true}
-              style={styles.input}
-              value={total} />
+                autoFocus
+                editable={edit}
+                keyboardType="numeric"
+                onChangeText={(value) => setMaxPrice(value)}
+                placeholder="Payment ceiling"
+                require={true}
+                style={styles.input}
+                value={maxPrice}
+              />
             </View>
             <View>
               <Input
-              autoFocus
-              editable={!edit}
-              onChangeText={(value) => setMaxPrice(value)}
-              placeholder="Payment ceiling"
-              require={true}
-              style={styles.input}
-              value={maxPrice} />
+                autoFocus
+                editable={edit}
+                keyboardType="numeric"
+                onChangeText={(value) => setTotal(value)}
+                placeholder="Amount added"
+                require={true}
+                style={styles.input}
+                value={total}
+              />
             </View>
-            <Wallet total={Number(total)} max={Number(maxPrice)} style={styles.wallet} />
+            <Wallet
+              total={Number(total)}
+              max={Number(maxPrice)}
+              style={styles.wallet}
+            />
             {edit && (
               <Input
                 autoFocus
@@ -382,7 +389,6 @@ export default function ActivityAdminScreen({ route, navigation }) {
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
-      </TouchableWithoutFeedback>
     </SafeAreaView>
   );
 }
@@ -455,12 +461,15 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    height: 50,
+    height: 100,
     width: "80%",
-    marginBottom: 20,
+    // backgroundColor: "green",
   },
   add: {
     backgroundColor: "rgb(31,132,214)",
+    borderRadius: 15,
+    justifyContent: "flex-end",
+    marginLeft: 10,
   },
   centeredView: {
     flex: 1,
@@ -499,5 +508,11 @@ const styles = StyleSheet.create({
     height: 24,
     fontWeight: "600",
     fontSize: 15,
+  },
+  friendsContainerWrapper: {
+    width: "80%",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
   },
 });
