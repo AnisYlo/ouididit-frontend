@@ -12,7 +12,7 @@ export default function ChatMessage(props) {
     const avatar = (props.avatar) ? {uri : props.avatar} : require('../assets/avatarDefault.png');
     return (          
         <View style={styles.messageContainer} >
-            <Image style={styles.avatar} source={avatar} />
+            <Image style={styles.avatar} source={avatar} alt={`Avatar of ${props.userName}`}/>
             <View style={styles.textContainer}>
                 <View style={styles.messageInfos}>
                     <Text style={styles.userName} >{props.userName}</Text> 

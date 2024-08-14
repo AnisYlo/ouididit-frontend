@@ -17,13 +17,14 @@ const chatId = '66b8bc81c2d65214466106d9';
 export default function DiscussionsScreen({ navigation }) {
   const [messages, setMessages] = useState([]);
   const [messageText, setMessageText] = useState('');
+  const [activitiesIndex, setActivitiesIndex] = useState(0);
   
   const isFocused = useIsFocused();
 
   const users = useSelector((state) => state.users.value);
   const activities = useSelector((state) => state.activities.value);
+  const chats = useSelector((state) => state.chats.value);
   const scrollViewRef = useRef();
-  let activitiesIndex =0;
 
   useEffect(()=>{
     // Créer une nouvelle instance de Pusher
@@ -34,8 +35,7 @@ export default function DiscussionsScreen({ navigation }) {
         const response = await fetch(`${BACKEND_IP}/chats/${chatId}`);
         const chatHistory = await response.json();
 
-        console.log('chatHistory.messages[last] =>',chatHistory.messages[chatHistory.messages.length-1])
-        // If last message, is event then it's remove from array
+       // If last message, is event then it's remove from array
         if(chatHistory.messages[chatHistory.messages.length-1].type==='Event')
           chatHistory.messages.pop();
         setMessages(chatHistory.messages);
@@ -125,15 +125,18 @@ export default function DiscussionsScreen({ navigation }) {
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'}  >
         <View style={styles.vue1}>
           <View style={styles.vue11}>
-          <Text  >Hello</Text>
-            {/* {
-              activities.map((activity, i)=>{ */}
-                <ChatActivity key={0}
+            {
+              activities.map((activity, i)=>{
+                console.log(activity._id)
+               return ( <>
+                 {/* <ChatActivity key={i}
                   userToken ={users.token}
-                  chatId = {chatId}
-                />
-              {/* })
-            } */}
+                  chatId = {chats.find(()=> activity._id ===chats._id)}
+                  activityId = {activity._id}
+                /> */}
+                </>)
+              })
+            }
           </View>
           <View style={styles.vue12}>
             <View style={styles.topBar}>
@@ -194,8 +197,9 @@ const styles = StyleSheet.create({
   },
   vue11: {
     flexDirection: "column",
-    alignItems: "flex-start",
+    alignItems: "center",
     backgroundColor: "#1F84D6",
+    paddingVertical: 10,
     width: "20%",
     height: "100%",
     borderRadius: 10,

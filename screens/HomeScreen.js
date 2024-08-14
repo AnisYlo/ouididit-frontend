@@ -6,7 +6,7 @@ import { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { BACKEND_IP } from '@env';
 import { addActivities } from "../reducers/activities";
-import { addchats } from "../reducers/chats";
+import { addChats } from "../reducers/chats";
 import { useIsFocused} from '@react-navigation/native';
 import moment from 'moment';
 
@@ -17,6 +17,25 @@ export default function HomeScreen({ navigation }) {
   const activity = useSelector(state => state.activities.value);
   const chats = useSelector(state => state.chats.value);
   const isFocused = useIsFocused();
+
+  // Return last message for a chat {message} or null
+  const getLastMessage = chat => {                  
+    const lastMessage = chat.messages.findLast(mess => mess.type === 'Message');                  
+      if(lastMessage)
+        return lastMessage
+      else 
+        return null
+  };
+
+  // Show last message or replacement text if not exist
+  function showMessage (chat) {
+    const message =(getLastMessage(chat))
+    if(message)
+      return `${message.user.username} : ${moment(message.date).format('DD/MM à HH:mm')} - ${message.message}`;
+    else 
+      return 'No messages yet'
+  }
+
 
   useEffect(() => {
     fetch(`${BACKEND_IP}/users/${users.token}/activities`)
@@ -39,6 +58,35 @@ export default function HomeScreen({ navigation }) {
             // Order activity by dates (from the nearest to the furthest)
             updatedActivities.sort((a, b) => new Date(a.date) - new Date(b.date));
             dispatch(addActivities(updatedActivities));
+
+            // 
+            const chatPromises = updatedActivities.map( async (activity)=>{
+              return fetch(`${BACKEND_IP}/chats/find/${activity._id}`)
+              .then(response => response.json())
+              .then(dataChats => {
+                if (dataChats.result) {
+                  return dataChats.chat;                  
+                }
+              })
+            })
+            Promise.all(chatPromises)
+              .then(chats =>{
+                // Sort chats by last message date
+                chats.sort((a, b) => {
+                    const lastMessageA = getLastMessage(a);
+                    const lastMessageB = getLastMessage(b);
+                    
+                    // If a chat has no messages, it is placed after those that have messages.
+                    if (lastMessageA === null) return 1;
+                    if (lastMessageB === null) return -1;
+                    
+                    // If else, compare dates
+                    const dateA = new Date(lastMessageA.date);
+                    const dateB = new Date(lastMessageB.date);  
+                    return dateB - new dateA;
+                });
+                dispatch(addChats(chats))
+              })
           })
       }
     })
@@ -75,7 +123,24 @@ export default function HomeScreen({ navigation }) {
         </View>
       </View>
       <View style={styles.chatCard}>
-        <Text>{JSON.stringify(activity[1])}</Text>
+      <Text style={styles.activityList}>Discussions :</Text>
+      <View style={styles.viewActivity}>
+          {chats && chats.length > 0 ? (
+            chats.slice(0, 4)  // Limit to 4 chats
+              .map((chat, i) => (                
+                <View key={i}>
+                  <View style={styles.activityTitle}>
+                    <Text style={styles.activityList}>{activity.find(acti => acti._id === chat.activity).name}</Text>
+                  </View>
+                  <Text style={styles.activityInfo}>
+                    {showMessage(chat)}
+                  </Text>
+                </View>
+              ))
+          ) : (
+            <Text>No upcoming activities yet</Text>  // Message if no activity to display
+          )}
+        </View>
       </View>
       <RedButton
         onPress={() => navigation.navigate("Create activity")}
@@ -91,7 +156,7 @@ const styles = StyleSheet.create({
   safeArea:{
     flex: 1,
     backgroundColor: 'white',
-},
+  },
   container: {
     flex: 1,
     paddingTop: 130,
@@ -132,6 +197,7 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     height: "40%",
     width: "95%",
+    paddingHorizontal: 10,
   },
   title: {
     width: "100%",
