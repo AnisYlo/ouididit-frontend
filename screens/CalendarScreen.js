@@ -24,34 +24,30 @@ const CalendarScreen = ({ navigation }) => {
   const [dayActivities, setDayActivities] = useState({});
 
   useEffect(() => {
-    //prend les infos dans le redux, les tri et les formate au format utiliser pour l'agenda 
+    // prend les infos dans le redux, les tri et les formate au format utilisé pour l'agenda 
     let container = {};
     reduxActivities.forEach(data => {
+      
+     
       const date = moment(data.date).format('YYYY-MM-DD');
       if (!container[date]) {
         container[date] = [];
       }
+     
       container[date].push({
         name: data.name,
         time: moment(data.date).format('HH:mm'),
         location: data.location.street,
-        activityID: data._id
+        activityID: data._id,
+        organizer: data.organizer,
       });
-      //pose un timer avant d'arreter de charger l'element de l'agenda
-      const timer = setTimeout(() => {
-        const selectedEvents = allActivities[selectedDate] || [];
-        setDayActivities({ [selectedDate]: selectedEvents });
-      }, 200)
     });
- 
     
     setAllActivities(container);
-  }, [selectedDate]);
   
-
-
-  
-  
+    const selectedEvents = container[selectedDate] || [];
+    setDayActivities({ [selectedDate]: selectedEvents });
+  }, [reduxActivities, selectedDate]);
 
   const onDayPress = (day) => {
     setSelectedDate(day.dateString);
@@ -60,22 +56,21 @@ const CalendarScreen = ({ navigation }) => {
   };
 
   const handlePress = (item) => {
-    navigation.navigate('Activity', { activity: item.activityID });
+    navigation.navigate('Activity', { activity: item.activityID, organizer: item.organizer });
   };
+
   const renderItem = (item) => {
-   
     return (
-      
       <View>
         <View style={styles.item}>
-        <Text onPress={() => handlePress(item)} style={styles.itemName}>{item.name}</Text>
-        <Text onPress={() => handlePress(item)}style={styles.itemTime}>{item.time}</Text>
-        <Text onPress={() => handlePress(item)}style={styles.itemLocation}>{item.location}</Text>
+          <Text onPress={() => handlePress(item)} style={styles.itemName}>{item.name}</Text>
+          <Text onPress={() => handlePress(item)} style={styles.itemTime}>{item.time}</Text>
+          <Text onPress={() => handlePress(item)} style={styles.itemLocation}>{item.location}</Text>
         </View>
       </View>
     );
-    
   };
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <Header
@@ -129,19 +124,19 @@ const styles = StyleSheet.create({
     height: 80,
     marginBottom: 10,
     padding: 10,
-    color: 'white'
+    color: 'white',
   },
   itemName: {
     fontWeight: 'ClashGrotesk-Bold',
-    color: 'white'
+    color: 'white',
   },
   itemTime: {
     fontStyle: 'italic',
-    color: 'white'
+    color: 'white',
   },
   itemLocation: {
     marginTop: 5,
-    color: 'white'
+    color: 'white',
   },
 });
 
