@@ -43,6 +43,9 @@ export default function Header(props) {
     //fois que route.name change
   }, [route.name]);
 
+  function truncateString(str, num) {
+    return str.length > num ? str.slice(0, num) + "..." : str;
+  }
   // set avatar to user uri if exist or to default avatar
   const avatar = !(props.avatar) ? require('../assets/avatarDefault.png') : {uri : props.avatar};
 
@@ -50,7 +53,7 @@ export default function Header(props) {
     <SafeAreaView style={styles.container}>
       <View style={styles.buttonsMenu}>
         <TouchableOpacity onPress={() => props.navigation.navigate("Profile")}>
-          <Image style={styles.avatar} source={avatar} />
+          <Image style={styles.avatar} source={avatar} alt="Your avatar"/>
         </TouchableOpacity>
         <TouchableOpacity style={styles.drawer}>
           <Entypo
@@ -72,7 +75,7 @@ export default function Header(props) {
             />
       
         </TouchableOpacity>
-        <Text style={styles.title}>{props.title}</Text>
+        <Text style={styles.title}>{truncateString(props.title, 22)}</Text>
         <View style={styles.view}></View>
       </View>
     </SafeAreaView>
@@ -103,7 +106,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
   },
   title: {
-    flex: 4,
+    flex: 8,
     textAlign: "center",
     fontWeight: "600",
     fontSize: 24,
