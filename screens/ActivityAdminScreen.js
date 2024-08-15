@@ -11,11 +11,7 @@ import {
   Modal,
   TextInput,
   Button,
-<<<<<<< HEAD
-  TouchableOpacity
-=======
   TouchableOpacity,
->>>>>>> navigation
 } from "react-native";
 import RNDateTimePicker from "@react-native-community/datetimepicker";
 import moment from "moment";
@@ -51,20 +47,12 @@ export default function ActivityAdminScreen({ navigation }) {
   const [maxPrice, setMaxPrice] = useState(0);
   const route = useRoute();
 
-<<<<<<< HEAD
 
 
   const activityId = route.params?.activity
   const organizer = route.params?.organizer
   // const activityId = "66bb6b6e425d42873c3dbec0";
   // const participantId = "66bdb00005e179a0e7496da7";
-=======
-  const route = useRoute();
-  const activityId = route.params?.activityId
-  // console.log("activity ID===>",activityId)
-  // const activityId = "66b616abf3737e48d744e56b";
- 
->>>>>>> navigation
 
   // Grabbed from emailregex.com
   const EMAIL_REGEX = /^[\w-.]+@([\w-]+.)+[\w-]{2,}$/gi;
