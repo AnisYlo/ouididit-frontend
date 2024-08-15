@@ -47,9 +47,9 @@ export default function ActivityAdminScreen({ navigation }) {
   const [maxPrice, setMaxPrice] = useState(0);
 
   const route = useRoute();
-  // const activityId = route.params?.activityId
+  const activityId = route.params?.activityId
   // console.log("activity ID===>",activityId)
-  const activityId = "66b616abf3737e48d744e56b";
+  // const activityId = "66b616abf3737e48d744e56b";
  
 
   // Grabbed from emailregex.com
