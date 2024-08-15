@@ -29,6 +29,7 @@ const CalendarScreen = ({ navigation }) => {
     // prend les infos dans le redux, les tri et les formate au format utilisé pour l'agenda 
     let container = {};
     reduxActivities.forEach(data => {
+      console.log("hello data =====>", data)
       
      
       const date = moment(data.date).format('YYYY-MM-DD');
