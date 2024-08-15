@@ -9,7 +9,6 @@ import { addActivities } from "../reducers/activities";
 import { addChats } from "../reducers/chats";
 import { useIsFocused} from '@react-navigation/native';
 import moment from 'moment';
-import { TouchableOpacity } from "react-native-gesture-handler";
 
 
 export default function HomeScreen({ navigation }) {
