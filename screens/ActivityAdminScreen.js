@@ -11,7 +11,11 @@ import {
   Modal,
   TextInput,
   Button,
+<<<<<<< HEAD
   TouchableOpacity
+=======
+  TouchableOpacity,
+>>>>>>> navigation
 } from "react-native";
 import RNDateTimePicker from "@react-native-community/datetimepicker";
 import moment from "moment";
@@ -47,12 +51,20 @@ export default function ActivityAdminScreen({ navigation }) {
   const [maxPrice, setMaxPrice] = useState(0);
   const route = useRoute();
 
+<<<<<<< HEAD
 
 
   const activityId = route.params?.activity
   const organizer = route.params?.organizer
   // const activityId = "66bb6b6e425d42873c3dbec0";
   // const participantId = "66bdb00005e179a0e7496da7";
+=======
+  const route = useRoute();
+  const activityId = route.params?.activityId
+  // console.log("activity ID===>",activityId)
+  // const activityId = "66b616abf3737e48d744e56b";
+ 
+>>>>>>> navigation
 
   // Grabbed from emailregex.com
   const EMAIL_REGEX = /^[\w-.]+@([\w-]+.)+[\w-]{2,}$/gi;
@@ -125,8 +137,17 @@ export default function ActivityAdminScreen({ navigation }) {
         setDuration(String(data.activity.time));
         setLocation(data.activity.location.street);
         setStartTime(moment(data.activity.startTime).format("HH:mm"));
+
+
+        fetch(`${BACKEND_IP}/activities/participants/${activityId}`)
+        .then((response) => response.json())
+        .then((data) => {
+          // console.log("tableau de participants ====>", data)
+          setParticipantsArr(data);
+        });
       });
   }, [activityId]);
+  
 
   const validModifications = (res) => {
     // Check inputs before action
@@ -188,10 +209,16 @@ export default function ActivityAdminScreen({ navigation }) {
     })
       .then((response) => response.json())
       .then((data) => {
-        // console.log("hello data", data.participants);
-        setParticipantsArr([...participantsArr, data.participants]);
-        setinputParticipant("");
-        if (data) {
+        if (data.result) {
+          const newParticipant = {
+            ...participantsArr[0], // Clone du premier participant comme modèle
+            user: data.participants[0], // Remplacement des données utilisateur
+            _id: '', // ID vide pour un nouveau participant
+          };
+    
+          // Mise à jour de l'état avec le nouveau participant
+          setParticipantsArr(prev => [...prev, newParticipant]);
+          setinputParticipant("");
           alert("Email sent to participant");
         } else {
           alert("Error");
@@ -199,10 +226,43 @@ export default function ActivityAdminScreen({ navigation }) {
       });
   };
 
-  const avatarPart = participantsArr.map((data, i) => {
+  
+  const deleteParticipant = (participantId) => {
+    if(participantsArr.length === 1){
+      Alert.alert('Impossible de supprimer le dernier participant')
+      return;
+    }
+    fetch(`${BACKEND_IP}/activities/participants/${participantId}`, {
+      method: "DELETE",
+      headers: { "Content-type": "application/json" },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data) {
+          fetch(`${BACKEND_IP}/activities/participants/${activityId}`)
+          .then((response) => response.json())
+          .then((data) => {
+            // console.log("tableau de participants ====>", data)
+            setParticipantsArr(data);
+          });
+          alert("Invitation removed!");
+        } else {
+          alert("Error during process!");
+        }
+      });
+  };
+  // setParticipantsArr()
+  // const participantFiltres = data.participants.filter(participant => participant)
+  
+  let avatarPart;
+
+if (participantsArr && Array.isArray(participantsArr)) {
+  avatarPart = participantsArr.map((data, i) => {
+    const participantId = data.user._id;
     return (
       <TouchableOpacity
-        onPress={() => 
+        key={i}
+        onPress={() =>
           Alert.alert(
             "Remove invitation",
             "Are you sure you want to remove invitation?",
@@ -215,38 +275,23 @@ export default function ActivityAdminScreen({ navigation }) {
               {
                 text: "Yes",
                 onPress: () => {
-                  deleteParticipant();
-                  setParticipantsArr('')
+                  deleteParticipant(participantId);
                   console.log("Suppression validée");
                 },
               },
             ],
             { cancelable: false }
           )
-        }>
-      <Image
-        key={data.i}
-        source={avatar(data.avatar)}
-        style={styles.avatar}
-      />
+        }
+      >
+        <Image key={i} source={avatar(data.avatar)} style={styles.avatar} />
       </TouchableOpacity>
     );
   });
+} else {
+  avatarPart = null; // rendu si participantsArr est indéfini ou non un tableau
+}
 
-  const deleteParticipant = () => {
-    fetch(`${BACKEND_IP}/participants/${participantId}`, {
-      method: "DELETE",
-      headers: { "Content-type": "application/json" },
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        if (data) {
-          alert("Invitation removed!");
-        } else {
-          alert("Error during process!");
-        }
-      });
-  };
 
   return (
     //implementation du component header
@@ -295,9 +340,7 @@ export default function ActivityAdminScreen({ navigation }) {
                 horizontal={true}
                 style={styles.horizontalScrollContent}
               >
-                <View style={styles.friendsContainer}>
-                  {avatarPart}
-                </View>
+                <View style={styles.friendsContainer}>{avatarPart}</View>
               </ScrollView>
               <View style={styles.add}>
                 <Ionicons
@@ -340,10 +383,7 @@ export default function ActivityAdminScreen({ navigation }) {
                 value={total}
               />
             </View>
-            <Wallet
-              total={Number(total)}
-              max={Number(maxPrice)}
-            />
+            <Wallet total={Number(total)} max={Number(maxPrice)} />
             {edit && (
               <Input
                 autoFocus
