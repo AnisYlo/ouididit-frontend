@@ -4,7 +4,7 @@ import { StyleSheet, Text, TouchableOpacity} from 'react-native';
 function RedButton(props){
 
     return(
-        <TouchableOpacity style={styles.redButton} onPress={props.onPress}>
+        <TouchableOpacity style={[styles.redButton, props.style]} onPress={props.onPress}>
             <Text style={styles.redButtonText} >
                 {props.buttonText}
             </Text>

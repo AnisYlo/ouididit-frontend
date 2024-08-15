@@ -26,6 +26,7 @@ import { BACKEND_IP } from "@env";
 import { useRoute } from "@react-navigation/native";
 import Wallet from "../components/ProgressBar";
 import { useIsFocused } from "@react-navigation/native";
+import PaymentModal from "../components/ModalCB";
 
 export default function ActivityAdminScreen({ navigation }) {
   const [activityName, setActivityName] = useState("");
@@ -43,16 +44,15 @@ export default function ActivityAdminScreen({ navigation }) {
   const [modalVisible, setModalVisible] = useState(false);
   const [inputParticipant, setinputParticipant] = useState(null);
   const [participantsArr, setParticipantsArr] = useState([]);
-  const [total, setTotal] = useState(0);
   const [maxPrice, setMaxPrice] = useState(0);
+  const [totalPayement, setTotalPayement] = useState(0);
+  const [modalCBVisible, setModalCBVisible] = useState(false);
   const route = useRoute();
 
 
 
   const activityId = route.params?.activity
   const organizer = route.params?.organizer
-  // const activityId = "66bb6b6e425d42873c3dbec0";
-  // const participantId = "66bdb00005e179a0e7496da7";
 
   // Grabbed from emailregex.com
   const EMAIL_REGEX = /^[\w-.]+@([\w-]+.)+[\w-]{2,}$/gi;
@@ -124,15 +124,24 @@ export default function ActivityAdminScreen({ navigation }) {
         setDate(moment(data.activity.date).format("DD/MM/YYYY"));
         setDuration(String(data.activity.time));
         setLocation(data.activity.location.street);
-        setStartTime(moment(data.activity.startTime).format("HH:mm"));
-
-
+        setStartTime(moment(data.activity.startTime).format("HH:mm"))
+        
         fetch(`${BACKEND_IP}/activities/participants/${activityId}`)
         .then((response) => response.json())
         .then((data) => {
-          // console.log("tableau de participants ====>", data)
           setParticipantsArr(data);
         });
+      })
+      .then(()=>{
+        fetch(`${BACKEND_IP}/transactions/${activityId}`)
+          .then((response) => response.json())
+          .then((data) => {
+            const initialValue = 0;
+            const totalAmount = data.reduce(
+              (accumulator, currentValue) => accumulator + currentValue.amount,
+              initialValue)
+              setTotalPayement(totalAmount);
+          })
       });
   }, [activityId]);
   
@@ -162,6 +171,7 @@ export default function ActivityAdminScreen({ navigation }) {
       date: startDate,
       time: duration,
       description: description,
+      payementLimit : maxPrice,
     };
     // console.log(modif)
     fetch(`${BACKEND_IP}/activities/${activityId}`, {
@@ -322,7 +332,8 @@ if (participantsArr && Array.isArray(participantsArr)) {
         behavior={Platform.OS === "ios" ? "padding" : "height"}
       >
         <ScrollView contentContainerStyle={styles.scroll}>
-          <View style={styles.content}>
+          <View style={styles.content}>            
+          <Text style={styles.participantsTitle}>Participants :</Text>
             <View style={styles.friendsContainerWrapper}>
               <ScrollView
                 horizontal={true}
@@ -339,27 +350,9 @@ if (participantsArr && Array.isArray(participantsArr)) {
                 />
               </View>
             </View>
-            <View style={styles.editButton}>
-              <TouchableOpacity
-                style={styles.edit}
-                onPress={() => setEdit(!edit)}
-              >
-                <MaterialIcons name="edit" color="white" size={30} />
-              </TouchableOpacity>
-            </View>
-            <View>
-              <Input
-                autoFocus
-                editable={edit}
-                keyboardType="numeric"
-                onChangeText={(value) => setMaxPrice(value)}
-                placeholder="Payment ceiling"
-                require={true}
-                style={styles.input}
-                value={maxPrice}
-              />
-            </View>
-            <View>
+            
+            
+            {/* <View>
               <Input
                 autoFocus
                 editable={edit}
@@ -370,9 +363,22 @@ if (participantsArr && Array.isArray(participantsArr)) {
                 style={styles.input}
                 value={total}
               />
+            </View> */}
+            <Wallet total={Number(totalPayement)} max={Number(maxPrice)} />
+            <RedButton style={styles.buttonWallet} buttonText='Contribute' onPress={() => setModalCBVisible(true)} />
+        
+            <View style={styles.editButton}>
+              <TouchableOpacity
+                style={styles.edit}
+                onPress={() => setEdit(!edit)}
+              >
+                <MaterialIcons name="edit" color="white" size={30} />
+              </TouchableOpacity>
             </View>
-            <Wallet total={Number(total)} max={Number(maxPrice)} />
+
             {edit && (
+              <View style={styles.viewHidden}>
+            
               <Input
                 autoFocus
                 editable={edit}
@@ -382,6 +388,17 @@ if (participantsArr && Array.isArray(participantsArr)) {
                 style={styles.input}
                 value={activityName}
               />
+
+              <Input
+                editable={edit}
+                keyboardType="numeric"
+                onChangeText={(value) => setMaxPrice(value)}
+                placeholder="Payment ceiling"
+                require={true}
+                style={styles.input}
+                value={maxPrice}
+              />
+              </View>
             )}
             <Input
               editable={edit}
@@ -458,6 +475,14 @@ if (participantsArr && Array.isArray(participantsArr)) {
             />
           </View>
         </ScrollView>
+        <PaymentModal 
+          visible={modalCBVisible} 
+          onClose={() => setModalCBVisible(false)} 
+          userToken={users.token}
+          activityId={activityId}
+          setTotal={setTotalPayement}
+          total={totalPayement}
+        />
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
@@ -586,4 +611,16 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
   },
+  buttonWallet:{
+    marginVertical: 15,
+  },
+  viewHidden:{
+    width:'100%',
+    alignItems: 'center',
+  },
+  participantsTitle:{
+    alignSelf:'flex-start',
+    marginBottom: -20,
+    marginLeft: '10%',
+  }
 });
