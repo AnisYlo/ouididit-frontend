@@ -9,7 +9,34 @@ export const chatsSlice = createSlice({
     initialState,
     reducers: {       
         addChats: (state, action) => { 
-            state.value = action.payload;
+            
+            // Function to return last message for a chat {message} or null
+            const getLastMessage = chat => {          
+                const lastMessage = chat.messages.findLast(mess => mess.type === 'Message'); 
+
+                if(lastMessage)  {
+                    return lastMessage
+                }
+                else 
+                    return null
+            };
+            
+            // Sort chats by last message date
+            const sortedChats = action.payload.sort((a, b) => {
+                const lastMessageA = getLastMessage(a);
+                const lastMessageB = getLastMessage(b);
+                
+                // If a chat has no messages, it is placed after those that have messages.
+                if (lastMessageA === null) return 1;
+                if (lastMessageB === null) return -1;
+                
+                // If else, compare dates
+                const dateA = new Date(lastMessageA.createdAt);
+                const dateB = new Date(lastMessageB.createdAt); 
+                return dateB - dateA;
+            });
+
+            state.value = sortedChats ;
         },
 
         logoutChats: (state) => {

@@ -32,8 +32,8 @@ export default function DrawerNavigator() {
         },
         { text: "Log out",
           onPress: () => {
-            dispatch(logoutActivities()) // Déclenche l'action de déconnexion des ativités
             dispatch(logout()) // Déclenche l'action de déconnexion
+            dispatch(logoutActivities()) // Déclenche l'action de déconnexion des ativités
           }
         }
       ],

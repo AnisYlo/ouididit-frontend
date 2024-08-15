@@ -23,7 +23,7 @@ export default function ChatActivity(props) {
     const avatar = (avatarUrl) => (avatarUrl) ? {uri : avatarUrl} : require('../assets/avatarDefault.png');
     const indexPosition = participants.length >4 ? 4 : participants.length;
     return ( 
-        <TouchableOpacity style={styles.viewAvatars} onPress={props.onPress}>
+        <TouchableOpacity style={styles.viewAvatars} onPress={props.updateChatId(props.chatId)}>
             {participants && participants.length > 0 ? (
 
                 participants.slice(0,4).map((participant, i) =>{
@@ -41,70 +41,3 @@ export default function ChatActivity(props) {
         </TouchableOpacity>
     );
 }
-
-const styles = StyleSheet.create({
-    viewAvatars:{
-        flexDirection: 'row',
-        width:'100%',
-        height:35,
-        alignItems:'center',
-        marginVertical:10,
-        paddingHorizontal:5,
-    },
-    avatar: {
-        height: 30,
-        width: 30,
-        borderRadius: 30,
-    },
-    compteurContainer: {
-        height: 15,
-        width: 15,
-        backgroundColor: 'red',
-        borderRadius: 15,
-        alignSelf:'flex-end',
-    },
-    compteurText: {
-        lineHeight: 16,
-        textAlign: 'center',
-        textAlignVertical: 'center',
-        color:'white',
-    },
-    index: (i) => ({
-        left: i * -15,
-    }),
-    textContainer:{
-        flexDirection:'column',
-        flexShrink:1,
-        width : '100%',
-        height: '100%',
-        paddingHorizontal: 10,
-    },
-    messageInfos:{
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        width : '100%',        
-    },
-    userName:{
-        fontFamily: 'ClashGrotesk-Regular',
-        fontWeight:'bold',
-    },
-    date:{
-        color:'#496F5D',
-    },
-    messageText:{
-        flexShrink:1,
-        flexWrap:'wrap',
-        fontFamily: 'ClashGrotesk-Regular',
-    },
-
-
-    new:{
-        width :'100%',
-        height:'auto', 
-        textAlign:'right',
-        borderTopColor: '#496F5D',
-        borderTopWidth:1,
-        color:'#496F5D',
-        marginVertical:5,
-    },
-});
