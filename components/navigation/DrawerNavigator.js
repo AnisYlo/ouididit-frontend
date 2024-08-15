@@ -46,21 +46,13 @@ export default function DrawerNavigator() {
       headerShown: false,
       drawerActiveTintColor: '#e91e63', // Couleur du texte de l'élément actif
           drawerItemStyle: { 
-            // flexDirection: 'row',
-            // backgroundColor: 'blue',
-            // justifyContent:'center',
-            // alignItems:'center',
             marginVertical: 5, }, // Style de chaque élément du drawer
           drawerLabelStyle: { color: '#496F5D',
             
            }, // Style du texte des éléments
           drawerStyle: {
-            flexDirection: 'colum',
-            
+            flexDirection: 'colum',            
             justifyContent:'center',
-            //alignItems:'center',
-          //  backgroundColor: '#c6cbef', // Couleur d'arrière-plan du drawer
-          //  width: 240, // Largeur du drawer
           },
        }} >
       <Drawer.Screen name="Home" component={HomeScreen} />
@@ -68,7 +60,7 @@ export default function DrawerNavigator() {
       {/* <Drawer.Screen name="Admin Activity" component={ActivityAdminScreen} /> */}
       <Drawer.Screen name="Activities" component={allActivities}/>
       <Drawer.Screen name="Calendar" component={CalendarScreen} />
-      <Drawer.Screen name="Discussions" component={DiscussionsScreen} />
+      <Drawer.Screen name="DiscussionScreen" component={DiscussionsScreen} />
       <Drawer.Screen name="Profile" component={ProfilScreen} />
       <Drawer.Screen name="Logout" component={HomeScreen}
         options={{

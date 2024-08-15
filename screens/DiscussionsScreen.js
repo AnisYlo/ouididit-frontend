@@ -16,12 +16,11 @@ import { useIsFocused } from '@react-navigation/native';
 
 
 export default function DiscussionsScreen({ navigation }) {
+  const route = useRoute();
   const [messages, setMessages] = useState([]);
   const [messageText, setMessageText] = useState('');
-  //const [activitiesIndex, setActivitiesIndex] = useState(0);
-  const [chatId, setChatId] = useState('');
-  
-  const route = useRoute();
+  const [isLoading, setIsLoading] = useState(false);
+
   const isFocused = useIsFocused();
 
   const users = useSelector((state) => state.users.value);
@@ -29,13 +28,15 @@ export default function DiscussionsScreen({ navigation }) {
   const chats = useSelector((state) => state.chats.value);
   const scrollViewRef = useRef();
 
+  const routeId = route.params?.chatId
+  const [chatId, setChatId] = useState(routeId);
+
   const initFetchMessages = async () => {
     try {
-      console.log("chatId Fetch =>",chatId)
       const response = await fetch(`${BACKEND_IP}/chats/${chatId}`);
       const chatHistory = await response.json();
 
-      if(chatHistory !==null){
+      if(chatHistory !==null && chatHistory.messages?.length > 0){
       // If last message, is event then it's remove from array
         if(chatHistory.messages[chatHistory.messages.length-1].type==='Event')
           chatHistory.messages.pop();
@@ -46,24 +47,23 @@ export default function DiscussionsScreen({ navigation }) {
     }
   };
 
-  
-  let tempChatId = route.params?.chatId;
-if(!tempChatId)
-  tempChatId = chats[0]._id
+  useEffect(() => {
+    // Initialiser chatId si nécessaire
+    if (routeId) {
+      setChatId(routeId);
+    }
+  }, [routeId]);
 
-  useEffect(()=>{
-
-    
+useEffect(() => {
+  if (chatId) {  // Assurez-vous que chatId est défini
     (async () => {
-      setChatId(tempChatId)
-      console.log("chatId =--->",chatId)
-    await initFetchMessages();
+      setIsLoading(true);
+      await initFetchMessages();
+      setIsLoading(false);
+      setMessageText('');
     })();
     
-      // Créer une nouvelle instance de Pusher
-      const pusher = new Pusher('dbcb29f95b6462d0bedd', { cluster: 'mt1' });
-    
-    
+    const pusher = new Pusher('dbcb29f95b6462d0bedd', { cluster: 'mt1' });
 
     const updateUser = async () => {
       try {
@@ -80,7 +80,6 @@ if(!tempChatId)
       subscription.bind('message', handleReceiveMessage);
     });
 
-    // Cleanup function pour désabonner et détruire Pusher à la fin du cycle de vie du composant
     return () => {
       subscription.unbind('message', handleReceiveMessage);
       pusher.unsubscribe(chatId);
@@ -93,7 +92,8 @@ if(!tempChatId)
       };
       deleteUser();
     };
-  },[chatId]);
+  }
+}, [isFocused, chatId]);
 
   const handleReceiveMessage = (data) => {
     const newMessage = {
@@ -132,11 +132,11 @@ if(!tempChatId)
     }
   };
 
-  const updateChatId = (newId) =>{
-    setChatId(newId)
-  }
+  const updateChatId = (newId) => {
+    setIsLoading(true);  // Commence le chargement
+    setChatId(newId);
+  };
 
-  console.log("Before JSX==============")
   return (
       <SafeAreaView style={styles.container}>
       <Header
@@ -158,7 +158,6 @@ if(!tempChatId)
                   userToken ={users.token}
                   chatId = {chat._id}
                   activityId = {activityData._id}
-                  //changeChat = {changeChat}
                   updateChatId = {updateChatId}
                   />
                 )
@@ -166,9 +165,13 @@ if(!tempChatId)
             }
           </View>
           <View style={styles.vue12}>
-            <View style={styles.topBar}>
-              <Text style={styles.topBarText}>{chats.find(chat=>chat._id===chatId).activity.name}</Text>
-            </View>
+          <View style={styles.topBar}>
+            {chats.length > 0 && chatId ? (
+              <Text style={styles.topBarText}>{chats.find(chat => chat._id === chatId)?.activity?.name}</Text>
+            ) : (
+              <Text style={styles.topBarText}>No Chats Available</Text> // Affiche un texte par défaut ou un message d'erreur
+            )}
+          </View>
             <ScrollView flexGrow={1} ref={scrollViewRef} 
               onContentSizeChange={() => 
                         scrollViewRef.current?.scrollToEnd({ animated: false }) // 3. Appel de scrollToEnd
@@ -246,6 +249,7 @@ const styles = StyleSheet.create({
     width: "100%",
     height:'20%',
     paddingTop: 25,
+    backgroundColor:'white',
   },
   topBar: {
     width: "100%",

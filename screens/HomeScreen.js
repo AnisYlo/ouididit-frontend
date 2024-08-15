@@ -1,11 +1,11 @@
-import { View, StyleSheet, Button, ScrollView,Platform, Text, KeyboardAvoidingView } from "react-native";
+import { View, StyleSheet, Button, ScrollView,Platform, Text, TouchableOpacity, KeyboardAvoidingView } from "react-native";
 import RedButton from "../components/redButton";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Header from "../components/Header";
 import { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { BACKEND_IP } from '@env';
-import activities, { addActivities } from "../reducers/activities";
+import { addActivities } from "../reducers/activities";
 import { addChats } from "../reducers/chats";
 import { useIsFocused} from '@react-navigation/native';
 import moment from 'moment';
@@ -100,6 +100,9 @@ export default function HomeScreen({ navigation }) {
     })
   }, [isFocused]);
   
+  const handleNavigateToDiscussion = (chatId) => {
+    navigation.navigate("DiscussionScreen", {chatId });
+  };
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -137,14 +140,14 @@ export default function HomeScreen({ navigation }) {
           {chats && chats.length > 0 ? (
             chats.slice(0, 4)  // Limit to 4 chats
               .map((chat, i) => (                
-                <View key={i}>
+                <TouchableOpacity key={i} onPress={() => handleNavigateToDiscussion(chat._id)}>
                   <View style={styles.activityTitle}>
-                    <Text style={styles.activityList}>{chat.activity.name}</Text>
+                    <Text style={styles.activityList}>{truncateString(chat.activity.name,19)}</Text>
                   </View>
                   <Text style={styles.activityInfo}>
                     {showMessage(chat)}
                   </Text>
-                </View>
+                </TouchableOpacity>
               ))
           ) : (
             <Text>{JSON.stringify(chats)}No upcoming activities yet</Text>  // Message if no activity to display
