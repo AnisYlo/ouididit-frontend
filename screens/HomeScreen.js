@@ -5,7 +5,7 @@ import Header from "../components/Header";
 import { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { BACKEND_IP } from '@env';
-import { addActivities } from "../reducers/activities";
+import activities, { addActivities } from "../reducers/activities";
 import { addChats } from "../reducers/chats";
 import { useIsFocused} from '@react-navigation/native';
 import moment from 'moment';
@@ -21,7 +21,7 @@ export default function HomeScreen({ navigation }) {
   // Return last message for a chat {message} or null
   const getLastMessage = chat => {                  
     const lastMessage = chat.messages.findLast(mess => mess.type === 'Message');                  
-      if(lastMessage)
+    if(lastMessage)
         return lastMessage
       else 
         return null
@@ -30,8 +30,9 @@ export default function HomeScreen({ navigation }) {
   // Show last message or replacement text if not exist
   function showMessage (chat) {
     const message =(getLastMessage(chat))
+    
     if(message)
-      return `${message.user.username} : ${moment(message.date).format('DD/MM à HH:mm')} - ${message.message}`;
+      return `${message.user.username} : ${moment(message.createdAt).format('DD/MM à HH:mm')} - ${message.message}`;
     else 
       return 'No messages yet'
   }
@@ -42,56 +43,49 @@ export default function HomeScreen({ navigation }) {
     .then(response => response.json())
     .then(data => {
       if (data && data.allActivities.length > 0) {
-        const activityPromises = data.allActivities.map(async (activity) => {
-          return fetch(`${BACKEND_IP}/activities/participants/${activity._id}/${users.token}`)
-            .then(response => response.json())
-            .then(dataStatus => {
-              if (dataStatus) {
-                activity.status = dataStatus.status;
+        fetch(`${BACKEND_IP}/activities/participants/all/${users.token}`)
+        .then(response => response.json())
+        .then(participationData => {
+          if (participationData.result) {
+            // Map participation statuses to corresponding activities
+            const updatedActivities = data.allActivities.map(activity => {
+              const status = participationData.status.find(status => status.activity === activity._id);
+              if (status) {
+                activity.status = status.status; // Associe le statut à l'activité
               }
               return activity;
-            })
-        });
-        // Await all Promises of each activities before dispatch
-        Promise.all(activityPromises)
-          .then(updatedActivities => {
+            });
             // Order activity by dates (from the nearest to the furthest)
-            updatedActivities.sort((a, b) => new Date(a.date) - new Date(b.date));
-            dispatch(addActivities(updatedActivities));
+            const sortedActivities = updatedActivities.sort((a, b) => new Date(a.date) - new Date(b.date));
+            dispatch(addActivities(sortedActivities));
 
-            // 
-            const chatPromises = updatedActivities.map( async (activity)=>{
-              return fetch(`${BACKEND_IP}/chats/find/${activity._id}`)
-              .then(response => response.json())
-              .then(dataChats => {
-                if (dataChats.result) {
-                  return dataChats.chat;                  
-                }
-              })
+            const activityIds = sortedActivities.map(activity => activity._id);
+
+            fetch(`${BACKEND_IP}/chats/byActivities`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({ activityIds }),
             })
-            Promise.all(chatPromises)
-              .then(chats =>{
-                // Sort chats by last message date
-                chats.sort((a, b) => {
-                    const lastMessageA = getLastMessage(a);
-                    const lastMessageB = getLastMessage(b);
-                    
-                    // If a chat has no messages, it is placed after those that have messages.
-                    if (lastMessageA === null) return 1;
-                    if (lastMessageB === null) return -1;
-                    
-                    // If else, compare dates
-                    const dateA = new Date(lastMessageA.date);
-                    const dateB = new Date(lastMessageB.date);  
-                    return dateB - new dateA;
-                });
-                dispatch(addChats(chats))
-              })
-          })
-      }
+            .then(response => response.json())
+            .then(chatData => {
+              if (chatData.result) {
+                dispatch(addChats(chatData.chats));
+              } else {
+                console.error("Failed to fetch chats:", chatData.error);
+              }
+            });
+          } else {
+            console.error("Failed to fetch activities with status:", data.error);
+          }
+        })
+        .catch(error => console.error("Error fetching activities with status:", error)
+          )};
     })
   }, [isFocused]);
   
+
   return (
     <SafeAreaView style={styles.safeArea}>
     <Header
@@ -130,7 +124,7 @@ export default function HomeScreen({ navigation }) {
               .map((chat, i) => (                
                 <View key={i}>
                   <View style={styles.activityTitle}>
-                    <Text style={styles.activityList}>{activity.find(acti => acti._id === chat.activity).name}</Text>
+                    <Text style={styles.activityList}>{chat.activity.name}</Text>
                   </View>
                   <Text style={styles.activityInfo}>
                     {showMessage(chat)}
@@ -138,7 +132,7 @@ export default function HomeScreen({ navigation }) {
                 </View>
               ))
           ) : (
-            <Text>No upcoming activities yet</Text>  // Message if no activity to display
+            <Text>{JSON.stringify(chats)}No upcoming activities yet</Text>  // Message if no activity to display
           )}
         </View>
       </View>

@@ -10,15 +10,18 @@ import ChatMessage from "../components/ChatMessage";
 import ChatActivity from "../components/ChatActivity";
 import { BACKEND_IP } from '@env';
 import moment, { invalid } from 'moment';
+import { useRoute } from "@react-navigation/native";
 import { useIsFocused } from '@react-navigation/native';
 
-const chatId = '66b8bc81c2d65214466106d9';
+
 
 export default function DiscussionsScreen({ navigation }) {
   const [messages, setMessages] = useState([]);
   const [messageText, setMessageText] = useState('');
-  const [activitiesIndex, setActivitiesIndex] = useState(0);
+  //const [activitiesIndex, setActivitiesIndex] = useState(0);
+  const [chatId, setChatId] = useState('');
   
+  const route = useRoute();
   const isFocused = useIsFocused();
 
   const users = useSelector((state) => state.users.value);
@@ -26,25 +29,41 @@ export default function DiscussionsScreen({ navigation }) {
   const chats = useSelector((state) => state.chats.value);
   const scrollViewRef = useRef();
 
-  useEffect(()=>{
-    // Créer une nouvelle instance de Pusher
-    const pusher = new Pusher('dbcb29f95b6462d0bedd', { cluster: 'mt1' });
+  const initFetchMessages = async () => {
+    try {
+      console.log("chatId Fetch =>",chatId)
+      const response = await fetch(`${BACKEND_IP}/chats/${chatId}`);
+      const chatHistory = await response.json();
 
-    const fetchMessages = async () => {
-      try {
-        const response = await fetch(`${BACKEND_IP}/chats/${chatId}`);
-        const chatHistory = await response.json();
-
-       // If last message, is event then it's remove from array
+      if(chatHistory !==null){
+      // If last message, is event then it's remove from array
         if(chatHistory.messages[chatHistory.messages.length-1].type==='Event')
           chatHistory.messages.pop();
         setMessages(chatHistory.messages);
-      } catch (error) {
-        console.error("Failed to fetch messages:", error);
       }
-    };
+    } catch (error) {
+      console.error("Failed to fetch messages:", error);
+    }
+  };
 
-    fetchMessages();
+  
+  let tempChatId = route.params?.chatId;
+if(!tempChatId)
+  tempChatId = chats[0]._id
+
+  useEffect(()=>{
+
+    
+    (async () => {
+      setChatId(tempChatId)
+      console.log("chatId =--->",chatId)
+    await initFetchMessages();
+    })();
+    
+      // Créer une nouvelle instance de Pusher
+      const pusher = new Pusher('dbcb29f95b6462d0bedd', { cluster: 'mt1' });
+    
+    
 
     const updateUser = async () => {
       try {
@@ -74,10 +93,9 @@ export default function DiscussionsScreen({ navigation }) {
       };
       deleteUser();
     };
-  },[isFocused]);
+  },[chatId]);
 
   const handleReceiveMessage = (data) => {
-    console.log("data messages =>", data)
     const newMessage = {
       user :{
         username: data.userName,
@@ -114,6 +132,11 @@ export default function DiscussionsScreen({ navigation }) {
     }
   };
 
+  const updateChatId = (newId) =>{
+    setChatId(newId)
+  }
+
+  console.log("Before JSX==============")
   return (
       <SafeAreaView style={styles.container}>
       <Header
@@ -126,21 +149,25 @@ export default function DiscussionsScreen({ navigation }) {
         <View style={styles.vue1}>
           <View style={styles.vue11}>
             {
-              activities.map((activity, i)=>{
-                console.log(activity._id)
-               return ( <>
-                 {/* <ChatActivity key={i}
+              activities.map((activityData, i)=>{
+                const chat = chats.find(chat => chat.activity._id === activityData._id);
+               
+                return ( 
+                 <ChatActivity
+                  key={activityData._id}
                   userToken ={users.token}
-                  chatId = {chats.find(()=> activity._id ===chats._id)}
-                  activityId = {activity._id}
-                /> */}
-                </>)
+                  chatId = {chat._id}
+                  activityId = {activityData._id}
+                  //changeChat = {changeChat}
+                  updateChatId = {updateChatId}
+                  />
+                )
               })
             }
           </View>
           <View style={styles.vue12}>
             <View style={styles.topBar}>
-              <Text style={styles.topBarText}>{activities[activitiesIndex].name}</Text>
+              <Text style={styles.topBarText}>{chats.find(chat=>chat._id===chatId).activity.name}</Text>
             </View>
             <ScrollView flexGrow={1} ref={scrollViewRef} 
               onContentSizeChange={() => 
@@ -168,7 +195,8 @@ export default function DiscussionsScreen({ navigation }) {
           <Input 
             style={styles.input}
             onChangeText={(value) => setMessageText(value)}
-            value={messageText} autoCapitalize='none'
+            value={messageText}
+            autoCapitalize='none'
             inputMode='message'
             placeholder='Message'
             maxLength={200}
