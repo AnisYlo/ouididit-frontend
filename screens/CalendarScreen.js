@@ -6,6 +6,7 @@ import { BACKEND_IP } from "@env";
 import Header from '../components/Header';
 import moment from 'moment';
 import { calendarTheme } from 'react-native-calendars'; 
+import { TouchableOpacity } from 'react-native-gesture-handler';
 
 const customTheme = {
   ...calendarTheme, 
@@ -23,14 +24,11 @@ const CalendarScreen = ({ navigation }) => {
   const [selectedDate, setSelectedDate] = useState(moment().format('YYYY-MM-DD'));
   const [allActivities, setAllActivities] = useState({});
   const [dayActivities, setDayActivities] = useState({});
-  const [userId, setUserId]= useState('')
-  
   useEffect(() => {
     // prend les infos dans le redux, les tri et les formate au format utilisé pour l'agenda 
     let container = {};
     reduxActivities.forEach(data => {
-      
-     
+      // console.log('NININININININININNNINNI', data.organizer.token)
       const date = moment(data.date).format('YYYY-MM-DD');
       if (!container[date]) {
         container[date] = [];
@@ -41,7 +39,7 @@ const CalendarScreen = ({ navigation }) => {
         time: moment(data.date).format('HH:mm'),
         location: data.location.street,
         activityID: data._id,
-        organizer: data.organizer,
+        organizer: data.organizer.token,
       });
     });
     
@@ -58,18 +56,9 @@ const CalendarScreen = ({ navigation }) => {
   };
 
   const handlePress = (item) => {
-  
-    
-    fetch(`${BACKEND_IP}/users/info/${user.token}`)
-    .then((response) => response.json())
-    .then((data) => {
-
-      setUserId( data.user._id)
-    })
-
-    if(item.organizer === userId) {
-
-      navigation.navigate('Activity Admin', {activity: item.activityID})
+    if(item.organizer === user.token) {
+      console.log('isOrganizer')
+      navigation.navigate("Activity Admin", {organizer: item.organizer})
     }
     else {
       navigation.navigate('Activity', { activity: item.activityID, organizer: item.organizer })
@@ -80,7 +69,7 @@ const CalendarScreen = ({ navigation }) => {
     return (
       <View>
         <View style={styles.item}>
-          <Text onPress={() => handlePress(item)} style={styles.itemName}>{item.name}</Text>
+         <Text onPress={() => handlePress(item)} style={styles.itemName}>{item.name}</Text>
           <Text onPress={() => handlePress(item)} style={styles.itemTime}>{item.time}</Text>
           <Text onPress={() => handlePress(item)} style={styles.itemLocation}>{item.location}</Text>
         </View>

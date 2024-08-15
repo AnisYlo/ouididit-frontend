@@ -9,6 +9,7 @@ import activities, { addActivities } from "../reducers/activities";
 import { addChats } from "../reducers/chats";
 import { useIsFocused} from '@react-navigation/native';
 import moment from 'moment';
+import { TouchableOpacity } from "react-native-gesture-handler";
 
 
 export default function HomeScreen({ navigation }) {
@@ -18,6 +19,21 @@ export default function HomeScreen({ navigation }) {
   const chats = useSelector(state => state.chats.value);
   const isFocused = useIsFocused();
 
+  function truncateString(str, num) {
+    return str.length > num ? str.slice(0, num) + "..." : str;
+  }
+
+ const handlePress = (act) => {
+    if(act.organizer.token === users.token) {
+  
+      navigation.navigate("Activity Admin", {organizer: act.organizer})
+    }
+    else {
+      navigation.navigate('Activity', { activity: act._id, organizer: act.organizer })
+    }
+  }
+
+
   // Return last message for a chat {message} or null
   const getLastMessage = chat => {                  
     const lastMessage = chat.messages.findLast(mess => mess.type === 'Message');                  
@@ -26,6 +42,7 @@ export default function HomeScreen({ navigation }) {
       else 
         return null
   };
+  
 
   // Show last message or replacement text if not exist
   function showMessage (chat) {
@@ -58,7 +75,6 @@ export default function HomeScreen({ navigation }) {
             // Order activity by dates (from the nearest to the furthest)
             const sortedActivities = updatedActivities.sort((a, b) => new Date(a.date) - new Date(b.date));
             dispatch(addActivities(sortedActivities));
-
             const activityIds = sortedActivities.map(activity => activity._id);
 
             fetch(`${BACKEND_IP}/chats/byActivities`, {
@@ -101,15 +117,15 @@ export default function HomeScreen({ navigation }) {
             activity.filter(act => new Date(act.date) > new Date())  // Filter activities that have not passed
               .slice(0, 4)  // Limit to 4 activities
               .map((act, i) => (
-                <View key={i}>
+                <TouchableOpacity key={i} onPress={() => handlePress(act)}> 
                   <View style={styles.activityTitle}>
-                    <Text style={styles.activityList}>{act.name}</Text>
+                    <Text style={styles.activityList}>{truncateString(act.name, 19)}</Text>
                     <Text style={[styles.activityStatus, act.status==="Accepted" && styles.activityAccepted]}>{act.status}</Text>
                   </View>
                   <Text style={styles.activityInfo}>
                     {act.location.street}, {act.location.city} le {moment(act.date).format('DD/MM/YYYY à HH:mm')}
                   </Text>
-                </View>
+                </TouchableOpacity>
               ))
           ) : (
             <Text>No upcoming activities yet</Text>  // Message if no activity to display

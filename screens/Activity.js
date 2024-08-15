@@ -15,7 +15,7 @@ import RedButton from "../components/redButton";
 
 
 
-export default function ActivityAdminScreen({ navigation }) {
+export default function ActivityScreen({ navigation }) {
   const route = useRoute();
   const [activityName, setActivityName] = useState("");
   const [date, setDate] = useState("");
@@ -39,7 +39,6 @@ export default function ActivityAdminScreen({ navigation }) {
     fetch(`${BACKEND_IP}/activities/${activityId}`)
       .then((response) => response.json())
       .then((data) => {
-        console.log(data)
         setDescription(data.activity.description);
         setActivityName(data.activity.name);
         setDate(moment(data.activity.date).format("DD/MM/YYYY"));

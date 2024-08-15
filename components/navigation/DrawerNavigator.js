@@ -65,7 +65,7 @@ export default function DrawerNavigator() {
        }} >
       <Drawer.Screen name="Home" component={HomeScreen} />
       <Drawer.Screen name="Create activity" component={CreateActivityScreen} />
-      <Drawer.Screen name="Admin Activity" component={ActivityAdminScreen} />
+      {/* <Drawer.Screen name="Admin Activity" component={ActivityAdminScreen} /> */}
       <Drawer.Screen name="Activities" component={allActivities}/>
       <Drawer.Screen name="Calendar" component={CalendarScreen} />
       <Drawer.Screen name="Discussions" component={DiscussionsScreen} />

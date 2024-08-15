@@ -11,6 +11,7 @@ import {
   Modal,
   TextInput,
   Button,
+  TouchableOpacity
 } from "react-native";
 import RNDateTimePicker from "@react-native-community/datetimepicker";
 import moment from "moment";
@@ -22,12 +23,11 @@ import RedButton from "../components/redButton";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { BACKEND_IP } from "@env";
-import { TouchableOpacity } from "react-native-gesture-handler";
 import { useRoute } from "@react-navigation/native";
 import Wallet from "../components/ProgressBar";
 import { useIsFocused } from "@react-navigation/native";
 
-export default function ActivityAdminScreen({ route, navigation }) {
+export default function ActivityAdminScreen({ navigation }) {
   const [activityName, setActivityName] = useState("");
   const [price, setPrice] = useState(null);
   const [date, setDate] = useState("");
@@ -45,12 +45,14 @@ export default function ActivityAdminScreen({ route, navigation }) {
   const [participantsArr, setParticipantsArr] = useState([]);
   const [total, setTotal] = useState(0);
   const [maxPrice, setMaxPrice] = useState(0);
+  const route = useRoute();
 
 
-  // const route = useRoute()
-  // const activityId = route.params?.activity
-  const activityId = "66bb6b6e425d42873c3dbec0";
-  const participantId = "66bdb00005e179a0e7496da7";
+
+  const activityId = route.params?.activity
+  const organizer = route.params?.organizer
+  // const activityId = "66bb6b6e425d42873c3dbec0";
+  // const participantId = "66bdb00005e179a0e7496da7";
 
   // Grabbed from emailregex.com
   const EMAIL_REGEX = /^[\w-.]+@([\w-]+.)+[\w-]{2,}$/gi;

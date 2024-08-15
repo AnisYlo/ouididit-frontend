@@ -34,8 +34,8 @@ export default function Navigation() {
             <Stack.Screen name="SignUp" component={SignUpScreen} />
           </>
         )}
-        <Stack.Screen name="Activity Admin" component={ActivityAdminScreen} />
         <Stack.Screen name="The Calendar" component={CalendarScreen}/>
+        <Stack.Screen name="Activity Admin" component={ActivityAdminScreen} />
         <Stack.Screen name="Create activity" component={CreateActivityScreen}/>
         <Stack.Screen name="AllActivites" component={allActivities}/>
         <Stack.Screen name="Profile" component={ProfilScreen} />

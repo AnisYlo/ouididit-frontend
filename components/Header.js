@@ -75,7 +75,7 @@ export default function Header(props) {
             />
       
         </TouchableOpacity>
-        <Text style={styles.title}>{truncateString(props.title, 22)}</Text>
+        <Text style={styles.title}>{truncateString(props.title, 20)}</Text>
         <View style={styles.view}></View>
       </View>
     </SafeAreaView>
