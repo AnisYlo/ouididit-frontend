@@ -13,7 +13,7 @@ import ProfilScreen from "../../screens/ProfilScreen";
 import WalletScreen from "../../screens/WalletScreen";
 import CalendarScreen from "../../screens/CalendarScreen";
 import allActivities from "../../screens/AllActivities";
-import Activity from "../../screens/Activity"
+import Activity from "../../screens/Activity";
 
 const Stack = createNativeStackNavigator();
 

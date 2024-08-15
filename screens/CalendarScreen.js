@@ -30,6 +30,7 @@ const CalendarScreen = ({ navigation }) => {
     let container = {};
     reduxActivities.forEach(data => {
       
+      console.log("activity data------------------",data)
      
       const date = moment(data.date).format('YYYY-MM-DD');
       if (!container[date]) {

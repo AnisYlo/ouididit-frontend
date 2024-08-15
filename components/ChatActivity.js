@@ -23,7 +23,7 @@ export default function ChatActivity(props) {
     const avatar = (avatarUrl) => (avatarUrl) ? {uri : avatarUrl} : require('../assets/avatarDefault.png');
     const indexPosition = participants.length >4 ? 4 : participants.length;
     return ( 
-        <TouchableOpacity style={styles.viewAvatars} onPress={props.onPress}>
+        <TouchableOpacity style={styles.viewAvatars} onPress={() => props.updateChatId(props.chatId)}>
             {participants && participants.length > 0 ? (
 
                 participants.slice(0,4).map((participant, i) =>{
