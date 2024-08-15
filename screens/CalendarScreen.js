@@ -28,7 +28,6 @@ const CalendarScreen = ({ navigation }) => {
     // prend les infos dans le redux, les tri et les formate au format utilisé pour l'agenda 
     let container = {};
     reduxActivities.forEach(data => {
-      // console.log('NININININININININNNINNI', data.organizer.token)
       const date = moment(data.date).format('YYYY-MM-DD');
       if (!container[date]) {
         container[date] = [];
@@ -57,7 +56,6 @@ const CalendarScreen = ({ navigation }) => {
 
   const handlePress = (item) => {
     if(item.organizer === user.token) {
-      console.log('isOrganizer')
       navigation.navigate("Activity Admin", {organizer: item.organizer})
     }
     else {
