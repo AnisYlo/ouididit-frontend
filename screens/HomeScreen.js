@@ -25,7 +25,7 @@ export default function HomeScreen({ navigation }) {
  const handlePress = (act) => {
     if(act.organizer.token === users.token) {
   
-      navigation.navigate("Activity Admin", {organizer: act.organizer})
+      navigation.navigate("Activity Admin", {activity: act._id, organizer: act.organizer})
     }
     else {
       navigation.navigate('Activity', { activity: act._id, organizer: act.organizer })
