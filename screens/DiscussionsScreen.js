@@ -249,6 +249,7 @@ const styles = StyleSheet.create({
     width: "100%",
     height:'20%',
     paddingTop: 25,
+    backgroundColor:'white',
   },
   topBar: {
     width: "100%",
