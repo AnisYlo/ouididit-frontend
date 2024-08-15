@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { View, Text, StyleSheet, SafeAreaView } from 'react-native';
 import { Agenda } from 'react-native-calendars';
+import { BACKEND_IP } from "@env";
 import Header from '../components/Header';
 import moment from 'moment';
 import { calendarTheme } from 'react-native-calendars'; 
@@ -16,13 +17,14 @@ const customTheme = {
 };
 
 const CalendarScreen = ({ navigation }) => {
+  
   const user = useSelector((state) => state.users.value);
   const reduxActivities = useSelector((state) => state.activities.value);
-  
   const [selectedDate, setSelectedDate] = useState(moment().format('YYYY-MM-DD'));
   const [allActivities, setAllActivities] = useState({});
   const [dayActivities, setDayActivities] = useState({});
-
+  const [userId, setUserId]= useState('')
+  
   useEffect(() => {
     // prend les infos dans le redux, les tri et les formate au format utilisé pour l'agenda 
     let container = {};
@@ -56,8 +58,23 @@ const CalendarScreen = ({ navigation }) => {
   };
 
   const handlePress = (item) => {
-    navigation.navigate('Activity', { activity: item.activityID, organizer: item.organizer });
-  };
+  
+    
+    fetch(`${BACKEND_IP}/users/info/${user.token}`)
+    .then((response) => response.json())
+    .then((data) => {
+
+      setUserId( data.user._id)
+    })
+
+    if(item.organizer === userId) {
+
+      navigation.navigate('Activity Admin', {activity: item.activityID})
+    }
+    else {
+      navigation.navigate('Activity', { activity: item.activityID, organizer: item.organizer })
+    }
+  }
 
   const renderItem = (item) => {
     return (

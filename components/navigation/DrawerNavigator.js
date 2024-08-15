@@ -69,7 +69,6 @@ export default function DrawerNavigator() {
       <Drawer.Screen name="Calendar" component={CalendarScreen} />
       <Drawer.Screen name="Discussions" component={DiscussionsScreen} />
       <Drawer.Screen name="Profile" component={ProfilScreen} />
-      <Drawer.Screen name="ActivityScreen" component={Activity}/>
       <Drawer.Screen name="Logout" component={HomeScreen}
         options={{
           drawerLabelStyle: { 

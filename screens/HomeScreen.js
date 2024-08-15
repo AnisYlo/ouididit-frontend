@@ -182,6 +182,7 @@ const styles = StyleSheet.create({
   activityTitle:{
     flexDirection:'row',
     justifyContent: 'space-between',
+    
   },
   activityStatus:{
     fontFamily: "ClashGrotesk-Semibold",
@@ -207,8 +208,7 @@ const styles = StyleSheet.create({
   },
   activityList: {
     fontSize: 24,
-    fontFamily: 'ClashGrotesk-Bold'
-   
+    fontFamily: 'ClashGrotesk-Bold',
   },
   activityInfo: {
     fontFamily: 'ClashGrotesk-Regular',
