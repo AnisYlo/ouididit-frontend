@@ -46,8 +46,11 @@ export default function ActivityAdminScreen({ route, navigation }) {
   const [total, setTotal] = useState(0);
   const [maxPrice, setMaxPrice] = useState(0);
 
-  // const { activityId }  = route.params;
+
+  // const route = useRoute()
+  // const activityId = route.params?.activity
   const activityId = "66bb6b6e425d42873c3dbec0";
+  const participantId = "66bdb00005e179a0e7496da7";
 
   // Grabbed from emailregex.com
   const EMAIL_REGEX = /^[\w-.]+@([\w-]+.)+[\w-]{2,}$/gi;
@@ -183,7 +186,7 @@ export default function ActivityAdminScreen({ route, navigation }) {
     })
       .then((response) => response.json())
       .then((data) => {
-        console.log("hello data", data.participants);
+        // console.log("hello data", data.participants);
         setParticipantsArr([...participantsArr, data.participants]);
         setinputParticipant("");
         if (data) {
@@ -196,16 +199,52 @@ export default function ActivityAdminScreen({ route, navigation }) {
 
   const avatarPart = participantsArr.map((data, i) => {
     return (
+      <TouchableOpacity
+        onPress={() => 
+          Alert.alert(
+            "Remove invitation",
+            "Are you sure you want to remove invitation?",
+            [
+              {
+                text: "Cancel",
+                onPress: () => console.log("Suppression annulée"),
+                style: "cancel",
+              },
+              {
+                text: "Yes",
+                onPress: () => {
+                  deleteParticipant();
+                  setParticipantsArr('')
+                  console.log("Suppression validée");
+                },
+              },
+            ],
+            { cancelable: false }
+          )
+        }>
       <Image
-        key={i}
+        key={data.i}
         source={avatar(data.avatar)}
         style={styles.avatar}
-        editable={edit}
       />
+      </TouchableOpacity>
     );
   });
 
-  const deleteParticipant = () => {};
+  const deleteParticipant = () => {
+    fetch(`${BACKEND_IP}/participants/${participantId}`, {
+      method: "DELETE",
+      headers: { "Content-type": "application/json" },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data) {
+          alert("Invitation removed!");
+        } else {
+          alert("Error during process!");
+        }
+      });
+  };
 
   return (
     //implementation du component header
@@ -254,7 +293,9 @@ export default function ActivityAdminScreen({ route, navigation }) {
                 horizontal={true}
                 style={styles.horizontalScrollContent}
               >
-                <View style={styles.friendsContainer}>{avatarPart}</View>
+                <View style={styles.friendsContainer}>
+                  {avatarPart}
+                </View>
               </ScrollView>
               <View style={styles.add}>
                 <Ionicons
@@ -300,7 +341,6 @@ export default function ActivityAdminScreen({ route, navigation }) {
             <Wallet
               total={Number(total)}
               max={Number(maxPrice)}
-              style={styles.wallet}
             />
             {edit && (
               <Input
@@ -456,6 +496,7 @@ const styles = StyleSheet.create({
     height: 45,
     width: 45,
     borderRadius: 45,
+    backgroundColor: "green",
   },
   friendsContainer: {
     flexDirection: "row",

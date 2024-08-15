@@ -1,9 +1,20 @@
 import { KeyboardAvoidingView, Platform, SafeAreaView, ScrollView, StyleSheet, View, } from "react-native";
 import { useSelector } from "react-redux";
+import { useState, useEffect } from "react";
+import { useRoute } from "@react-navigation/native";
 import Header from "../components/Header";
+import Input from "../components/Input";
+import RedButton from "../components/redButton";
+import Wallet from "../components/ProgressBar";
 
 export default function WalletScreen({ navigation }) {
-  const users = useSelector(state => state.users.value)
+
+  const users = useSelector(state => state.users.value);
+  // const activityId = route.params?.activity;
+  // const route = useRoute();
+  const [total, setTotal] = useState(0);
+  const [maxPrice, setMaxPrice] = useState(0);
+
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -15,7 +26,9 @@ export default function WalletScreen({ navigation }) {
       <KeyboardAvoidingView style={styles.keyboardView} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>          
         <ScrollView contentContainerStyle={styles.scroll} >
           <View style={styles.content}>
-            {/* Add page content here */}
+            <Wallet
+            total={Number(total)}
+            max={Number(maxPrice)}/>
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
