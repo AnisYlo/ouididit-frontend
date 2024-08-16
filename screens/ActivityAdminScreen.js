@@ -123,7 +123,7 @@ export default function ActivityAdminScreen({ navigation }) {
         setLocation(data.activity.location.street);
         setMaxPrice(Number(data.activity.payementLimit));
         setStartTime(moment(data.activity.startTime).format("HH:mm"))
-        
+        setMaxPrice(data.activity.payementLimit);
         fetch(`${BACKEND_IP}/activities/participants/${activityId}`)
         .then((response) => response.json())
         .then((data) => {
@@ -373,7 +373,7 @@ if (participantsArr && Array.isArray(participantsArr)) {
                 editable={edit}
                 keyboardType="numeric"
                 onChangeText={(value) => setMaxPrice(value)}
-                placeholder="Payment ceiling"
+                placeholder="Total payement"
                 require={true}
                 style={styles.input}
                 value={maxPrice}
