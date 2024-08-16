@@ -1,17 +1,14 @@
-import { KeyboardAvoidingView, Button, Platform, SafeAreaView, StyleSheet, View, Text, Alert, Image } from "react-native";
-import moment, { invalid } from "moment";
+import { KeyboardAvoidingView, ScrollView, TouchableOpacity, Platform, SafeAreaView, StyleSheet, View, Text, Image } from "react-native";
+import moment from "moment";
 import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import Header from "../components/Header";
 import { BACKEND_IP } from "@env";
 import { useRoute } from "@react-navigation/native";
 import Wallet from "../components/ProgressBar";
-import users from "../reducers/users"
-import activities from "../reducers/activities";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import RedButton from "../components/redButton";
-
-
+import PaymentModal from "../components/ModalCB";
 
 
 export default function ActivityScreen({ navigation }) {
@@ -22,13 +19,19 @@ export default function ActivityScreen({ navigation }) {
   const [duration, setDuration] = useState("");
   const [location, setLocation] = useState([]);
   const [description, setDescription] = useState("");
-  const [payementLimit, setPayementLimit] = useState("")
-  const [organizerToken, setOrganizerToken] = useState("")
+  const [payementLimit, setPayementLimit] = useState("");
+  const [organizerToken, setOrganizerToken] = useState("");
+  const [totalPayement, setTotalPayement] = useState(0);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [participantsArr, setParticipantsArr] = useState([]);
+  
   const activityId = route.params?.activity
   const users = useSelector((state) => state.users.value);
-  const avatar = !(users.avatar) ? require('../assets/avatarDefault.png') : {uri : users.avatar};
-  const userToken = users.token
+  const userToken = users.token;
 
+  const avatar = (avatarUrl) =>
+    !avatarUrl ? require("../assets/avatarDefault.png") : { uri: avatarUrl };
+  
   
 // recuperation des infos de l'activité en fonction de l'activityId
 // formatage de la date
@@ -45,10 +48,39 @@ export default function ActivityScreen({ navigation }) {
         setStartTime(moment(data.activity.startTime).format("HH:mm"));
         setPayementLimit(data.activity.payementLimit)
         setOrganizerToken( data.activity.organizer.token)
+
+        fetch(`${BACKEND_IP}/activities/participants/${activityId}`)
+        .then((response) => response.json())
+        .then((data) => {
+          setParticipantsArr(data);
+        });
+      })
+      .then(()=>{
+        fetch(`${BACKEND_IP}/transactions/${activityId}`)
+          .then((response) => response.json())
+          .then((data) => {
+            const initialValue = 0;
+            const totalAmount = data.reduce(
+              (accumulator, currentValue) => accumulator + currentValue.amount,
+              initialValue)
+              setTotalPayement(totalAmount);
+          })
       });
   }, [activityId]);
 
-  
+  let avatarPart;
+  if (participantsArr && Array.isArray(participantsArr)) {
+    avatarPart = participantsArr.map((data, i) => {
+      const participantId = data.user._id;
+      return (
+        <TouchableOpacity key={i} >
+          <Image source={avatar(data.avatar)} style={styles.avatar} />
+        </TouchableOpacity>
+      );
+    });
+  } else {
+    avatarPart = null; // rendu si participantsArr est indéfini ou non un tableau
+  }
 
   return (
     //implementation du component header
@@ -62,27 +94,41 @@ export default function ActivityScreen({ navigation }) {
         avatar={users.avatar}
       />
       <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === 'ios' ? 'padding' : 'height'} >
+      <Text style={styles.participantsTitle}>Participants :</Text>
         <View style={styles.friendsContainer}>
-          <Image style={styles.avatar} source={avatar} />
+          <ScrollView
+                horizontal={true}
+                style={styles.horizontalScrollContent}
+              >
+                <View style={styles.friendsContainer}>{avatarPart}</View>
+            </ScrollView>
           </View>
           {organizerToken !== userToken && (
           <View style={styles.invitation}>
             <View style={styles.choice}>
-            <RedButton buttonText='Accept'></RedButton>
-            <RedButton buttonText='Refuse
-            '></RedButton>
+              <RedButton buttonText='Accept'></RedButton>
+              <RedButton buttonText='Refuse'></RedButton>
             </View>
           </View>
         )}
-        {/* implementation du wallet et des infos de l'activité de facon dynamique */}
-        <Wallet style={styles.wallet}total="3" max={payementLimit} />
+        {/* wallet dynamique */}
+        <Wallet style={styles.wallet} total={Number(totalPayement)} max={Number(payementLimit)} />
+        {(Number(totalPayement) < Number(payementLimit)) && <RedButton style={styles.button} buttonText='Contribute' onPress={() => setModalVisible(true)} />}
         <View style={styles.activityInfo}>
         <Text style={styles.text}>Date: {date} <FontAwesome name="calendar" size={24} color="black" /></Text>
         <Text style={styles.text}>Start: {startTime} <FontAwesome name="clock-o" size={24} color="black" /></Text>
         <Text style={styles.text}>Location: {location} <FontAwesome name="map-pin" size={24} color="black" /></Text>
         <Text style={styles.text}>Description: {description} <FontAwesome name="pencil" size={24} color="black" /></Text>
         </View>
-     
+        
+        <PaymentModal 
+          visible={modalVisible} 
+          onClose={() => setModalVisible(false)} 
+          userToken={userToken}
+          activityId={activityId}
+          setTotal={setTotalPayement}
+          total={totalPayement}
+        />
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
@@ -120,23 +166,6 @@ const styles = StyleSheet.create({
     marginVertical: 10,
     width: "80%",
   },
-  inputLine: {
-    width: "48%",
-  },
-  editButton: {
-    flexDirection: "row",
-    justifyContent: "flex-end",
-    width: "80%",
-    marginTop: 35,
-  },
-  edit: {
-    height: 40,
-    width: 40,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#F74231",
-    borderRadius: 10,
-  },
   text: {
     fontFamily: "ClashGrotesk-Regular",
     fontSize: 30,
@@ -169,21 +198,26 @@ const styles = StyleSheet.create({
     width: '100%',
     fontFamily: "ClashGrotesk-Regular",
     fontSize: 24,
-    paddingTop: 50,
+    paddingVertical: 20,
   },
-  invitation :{
-    
+  invitation :{    
     justifyContent: 'center',
     alignItems: 'center',
     height: '20%',
-    width: '80%',
+    width: '100%',
     paddingBottom: 20,
   },
   choice: {
     height: '100%',
     width: "100%",
     justifyContent: 'space-around',
-    alignItems: 'center'
-    
+    alignItems: 'center',  
+  },
+  button:{
+    marginVertical: 15,
+  },
+  participantsTitle:{
+    alignSelf:'flex-start',
+    marginLeft: '10%',
   }
 });

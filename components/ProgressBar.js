@@ -7,6 +7,11 @@ export default function Wallet(props) {
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
+    if (isNaN(props.total) || isNaN(props.max)) {
+      console.error('Invalid values for props.total or props.max:', props.total, props.max);
+      return;
+    }
+
     if(props.max === 0) {
       setProgress(1)
     } else {
@@ -31,7 +36,7 @@ export default function Wallet(props) {
         borderRadius={10}
       />
       <Text style={styles.text}>
-        {props.total} / {props.max} Wallet
+        {props.total} / {props.max}€ Wallet
       </Text>
       <FontAwesome
         name={iconName}

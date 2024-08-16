@@ -143,7 +143,7 @@ export default function CreateActivityScreen( {navigation} ) {
                 })
             })
             .then(()=>{
-                navigation.navigate('Admin activity',{activityId});
+                navigation.navigate('Admin Activity',{ activityId});
             });
         } catch (error) {
             console.error("Failed to send activty:", error);

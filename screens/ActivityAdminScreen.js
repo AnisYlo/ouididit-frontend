@@ -9,9 +9,7 @@ import {
   Alert,
   Image,
   Modal,
-  TextInput,
-  Button,
-  TouchableOpacity
+  TouchableOpacity,
 } from "react-native";
 import RNDateTimePicker from "@react-native-community/datetimepicker";
 import moment from "moment";
@@ -26,10 +24,10 @@ import { BACKEND_IP } from "@env";
 import { useRoute } from "@react-navigation/native";
 import Wallet from "../components/ProgressBar";
 import { useIsFocused } from "@react-navigation/native";
+import PaymentModal from "../components/ModalCB";
 
 export default function ActivityAdminScreen({ navigation }) {
   const [activityName, setActivityName] = useState("");
-  const [price, setPrice] = useState(null);
   const [date, setDate] = useState("");
   const [datePicker, setDatePicker] = useState(new Date());
   const [startTime, setStartTime] = useState("");
@@ -43,16 +41,13 @@ export default function ActivityAdminScreen({ navigation }) {
   const [modalVisible, setModalVisible] = useState(false);
   const [inputParticipant, setinputParticipant] = useState(null);
   const [participantsArr, setParticipantsArr] = useState([]);
-  const [total, setTotal] = useState(0);
   const [maxPrice, setMaxPrice] = useState(0);
+  const [totalPayement, setTotalPayement] = useState(0);
+  const [modalCBVisible, setModalCBVisible] = useState(false);
   const route = useRoute();
 
-
-
+  const organizer = route.params?.organizer  
   const activityId = route.params?.activity
-  const organizer = route.params?.organizer
-  // const activityId = "66bb6b6e425d42873c3dbec0";
-  // const participantId = "66bdb00005e179a0e7496da7";
 
   // Grabbed from emailregex.com
   const EMAIL_REGEX = /^[\w-.]+@([\w-]+.)+[\w-]{2,}$/gi;
@@ -116,6 +111,7 @@ export default function ActivityAdminScreen({ navigation }) {
   }
 
   useEffect(() => {
+
     fetch(`${BACKEND_IP}/activities/${activityId}`)
       .then((response) => response.json())
       .then((data) => {
@@ -124,14 +120,32 @@ export default function ActivityAdminScreen({ navigation }) {
         setDate(moment(data.activity.date).format("DD/MM/YYYY"));
         setDuration(String(data.activity.time));
         setLocation(data.activity.location.street);
-        setStartTime(moment(data.activity.startTime).format("HH:mm"));
+        setStartTime(moment(data.activity.startTime).format("HH:mm"))
+        
+        fetch(`${BACKEND_IP}/activities/participants/${activityId}`)
+        .then((response) => response.json())
+        .then((data) => {
+          setParticipantsArr(data);
+        });
+      })
+      .then(()=>{
+        fetch(`${BACKEND_IP}/transactions/${activityId}`)
+          .then((response) => response.json())
+          .then((data) => {
+            const initialValue = 0;
+            const totalAmount = data.reduce(
+              (accumulator, currentValue) => accumulator + currentValue.amount,
+              initialValue)
+              setTotalPayement(totalAmount);
+          })
       });
   }, [activityId]);
+  
 
   const validModifications = (res) => {
     // Check inputs before action
     let alertMessage = "";
-    // !/^\d+(\.\d{1,2})?$/.test(price) && (alertMessage += "Invalid price.\n");
+    !/^\d+(\.\d{1,2})?$/.test(maxPrice) && (alertMessage += "Invalid price.\n");
     !/^[1-9]\d*$/.test(duration) && (alertMessage += "Invalid duration.\n");
     !isFutureDate(date, startTime) &&
       (alertMessage += "Invalid date/time or passed date/time.\n");
@@ -153,6 +167,7 @@ export default function ActivityAdminScreen({ navigation }) {
       date: startDate,
       time: duration,
       description: description,
+      payementLimit : maxPrice,
     };
     // console.log(modif)
     fetch(`${BACKEND_IP}/activities/${activityId}`, {
@@ -188,10 +203,16 @@ export default function ActivityAdminScreen({ navigation }) {
     })
       .then((response) => response.json())
       .then((data) => {
-        // console.log("hello data", data.participants);
-        setParticipantsArr([...participantsArr, data.participants]);
-        setinputParticipant("");
-        if (data) {
+        if (data.result) {
+          const newParticipant = {
+            ...participantsArr[0], // Clone du premier participant comme modèle
+            user: data.participants[0], // Remplacement des données utilisateur
+            _id: '', // ID vide pour un nouveau participant
+          };
+    
+          // Mise à jour de l'état avec le nouveau participant
+          setParticipantsArr(prev => [...prev, newParticipant]);
+          setinputParticipant("");
           alert("Email sent to participant");
         } else {
           alert("Error");
@@ -199,10 +220,40 @@ export default function ActivityAdminScreen({ navigation }) {
       });
   };
 
-  const avatarPart = participantsArr.map((data, i) => {
+  
+  const deleteParticipant = (participantId) => {
+    if(participantsArr.length === 1){
+      Alert.alert('Impossible de supprimer le dernier participant')
+      return;
+    }
+    fetch(`${BACKEND_IP}/activities/participants/${participantId}`, {
+      method: "DELETE",
+      headers: { "Content-type": "application/json" },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data) {
+          fetch(`${BACKEND_IP}/activities/participants/${activityId}`)
+          .then((response) => response.json())
+          .then((data) => {
+            setParticipantsArr(data);
+          });
+          alert("Invitation removed!");
+        } else {
+          alert("Error during process!");
+        }
+      });
+  };
+
+  let avatarPart;
+
+if (participantsArr && Array.isArray(participantsArr)) {
+  avatarPart = participantsArr.map((data, i) => {
+    const participantId = data.user._id;
     return (
       <TouchableOpacity
-        onPress={() => 
+        key={i}
+        onPress={() =>
           Alert.alert(
             "Remove invitation",
             "Are you sure you want to remove invitation?",
@@ -215,38 +266,23 @@ export default function ActivityAdminScreen({ navigation }) {
               {
                 text: "Yes",
                 onPress: () => {
-                  deleteParticipant();
-                  setParticipantsArr('')
+                  deleteParticipant(participantId);
                   console.log("Suppression validée");
                 },
               },
             ],
             { cancelable: false }
           )
-        }>
-      <Image
-        key={data.i}
-        source={avatar(data.avatar)}
-        style={styles.avatar}
-      />
+        }
+      >
+        <Image key={i} source={avatar(data.avatar)} style={styles.avatar} />
       </TouchableOpacity>
     );
   });
+} else {
+  avatarPart = null; // rendu si participantsArr est indéfini ou non un tableau
+}
 
-  const deleteParticipant = () => {
-    fetch(`${BACKEND_IP}/participants/${participantId}`, {
-      method: "DELETE",
-      headers: { "Content-type": "application/json" },
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        if (data) {
-          alert("Invitation removed!");
-        } else {
-          alert("Error during process!");
-        }
-      });
-  };
 
   return (
     //implementation du component header
@@ -289,15 +325,14 @@ export default function ActivityAdminScreen({ navigation }) {
         behavior={Platform.OS === "ios" ? "padding" : "height"}
       >
         <ScrollView contentContainerStyle={styles.scroll}>
-          <View style={styles.content}>
+          <View style={styles.content}>            
+          <Text style={styles.participantsTitle}>Participants :</Text>
             <View style={styles.friendsContainerWrapper}>
               <ScrollView
                 horizontal={true}
                 style={styles.horizontalScrollContent}
               >
-                <View style={styles.friendsContainer}>
-                  {avatarPart}
-                </View>
+                <View style={styles.friendsContainer}>{avatarPart}</View>
               </ScrollView>
               <View style={styles.add}>
                 <Ionicons
@@ -308,6 +343,8 @@ export default function ActivityAdminScreen({ navigation }) {
                 />
               </View>
             </View>
+            <Wallet total={Number(totalPayement)} max={Number(maxPrice)} />
+            {(Number(totalPayement) < Number(maxPrice)) && <RedButton style={styles.buttonWallet} buttonText='Contribute' onPress={() => setModalCBVisible(true)} />}
             <View style={styles.editButton}>
               <TouchableOpacity
                 style={styles.edit}
@@ -316,35 +353,10 @@ export default function ActivityAdminScreen({ navigation }) {
                 <MaterialIcons name="edit" color="white" size={30} />
               </TouchableOpacity>
             </View>
-            <View>
-              <Input
-                autoFocus
-                editable={edit}
-                keyboardType="numeric"
-                onChangeText={(value) => setMaxPrice(value)}
-                placeholder="Payment ceiling"
-                require={true}
-                style={styles.input}
-                value={maxPrice}
-              />
-            </View>
-            <View>
-              <Input
-                autoFocus
-                editable={edit}
-                keyboardType="numeric"
-                onChangeText={(value) => setTotal(value)}
-                placeholder="Amount added"
-                require={true}
-                style={styles.input}
-                value={total}
-              />
-            </View>
-            <Wallet
-              total={Number(total)}
-              max={Number(maxPrice)}
-            />
+
             {edit && (
+              <View style={styles.viewHidden}>
+            
               <Input
                 autoFocus
                 editable={edit}
@@ -354,6 +366,17 @@ export default function ActivityAdminScreen({ navigation }) {
                 style={styles.input}
                 value={activityName}
               />
+
+              <Input
+                editable={edit}
+                keyboardType="numeric"
+                onChangeText={(value) => setMaxPrice(value)}
+                placeholder="Payment ceiling"
+                require={true}
+                style={styles.input}
+                value={maxPrice}
+              />
+              </View>
             )}
             <Input
               editable={edit}
@@ -430,6 +453,14 @@ export default function ActivityAdminScreen({ navigation }) {
             />
           </View>
         </ScrollView>
+        <PaymentModal 
+          visible={modalCBVisible} 
+          onClose={() => setModalCBVisible(false)} 
+          userToken={users.token}
+          activityId={activityId}
+          setTotal={setTotalPayement}
+          total={totalPayement}
+        />
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
@@ -558,4 +589,16 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
   },
+  buttonWallet:{
+    marginVertical: 15,
+  },
+  viewHidden:{
+    width:'100%',
+    alignItems: 'center',
+  },
+  participantsTitle:{
+    alignSelf:'flex-start',
+    marginBottom: -20,
+    marginLeft: '10%',
+  }
 });
