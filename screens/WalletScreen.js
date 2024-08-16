@@ -10,13 +10,12 @@ import Wallet from "../components/ProgressBar";
 export default function WalletScreen({ navigation }) {
 
   const users = useSelector(state => state.users.value);
-  // const activityId = route.params?.activity;
-  // const route = useRoute();
   const [total, setTotal] = useState(0);
   const [maxPrice, setMaxPrice] = useState(0);
 
 
   return (
+    //contenu de la page 
     <SafeAreaView style={styles.safeArea}>
       <Header 
           navigation={navigation}
@@ -35,7 +34,7 @@ export default function WalletScreen({ navigation }) {
     </SafeAreaView>
   );
 }
-
+//styleSheet du Screen
 const styles = StyleSheet.create({
   safeArea:{
     flex: 1,

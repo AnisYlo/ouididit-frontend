@@ -21,7 +21,7 @@ export default function SignInScreen({ navigation }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const dispatch = useDispatch();
-
+// a l'appuie d'un bouton correspondant a cette fonction on utilise la route signin 
   const handleSubmit = () => {
     fetch(`${BACKEND_IP}/users/signin`, {
       method: 'POST',
@@ -45,6 +45,7 @@ export default function SignInScreen({ navigation }) {
 
 
   return(
+    //contenu de le page
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
  <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.container}>
     <Image source={require('../assets/logo.png')} style={styles.logo}/>
@@ -64,7 +65,7 @@ export default function SignInScreen({ navigation }) {
  </TouchableWithoutFeedback>
   )
 }
-
+//StyleSheet du Screen
 const styles = StyleSheet.create({
   container: {
     flex: 1,

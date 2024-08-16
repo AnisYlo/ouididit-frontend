@@ -7,11 +7,12 @@ const initialState = {
 export const activitiesSlice = createSlice({
     name: 'activities',
     initialState,
-    reducers: {       
+    reducers: {     
+        //fonction pour ajouter une activité  
         addActivities: (state, action) => { 
             state.value = action.payload;
         },
-
+        //fonction pour quitter une activité
         logoutActivities: (state) => {
             state.value = initialState.value;
         },

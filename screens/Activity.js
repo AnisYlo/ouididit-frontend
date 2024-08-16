@@ -2,7 +2,6 @@ import { KeyboardAvoidingView, Button, Platform, SafeAreaView, StyleSheet, View,
 import moment, { invalid } from "moment";
 import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
-import Input from "../components/Input";
 import Header from "../components/Header";
 import { BACKEND_IP } from "@env";
 import { useRoute } from "@react-navigation/native";
@@ -25,16 +24,15 @@ export default function ActivityScreen({ navigation }) {
   const [description, setDescription] = useState("");
   const [payementLimit, setPayementLimit] = useState("")
   const [organizerToken, setOrganizerToken] = useState("")
-  
   const activityId = route.params?.activity
-  const organizer = route.params?.organizer
   const users = useSelector((state) => state.users.value);
   const avatar = !(users.avatar) ? require('../assets/avatarDefault.png') : {uri : users.avatar};
   const userToken = users.token
-  const participants = ["test@MediaList.fr", "toto@MediaList.fr"];
 
   
-
+// recuperation des infos de l'activité en fonction de l'activityId
+// formatage de la date
+// reatribution des different etat correspondant aux different infos de l'activité
   useEffect(() => {
     fetch(`${BACKEND_IP}/activities/${activityId}`)
       .then((response) => response.json())
@@ -54,6 +52,9 @@ export default function ActivityScreen({ navigation }) {
 
   return (
     //implementation du component header
+    //contenu du screen
+    //comparatif inline du Token du user ainsi que le Token attribuer a l'activité en tant qu'admin rien ne s'affiche
+    // en tant que User 'invité' une View s'affiche et offre le choix d'accepter ou refuser l'invitation a l'activité
     <SafeAreaView style={styles.safeArea}>
       <Header
         navigation={navigation}
@@ -73,6 +74,7 @@ export default function ActivityScreen({ navigation }) {
             </View>
           </View>
         )}
+        {/* implementation du wallet et des infos de l'activité de facon dynamique */}
         <Wallet style={styles.wallet}total="3" max={payementLimit} />
         <View style={styles.activityInfo}>
         <Text style={styles.text}>Date: {date} <FontAwesome name="calendar" size={24} color="black" /></Text>
@@ -85,7 +87,7 @@ export default function ActivityScreen({ navigation }) {
     </SafeAreaView>
   );
 }
-
+// styleSheet du Screen
 const styles = StyleSheet.create({
   safeArea:{
     width:'100%',

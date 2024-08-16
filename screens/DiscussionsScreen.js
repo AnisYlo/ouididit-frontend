@@ -150,6 +150,7 @@ useEffect(() => {
           <View style={styles.vue11}>
             {
               activities.map((activityData, i)=>{
+
                 const chat = chats.find(chat => chat.activity._id === activityData._id);
                
                 return ( 

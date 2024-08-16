@@ -15,10 +15,10 @@ import Header from "../components/Header";
 import RedButton from "../components/redButton";
 
 export default function ProfilScreen({ navigation }) {
-  // console.log(navigation);
   const users = useSelector(state => state.users.value)
   
   return (
+    //contenu de la page
     <SafeAreaView style={styles.safeArea}>
       <Header 
           navigation={navigation}
@@ -49,7 +49,7 @@ export default function ProfilScreen({ navigation }) {
     </SafeAreaView>
   );
 }
-
+//StyleSheet du Screen
 const styles = StyleSheet.create({
   safeArea:{
     flex: 1,

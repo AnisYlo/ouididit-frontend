@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import { View, Text, StyleSheet, SafeAreaView } from 'react-native';
+import { View, Text, StyleSheet, SafeAreaView} from 'react-native';
 import { Agenda } from 'react-native-calendars';
 import { BACKEND_IP } from "@env";
 import Header from '../components/Header';
 import moment from 'moment';
 import { calendarTheme } from 'react-native-calendars'; 
-import { TouchableOpacity } from 'react-native-gesture-handler';
 
+
+// changement visuel du calendrier 
 const customTheme = {
   ...calendarTheme, 
   agendaDayTextColor: '#F74231', 
@@ -24,6 +25,7 @@ const CalendarScreen = ({ navigation }) => {
   const [selectedDate, setSelectedDate] = useState(moment().format('YYYY-MM-DD'));
   const [allActivities, setAllActivities] = useState({});
   const [dayActivities, setDayActivities] = useState({});
+
   useEffect(() => {
     // prend les infos dans le redux, les tri et les formate au format utilisé pour l'agenda 
     let container = {};
@@ -32,7 +34,7 @@ const CalendarScreen = ({ navigation }) => {
       if (!container[date]) {
         container[date] = [];
       }
-     
+     //defini le contenu des items du calendrier
       container[date].push({
         name: data.name,
         time: moment(data.date).format('HH:mm'),
@@ -42,18 +44,20 @@ const CalendarScreen = ({ navigation }) => {
       });
     });
     
+    //fait en sorte de que tout les activité soit contenu en fonction de leurs date dans la date qui correspond
     setAllActivities(container);
-  
     const selectedEvents = container[selectedDate] || [];
     setDayActivities({ [selectedDate]: selectedEvents });
   }, [reduxActivities, selectedDate]);
-
+  
+  // a l'appuie sur une date affiche les activités du jour qui correspond
   const onDayPress = (day) => {
     setSelectedDate(day.dateString);
     const selectedEvents = allActivities[day.dateString] || [];
     setDayActivities({ [day.dateString]: selectedEvents });
   };
-
+  // A l'appuie sur une activité, compare le token de l'activité qui correspond et si il est egale rediriger vers une page 
+  // Admin de l'activité sinon sur une page 'invité' de l'activité
   const handlePress = (item) => {
     if(item.organizer === user.token) {
       navigation.navigate("Activity Admin", {organizer: item.organizer})
@@ -62,9 +66,8 @@ const CalendarScreen = ({ navigation }) => {
       navigation.navigate('Activity', { activity: item.activityID, organizer: item.organizer })
     }
   }
-
-  const renderItem = (item) => {
-    return (
+  // les item dans un jour du calendrier
+  const renderItem = (item) => {    return (
       <View>
         <View style={styles.item}>
          <Text onPress={() => handlePress(item)} style={styles.itemName}>{item.name}</Text>
@@ -74,7 +77,7 @@ const CalendarScreen = ({ navigation }) => {
       </View>
     );
   };
-
+  //affichage de la page
   return (
     <SafeAreaView style={styles.safeArea}>
       <Header
@@ -102,7 +105,7 @@ const CalendarScreen = ({ navigation }) => {
     </SafeAreaView>
   );
 };
-
+// stylesheet visuel
 const styles = StyleSheet.create({
   safeArea: {
     width: '100%',

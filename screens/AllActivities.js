@@ -4,7 +4,7 @@ import Header from "../components/Header";
 
 export default function AllActivities({ navigation }) {
   const users = useSelector(state => state.users.value)
-
+// Contenu du screen 
   return (
     <SafeAreaView style={styles.safeArea}>
       <Header 
@@ -24,7 +24,7 @@ export default function AllActivities({ navigation }) {
     </SafeAreaView>
   );
 }
-
+// StyleSheet du Screen
 const styles = StyleSheet.create({
   safeArea:{
     flex: 1,

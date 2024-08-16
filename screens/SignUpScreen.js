@@ -16,6 +16,10 @@ export default function SignUpScreen({navigation}) {
 
   const dispatch = useDispatch();
 
+  // a l'appuie d'un bouton correspondant a cette fonction un controle est fait grace a un regex sur le contenue de 
+  // l'input email et execute un fetch de la route signup uniquement si les caractere attendu dans email sont bon
+  // dans ce cas les information necessaire a la route post email, password et username sont envoyer, si l'utilisateur
+  // est deja existant dans la base de donnée la route renvoie une alert disant que l'utilisateur existe deja 
   const handleSubmitSignUp = () => {
     if(!(/^[\w-.]+@([\w-]+.)+[\w-]{2,}$/ig.test(email))){
       alert("Invalid email format");
@@ -37,6 +41,7 @@ export default function SignUpScreen({navigation}) {
   }
 
   return (
+    //contenu de la page 
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
     <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.container}>
       <View style={styles.close}> 
@@ -53,7 +58,7 @@ export default function SignUpScreen({navigation}) {
     </TouchableWithoutFeedback>
   );
 }
-
+//styleSheet du Screen
 const styles = StyleSheet.create({
     container: {
         flex: 1,

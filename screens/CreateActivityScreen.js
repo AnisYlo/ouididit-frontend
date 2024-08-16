@@ -155,7 +155,7 @@ export default function CreateActivityScreen( {navigation} ) {
         setTimePickerVisible(false);
         Keyboard.dismiss();
     }
-
+    // renvoie les inputs vides de tout caractère
     const clearInputs = () =>{
         setActivityName('');
         setPrice(null);
@@ -171,6 +171,7 @@ export default function CreateActivityScreen( {navigation} ) {
     }
 
     return (
+        //contenu de la page 
     <SafeAreaView style={styles.safeArea}>
         <Header 
             navigation={navigation}
@@ -275,7 +276,7 @@ export default function CreateActivityScreen( {navigation} ) {
     </SafeAreaView>
     );
 }
-
+//styleSheet du Screen
 const styles = StyleSheet.create({
     safeArea:{
         flex: 1,

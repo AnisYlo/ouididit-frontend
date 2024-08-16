@@ -15,6 +15,7 @@ SplashScreen.preventAutoHideAsync();
 
 const MyAgenda = () => {
     return (
+      //contenu de l'agenda et theme visuel de l'agenda
         <View>
             <Agenda
                 markedDates={{
@@ -50,7 +51,7 @@ const MyAgenda = () => {
         </View>
     );
 };
-
+//configuration du store et le contenu du reducer
 const store = configureStore({
   reducer: { 
     users, 
@@ -58,7 +59,7 @@ const store = configureStore({
     chats 
   },
 });
-
+//importation des polices de caractères
 export default function App() {
   const [loaded, error] = useFonts({
     "ClashGrotesk-Bold": require("./assets/fonts/ClashGrotesk-Bold.otf"),
