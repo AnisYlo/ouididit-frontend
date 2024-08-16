@@ -60,7 +60,7 @@ export default function ActivityAdminScreen({ navigation }) {
   const onChangeDate = (event, selectedDate) => {
     setDatePickerVisible(false); // Hide picker if user cancel selection
     if (event.type === "set") {
-      //setDatePickerVisible(Platform.OS === 'ios');  // Setting for IOs need testing
+      setDatePickerVisible(Platform.OS === 'ios');  // Setting for IOs
       const currentDate = selectedDate || datePicker;
       setDate(moment(currentDate).format("DD/MM/YYYY"));
       setDatePicker(currentDate);
@@ -72,6 +72,7 @@ export default function ActivityAdminScreen({ navigation }) {
   const onChangeTime = (event, selectedTime) => {
     setTimePickerVisible(false); // Hide picker if user cancel selection
     if (event.type === "set") {
+      setTimePickerVisible(Platform.OS === 'ios');
       const currentTime = selectedTime || startTimePicker;
       setStartTime(moment(currentTime).format("HH:mm"));
       setStartTimePicker(currentTime);
@@ -121,7 +122,7 @@ export default function ActivityAdminScreen({ navigation }) {
         setDuration(String(data.activity.time));
         setLocation(data.activity.location.street);
         setStartTime(moment(data.activity.startTime).format("HH:mm"))
-        
+        setMaxPrice(data.activity.payementLimit);
         fetch(`${BACKEND_IP}/activities/participants/${activityId}`)
         .then((response) => response.json())
         .then((data) => {
@@ -275,7 +276,7 @@ if (participantsArr && Array.isArray(participantsArr)) {
           )
         }
       >
-        <Image key={i} source={avatar(data.avatar)} style={styles.avatar} />
+        <Image key={i} source={avatar(data.user.avatar)} style={styles.avatar} /> 
       </TouchableOpacity>
     );
   });
@@ -371,7 +372,7 @@ if (participantsArr && Array.isArray(participantsArr)) {
                 editable={edit}
                 keyboardType="numeric"
                 onChangeText={(value) => setMaxPrice(value)}
-                placeholder="Payment ceiling"
+                placeholder="Total payement"
                 require={true}
                 style={styles.input}
                 value={maxPrice}

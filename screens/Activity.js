@@ -74,7 +74,7 @@ export default function ActivityScreen({ navigation }) {
       const participantId = data.user._id;
       return (
         <TouchableOpacity key={i} >
-          <Image source={avatar(data.avatar)} style={styles.avatar} />
+           <Image key={i} source={avatar(data.user.avatar)} style={styles.avatar} /> 
         </TouchableOpacity>
       );
     });

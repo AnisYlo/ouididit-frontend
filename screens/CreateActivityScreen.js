@@ -112,7 +112,7 @@ export default function CreateActivityScreen( {navigation} ) {
             description,
             payementLimit : price,
         };
-        const participants = [{email :'test2@MediaList.fr'},{email :'2toto@MediaList.fr'},{email :'xavier@gmail.com', status:"Accepted"}]
+        const participants = [{email :users.email, status:"Accepted"}]        
         let activityId = null;
         try{
             // Create activity
@@ -143,7 +143,7 @@ export default function CreateActivityScreen( {navigation} ) {
                 })
             })
             .then(()=>{
-                navigation.navigate('Admin Activity',{ activityId});
+                navigation.navigate('Activity Admin',{ activity: activityId});
             });
         } catch (error) {
             console.error("Failed to send activty:", error);

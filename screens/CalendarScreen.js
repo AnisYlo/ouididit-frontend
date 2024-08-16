@@ -99,6 +99,11 @@ const CalendarScreen = ({ navigation }) => {
               marked: true,
               selectedColor: '#F74231',
             },
+            '2024-08-20': { //feature de test
+        marked: true,
+        selectedColor: '#F74231',
+        dotColor: '#F74231', 
+      },
           }}
         />
       </View>
