@@ -46,10 +46,8 @@ export default function ActivityAdminScreen({ navigation }) {
   const [modalCBVisible, setModalCBVisible] = useState(false);
   const route = useRoute();
 
-
-
-
-  const organizer = route.params?.organizer
+  const organizer = route.params?.organizer  
+  const activityId = route.params?.activity
 
   // Grabbed from emailregex.com
   const EMAIL_REGEX = /^[\w-.]+@([\w-]+.)+[\w-]{2,}$/gi;
@@ -113,7 +111,6 @@ export default function ActivityAdminScreen({ navigation }) {
   }
 
   useEffect(() => {
-    const activityId = route.params?.activity
 
     fetch(`${BACKEND_IP}/activities/${activityId}`)
       .then((response) => response.json())
