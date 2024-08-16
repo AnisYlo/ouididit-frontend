@@ -9,8 +9,6 @@ import {
   Alert,
   Image,
   Modal,
-  TextInput,
-  Button,
   TouchableOpacity,
 } from "react-native";
 import RNDateTimePicker from "@react-native-community/datetimepicker";
@@ -30,7 +28,6 @@ import PaymentModal from "../components/ModalCB";
 
 export default function ActivityAdminScreen({ navigation }) {
   const [activityName, setActivityName] = useState("");
-  const [price, setPrice] = useState(null);
   const [date, setDate] = useState("");
   const [datePicker, setDatePicker] = useState(new Date());
   const [startTime, setStartTime] = useState("");
@@ -51,7 +48,7 @@ export default function ActivityAdminScreen({ navigation }) {
 
 
 
-  const activityId = route.params?.activity
+
   const organizer = route.params?.organizer
 
   // Grabbed from emailregex.com
@@ -116,6 +113,8 @@ export default function ActivityAdminScreen({ navigation }) {
   }
 
   useEffect(() => {
+    const activityId = route.params?.activity
+
     fetch(`${BACKEND_IP}/activities/${activityId}`)
       .then((response) => response.json())
       .then((data) => {
@@ -149,7 +148,7 @@ export default function ActivityAdminScreen({ navigation }) {
   const validModifications = (res) => {
     // Check inputs before action
     let alertMessage = "";
-    // !/^\d+(\.\d{1,2})?$/.test(price) && (alertMessage += "Invalid price.\n");
+    !/^\d+(\.\d{1,2})?$/.test(maxPrice) && (alertMessage += "Invalid price.\n");
     !/^[1-9]\d*$/.test(duration) && (alertMessage += "Invalid duration.\n");
     !isFutureDate(date, startTime) &&
       (alertMessage += "Invalid date/time or passed date/time.\n");
@@ -240,7 +239,6 @@ export default function ActivityAdminScreen({ navigation }) {
           fetch(`${BACKEND_IP}/activities/participants/${activityId}`)
           .then((response) => response.json())
           .then((data) => {
-            // console.log("tableau de participants ====>", data)
             setParticipantsArr(data);
           });
           alert("Invitation removed!");
@@ -249,9 +247,7 @@ export default function ActivityAdminScreen({ navigation }) {
         }
       });
   };
-  // setParticipantsArr()
-  // const participantFiltres = data.participants.filter(participant => participant)
-  
+
   let avatarPart;
 
 if (participantsArr && Array.isArray(participantsArr)) {
@@ -350,23 +346,8 @@ if (participantsArr && Array.isArray(participantsArr)) {
                 />
               </View>
             </View>
-            
-            
-            {/* <View>
-              <Input
-                autoFocus
-                editable={edit}
-                keyboardType="numeric"
-                onChangeText={(value) => setTotal(value)}
-                placeholder="Amount added"
-                require={true}
-                style={styles.input}
-                value={total}
-              />
-            </View> */}
             <Wallet total={Number(totalPayement)} max={Number(maxPrice)} />
-            <RedButton style={styles.buttonWallet} buttonText='Contribute' onPress={() => setModalCBVisible(true)} />
-        
+            {(Number(totalPayement) < Number(maxPrice)) && <RedButton style={styles.buttonWallet} buttonText='Contribute' onPress={() => setModalCBVisible(true)} />}
             <View style={styles.editButton}>
               <TouchableOpacity
                 style={styles.edit}

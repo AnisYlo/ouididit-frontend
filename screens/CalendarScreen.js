@@ -56,7 +56,7 @@ const CalendarScreen = ({ navigation }) => {
 
   const handlePress = (item) => {
     if(item.organizer === user.token) {
-      navigation.navigate("Activity Admin", {organizer: item.organizer})
+      navigation.navigate("Activity Admin", {activity: item.activityID, organizer: item.organizer})
     }
     else {
       navigation.navigate('Activity', { activity: item.activityID, organizer: item.organizer })

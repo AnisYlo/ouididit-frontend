@@ -1,14 +1,11 @@
-import { KeyboardAvoidingView, Button,ScrollView, TouchableOpacity, Platform, SafeAreaView, StyleSheet, View, Text, Alert, Image } from "react-native";
-import moment, { invalid } from "moment";
+import { KeyboardAvoidingView, ScrollView, TouchableOpacity, Platform, SafeAreaView, StyleSheet, View, Text, Image } from "react-native";
+import moment from "moment";
 import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
-import Input from "../components/Input";
 import Header from "../components/Header";
 import { BACKEND_IP } from "@env";
 import { useRoute } from "@react-navigation/native";
 import Wallet from "../components/ProgressBar";
-import users from "../reducers/users"
-import activities from "../reducers/activities";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import RedButton from "../components/redButton";
 import PaymentModal from "../components/ModalCB";
@@ -31,7 +28,6 @@ export default function ActivityScreen({ navigation }) {
   const activityId = route.params?.activity
   const organizer = route.params?.organizer
   const users = useSelector((state) => state.users.value);
-  //const avatar = !(users.avatar) ? require('../assets/avatarDefault.png') : {uri : users.avatar};
   const userToken = users.token;
 
   const avatar = (avatarUrl) =>
@@ -52,7 +48,6 @@ export default function ActivityScreen({ navigation }) {
         setPayementLimit(data.activity.payementLimit)
         setOrganizerToken( data.activity.organizer.token)
 
-
         fetch(`${BACKEND_IP}/activities/participants/${activityId}`)
         .then((response) => response.json())
         .then((data) => {
@@ -72,8 +67,6 @@ export default function ActivityScreen({ navigation }) {
       });
   }, [activityId]);
 
-  
-
   let avatarPart;
   if (participantsArr && Array.isArray(participantsArr)) {
     avatarPart = participantsArr.map((data, i) => {
@@ -88,9 +81,6 @@ export default function ActivityScreen({ navigation }) {
     avatarPart = null; // rendu si participantsArr est indéfini ou non un tableau
   }
 
-
-
-
   return (
     //implementation du component header
     <SafeAreaView style={styles.safeArea}>
@@ -102,7 +92,6 @@ export default function ActivityScreen({ navigation }) {
       <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === 'ios' ? 'padding' : 'height'} >
       <Text style={styles.participantsTitle}>Participants :</Text>
         <View style={styles.friendsContainer}>
-          {/* <Image style={styles.avatar} source={avatar} /> */}
           <ScrollView
                 horizontal={true}
                 style={styles.horizontalScrollContent}
@@ -119,7 +108,7 @@ export default function ActivityScreen({ navigation }) {
           </View>
         )}
         <Wallet style={styles.wallet} total={Number(totalPayement)} max={Number(payementLimit)} />
-        <RedButton style={styles.button} buttonText='Contribute' onPress={() => setModalVisible(true)} />
+        {(Number(totalPayement) < Number(payementLimit)) && <RedButton style={styles.button} buttonText='Contribute' onPress={() => setModalVisible(true)} />}
         <View style={styles.activityInfo}>
         <Text style={styles.text}>Date: {date} <FontAwesome name="calendar" size={24} color="black" /></Text>
         <Text style={styles.text}>Start: {startTime} <FontAwesome name="clock-o" size={24} color="black" /></Text>
