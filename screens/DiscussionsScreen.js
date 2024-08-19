@@ -37,7 +37,7 @@ export default function DiscussionsScreen({ navigation }) {
       const chatHistory = await response.json();
 
       if(chatHistory !==null && chatHistory.messages?.length > 0){
-      // If last message, is event then it's remove from array
+      // If last message, is event then it's remove from array => D'ont show "New tracker at end of messages"
         if(chatHistory.messages[chatHistory.messages.length-1].type==='Event')
           chatHistory.messages.pop();
         setMessages(chatHistory.messages);
@@ -63,8 +63,10 @@ useEffect(() => {
       setMessageText('');
     })();
     
+    // Init new Pusher instance
     const pusher = new Pusher('dbcb29f95b6462d0bedd', { cluster: 'mt1' });
 
+    // Connect user to chat instance
     const updateUser = async () => {
       try {
         await fetch(`${BACKEND_IP}/chats/${chatId}/${users.token}`, { method: 'PUT' });
@@ -75,11 +77,14 @@ useEffect(() => {
     
     updateUser();
 
+    // Register user to Pusher events to retrive new messages
     const subscription = pusher.subscribe(chatId);
     subscription.bind('pusher:subscription_succeeded', () => {
       subscription.bind('message', handleReceiveMessage);
     });
 
+
+    // Cleanup function to unsubscribe and destroy Pusher at the end of the component lifecycle
     return () => {
       subscription.unbind('message', handleReceiveMessage);
       pusher.unsubscribe(chatId);
@@ -95,7 +100,9 @@ useEffect(() => {
   }
 }, [isFocused, chatId]);
 
+  // New message receive from Pusher
   const handleReceiveMessage = (data) => {
+    // Format message receive same as history
     const newMessage = {
       user :{
         username: data.userName,
@@ -109,6 +116,7 @@ useEffect(() => {
     setMessages(messages => [...messages, newMessage]);
   };
 
+  // Send new message
   const handleSendMessage = async () => {
     if (!messageText) {
       return;
@@ -132,8 +140,9 @@ useEffect(() => {
     }
   };
 
+  //Tempo for changing chanel
   const updateChatId = (newId) => {
-    setIsLoading(true);  // Commence le chargement
+    setIsLoading(true);  // Start loading
     setChatId(newId);
   };
 
